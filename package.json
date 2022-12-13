@@ -1,0 +1,56 @@
+{
+  "name": "axustable",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Magnific responsive data table",
+  "author": "Donato Lorenzo <donato@afialapis.com>",
+  "contributors": [
+    "Donato Lorenzo <donato@afialapis.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "js",
+    "react",
+    "table"
+  ],
+  "scripts": {
+    "clean-demo": "rm -rf demo/dist",
+    "clean-lib": "rm -rf lib && mkdir lib",
+    "clean-dist": "rm -rf dist && mkdir dist",
+    "lint": "npx xeira lint ./src",
+    "test": "npx xeira test -t 5000 ./test/before.mjs ./test/units/*",
+    "lib": "npm run clean-lib && npx xeira transpile ./src ./lib",
+    "dist-css": "npx sass src/assets/style.scss ./dist/styles.css",
+    "dist": "npm run clean-dist && npx xeira bundle && npm run dist-css",
+    "prepare": "npm run clean-demo && npm run lint && npm run test && npm run lib && npm run dist",
+    "demo": "npm run clean-demo && npx xeira demo",
+    "reset": "npm run clean-demo && npm run clean-lib && npm run clean-dist && rm -fr node_modules package-lock.json && npm i"
+  },
+  "main": "./lib/index.cjs",
+  "exports": {
+    "import": "./dist/axustable.mjs",
+    "default": "./lib/index.cjs"
+  },
+  "module": "./dist/axustable.mjs",
+  "browser": "./dist/axustable.umd.js",
+  "eslintConfig": {
+    "extends": [
+      "./node_modules/xeira/configs/eslint.react.cjs"
+    ]
+  },
+  "babel": {
+    "extends": "./node_modules/xeira/configs/babel.react.cjs"
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.2",
+    "farrapa-collections": "^1.0.7",
+    "farrapa-commons": "^1.0.7",
+    "farrapa-strings": "^1.0.7",
+    "react": "^16.13.1",
+    "reactstrap": "8.5.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "xeira": "^0.0.26"
+  }
+}
