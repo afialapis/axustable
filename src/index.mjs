@@ -1,3 +1,3 @@
-import Axustable from './Axustable.mjs'
+import Axustable from '~table/Axustable.mjs'
 
 export {Axustable}

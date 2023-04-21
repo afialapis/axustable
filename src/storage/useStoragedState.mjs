@@ -2,7 +2,7 @@ import {useState, /*useCallback,*/ useEffect} from 'react'
 
 let _isBrowser = false
 try {
-  process= process?.env?.BROWSER != undefined
+  _isBrowser= process?.env?.BROWSER != undefined
 } catch(_) {}
 
 const getStorageKey = (key) => {

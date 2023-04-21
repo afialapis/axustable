@@ -17,19 +17,22 @@
     "clean-demo": "rm -rf demo/dist",
     "clean-lib": "rm -rf lib && mkdir lib",
     "clean-dist": "rm -rf dist && mkdir dist",
-    "lint": "npx xeira lint ./src",
-    "test": "npx xeira test -t 5000 ./test/before.mjs ./test/units/*",
-    "lib": "npm run clean-lib && npx xeira transpile ./src ./lib",
+    "lint": "npx xeira lint --folder=./src",
+    "test": "npx xeira test --timeout=5000 --files=./test/before.mjs,./test/units/*",
+    "lib": "npm run clean-lib && npx xeira transpile --from=./src --to=./lib",
     "dist-css": "npx sass src/assets/style.scss ./dist/styles.css",
     "dist": "npm run clean-dist && npx xeira bundle && npm run dist-css",
     "prepare": "npm run clean-demo && npm run lint && npm run test && npm run lib && npm run dist",
-    "demo": "npm run clean-demo && npx xeira demo",
+    "demo": "npm run clean-demo && npx xeira demo --port=8010",
     "reset": "npm run clean-demo && npm run clean-lib && npm run clean-dist && rm -fr node_modules package-lock.json && npm i"
   },
   "main": "./lib/index.cjs",
   "exports": {
-    "import": "./dist/axustable.mjs",
-    "default": "./lib/index.cjs"
+    ".": {
+      "import": "./dist/axustable.mjs",
+      "default": "./lib/index.cjs"
+    },
+    "./styles": "./dist/styles.css"
   },
   "module": "./dist/axustable.mjs",
   "browser": "./dist/axustable.umd.js",
@@ -38,19 +41,15 @@
       "./node_modules/xeira/configs/eslint.react.cjs"
     ]
   },
-  "babel": {
-    "extends": "./node_modules/xeira/configs/babel.react.cjs"
-  },
   "dependencies": {
     "bootstrap": "^4.5.2",
-    "farrapa-collections": "^1.0.7",
-    "farrapa-commons": "^1.0.7",
-    "farrapa-strings": "^1.0.7",
+    "farrapa": "^2.0.2",
     "react": "^16.13.1",
     "reactstrap": "8.5.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "xeira": "^0.0.26"
+    "sass": "^1.56.2",
+    "xeira": "^0.3.8"
   }
 }

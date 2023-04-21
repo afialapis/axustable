@@ -2,8 +2,6 @@ import React from 'react'
 import {Axustable} from '../../src/index.mjs'
 import data from '../../test/data.cjs'
 
-import './demo.scss'
-
 const fields = [
   {
     label: "Id",
@@ -55,7 +53,8 @@ const Demo = ( )=> {
         data= {data}
         fields= {fields}
         initialSort= {[0, "asc"]}
-        makeKey    = {(p) => `person_${p.id}`}/>
+        makeKey    = {(p) => `person_${p.id}`}
+        exportable={true }/>
     </div>
   )
 }

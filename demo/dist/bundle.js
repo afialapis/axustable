@@ -8,9 +8,16 @@
 	}
 
 	function getAugmentedNamespace(n) {
+	  if (n.__esModule) return n;
 	  var f = n.default;
 		if (typeof f == "function") {
-			var a = function () {
+			var a = function a () {
+				if (this instanceof a) {
+					var args = [null];
+					args.push.apply(args, arguments);
+					var Ctor = Function.bind.apply(f, args);
+					return new Ctor();
+				}
 				return f.apply(this, arguments);
 			};
 			a.prototype = f.prototype;
@@ -2146,14 +2153,12 @@
 	  })();
 	}
 
-	(function (module) {
+	{
+	  react.exports = react_development;
+	}
 
-		{
-		  module.exports = react_development;
-		}
-	} (react));
-
-	var React = /*@__PURE__*/getDefaultExportFromCjs(react.exports);
+	var reactExports = react.exports;
+	var React = /*@__PURE__*/getDefaultExportFromCjs(reactExports);
 
 	var reactDom = {exports: {}};
 
@@ -3016,15 +3021,14 @@
 		exports.unstable_shouldYield = unstable_shouldYield;
 		exports.unstable_wrapCallback = unstable_wrapCallback;
 		  })();
-		}
+		} 
 	} (scheduler_development));
 
-	(function (module) {
+	{
+	  scheduler.exports = scheduler_development;
+	}
 
-		{
-		  module.exports = scheduler_development;
-		}
-	} (scheduler));
+	var schedulerExports = scheduler.exports;
 
 	var tracing = {exports: {}};
 
@@ -3377,15 +3381,14 @@
 		exports.unstable_unsubscribe = unstable_unsubscribe;
 		exports.unstable_wrap = unstable_wrap;
 		  })();
-		}
+		} 
 	} (schedulerTracing_development));
 
-	(function (module) {
+	{
+	  tracing.exports = schedulerTracing_development;
+	}
 
-		{
-		  module.exports = schedulerTracing_development;
-		}
-	} (tracing));
+	var tracingExports = tracing.exports;
 
 	/** @license React v16.14.0
 	 * react-dom.development.js
@@ -3401,11 +3404,11 @@
 	{
 	  (function() {
 
-	var React = react.exports;
+	var React = reactExports;
 	var _assign = objectAssign;
-	var Scheduler = scheduler.exports;
+	var Scheduler = schedulerExports;
 	var checkPropTypes = checkPropTypes_1;
-	var tracing$1 = tracing.exports;
+	var tracing = tracingExports;
 
 	var ReactSharedInternals = React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED; // Prevent newer renderers from RTE when used with older react package versions.
 	// Current owner and dispatcher used to share the same ref,
@@ -14329,7 +14332,7 @@
 	  // Provide explicit error message when production+profiling bundle of e.g.
 	  // react-dom is used with production (non-profiling) bundle of
 	  // scheduler/tracing
-	  if (!(tracing$1.__interactionsRef != null && tracing$1.__interactionsRef.current != null)) {
+	  if (!(tracing.__interactionsRef != null && tracing.__interactionsRef.current != null)) {
 	    {
 	      throw Error( "It is not supported to run the profiling version of a renderer (for example, `react-dom/profiling`) without also replacing the `scheduler/tracing` module with `scheduler/tracing-profiling`. Your bundler might have a setting for aliasing both modules. Learn more at http://fb.me/react-profiling" );
 	    }
@@ -24058,7 +24061,7 @@
 	      if (!retryCache.has(thenable)) {
 	        {
 	          if (thenable.__reactDoNotTraceInteractions !== true) {
-	            retry = tracing$1.unstable_wrap(retry);
+	            retry = tracing.unstable_wrap(retry);
 	          }
 	        }
 
@@ -25424,15 +25427,15 @@
 
 	function pushInteractions(root) {
 	  {
-	    var prevInteractions = tracing$1.__interactionsRef.current;
-	    tracing$1.__interactionsRef.current = root.memoizedInteractions;
+	    var prevInteractions = tracing.__interactionsRef.current;
+	    tracing.__interactionsRef.current = root.memoizedInteractions;
 	    return prevInteractions;
 	  }
 	}
 
 	function popInteractions(prevInteractions) {
 	  {
-	    tracing$1.__interactionsRef.current = prevInteractions;
+	    tracing.__interactionsRef.current = prevInteractions;
 	  }
 	}
 
@@ -26726,7 +26729,7 @@
 	      });
 	    }
 
-	    var subscriber = tracing$1.__subscriberRef.current;
+	    var subscriber = tracing.__subscriberRef.current;
 
 	    if (subscriber !== null) {
 	      var threadID = computeThreadID(root, expirationTime);
@@ -26737,7 +26740,7 @@
 
 	function schedulePendingInteractions(root, expirationTime) {
 
-	  scheduleInteractions(root, expirationTime, tracing$1.__interactionsRef.current);
+	  scheduleInteractions(root, expirationTime, tracing.__interactionsRef.current);
 	}
 
 	function startWorkOnPendingInteractions(root, expirationTime) {
@@ -26761,7 +26764,7 @@
 	  root.memoizedInteractions = interactions;
 
 	  if (interactions.size > 0) {
-	    var subscriber = tracing$1.__subscriberRef.current;
+	    var subscriber = tracing.__subscriberRef.current;
 
 	    if (subscriber !== null) {
 	      var threadID = computeThreadID(root, expirationTime);
@@ -26784,7 +26787,7 @@
 	  var subscriber;
 
 	  try {
-	    subscriber = tracing$1.__subscriberRef.current;
+	    subscriber = tracing.__subscriberRef.current;
 
 	    if (subscriber !== null && root.memoizedInteractions.size > 0) {
 	      var threadID = computeThreadID(root, committedExpirationTime);
@@ -27523,7 +27526,7 @@
 	  this.lastExpiredTime = NoWork;
 
 	  {
-	    this.interactionThreadID = tracing$1.unstable_getThreadID();
+	    this.interactionThreadID = tracing.unstable_getThreadID();
 	    this.memoizedInteractions = new Set();
 	    this.pendingInteractionMap = new Map();
 	  }
@@ -28389,4440 +28392,12 @@
 	  })();
 	}
 
-	(function (module) {
-
-		{
-		  module.exports = reactDom_development;
-		}
-	} (reactDom));
-
-	var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDom.exports);
-
-	var ButtonBase = _ref => {
-	  var {
-	    color = 'black',
-	    enabled,
-	    onClick,
-	    children
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-action-button ".concat(enabled === false ? 'disabled' : ''),
-	    style: {
-	      color,
-	      cursor: "pointer"
-	    },
-	    onClick: onClick
-	  }, children);
-	};
-
-	var ExcelFile = _ref => {
-	  var {
-	    color = 'black',
-	    enabled,
-	    onClick,
-	    width = 24
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement(ButtonBase, {
-	    color,
-	    enabled,
-	    onClick
-	  }, /*#__PURE__*/React.createElement("svg", {
-	    xmlns: "http://www.w3.org/2000/svg",
-	    width: width,
-	    height: width,
-	    viewBox: "0 0 1024 1024"
-	  }, /*#__PURE__*/React.createElement("path", {
-	    d: "M743.028 384h-135.292l-95.732 141.032-95.742-141.032h-135.29l162.162 242.464-182.972 269.536h251.838v-91.576h-50.156l50.156-74.994 111.396 166.57h140.444l-182.976-269.536 162.164-242.464z"
-	  }), /*#__PURE__*/React.createElement("path", {
-	    d: "M917.806 229.076c-22.21-30.292-53.174-65.7-87.178-99.704s-69.412-64.964-99.704-87.178c-51.574-37.82-76.592-42.194-90.924-42.194h-496c-44.112 0-80 35.888-80 80v864c0 44.112 35.886 80 80 80h736c44.112 0 80-35.888 80-80v-624c0-14.332-4.372-39.35-42.194-90.924v0zM785.374 174.626c30.7 30.7 54.8 58.398 72.58 81.374h-153.954v-153.946c22.982 17.78 50.678 41.878 81.374 72.572v0zM896 944c0 8.672-7.328 16-16 16h-736c-8.672 0-16-7.328-16-16v-864c0-8.672 7.328-16 16-16 0 0 495.956-0.002 496 0v224c0 17.672 14.324 32 32 32h224v624z"
-	  })));
-	};
-
-	var FilterOff = _ref => {
-	  var {
-	    color = 'black',
-	    enabled,
-	    onClick,
-	    width = 24
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement(ButtonBase, {
-	    color,
-	    enabled,
-	    onClick
-	  }, /*#__PURE__*/React.createElement("svg", {
-	    xmlns: "http://www.w3.org/2000/svg",
-	    fill: "none",
-	    strokeWidth: "1.5",
-	    width: width,
-	    height: width,
-	    viewBox: "0 0 24 24"
-	  }, /*#__PURE__*/React.createElement("path", {
-	    d: "M3.99961 3H19.9997C20.552 3 20.9997 3.44764 20.9997 3.99987L20.9999 5.58569C21 5.85097 20.8946 6.10538 20.707 6.29295L14.2925 12.7071C14.105 12.8946 13.9996 13.149 13.9996 13.4142L13.9996 19.7192C13.9996 20.3698 13.3882 20.8472 12.7571 20.6894L10.7571 20.1894C10.3119 20.0781 9.99961 19.6781 9.99961 19.2192L9.99961 13.4142C9.99961 13.149 9.89425 12.8946 9.70672 12.7071L3.2925 6.29289C3.10496 6.10536 2.99961 5.851 2.99961 5.58579V4C2.99961 3.44772 3.44732 3 3.99961 3Z",
-	    stroke: "currentColor",
-	    strokeLinecap: "round",
-	    strokeLinejoin: "round"
-	  })));
-	};
-
-	var FilterRemove = _ref => {
-	  var {
-	    color = 'black',
-	    enabled,
-	    onClick,
-	    width = 24
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement(ButtonBase, {
-	    color,
-	    enabled,
-	    onClick
-	  }, /*#__PURE__*/React.createElement("svg", {
-	    xmlns: "http://www.w3.org/2000/svg",
-	    width: width,
-	    height: width,
-	    viewBox: "0 0 24 24"
-	  }, /*#__PURE__*/React.createElement("path", {
-	    d: "M14.76,20.83L17.6,18L14.76,15.17L16.17,13.76L19,16.57L21.83,13.76L23.24,15.17L20.43,18L23.24,20.83L21.83,22.24L19,19.4L16.17,22.24L14.76,20.83M12,12V19.88C12.04,20.18 11.94,20.5 11.71,20.71C11.32,21.1 10.69,21.1 10.3,20.71L8.29,18.7C8.06,18.47 7.96,18.16 8,17.87V12H7.97L2.21,4.62C1.87,4.19 1.95,3.56 2.38,3.22C2.57,3.08 2.78,3 3,3V3H17V3C17.22,3 17.43,3.08 17.62,3.22C18.05,3.56 18.13,4.19 17.79,4.62L12.03,12H12Z"
-	  })));
-	};
-
-	var AXUSTABLE_PAGE_ROWS_OPTIONS = [5, 10, 12, 15, 25, 50];
-
-	// ⅄
-	// ☷
-
-	var AxustableActions = _ref => {
-	  var {
-	    pageCurrent,
-	    pageCount,
-	    pageRows,
-	    dataLength,
-	    onChangePage,
-	    onChangePageRows,
-	    filterable,
-	    searchable,
-	    paginable,
-	    hasSomeFilter,
-	    onClearFilter,
-	    exportable,
-	    onExportFile,
-	    search,
-	    onChangeSearch
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-actions"
-	  }, /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-actions-left"
-	  }, filterable ? /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-clear-filter ".concat(hasSomeFilter ? 'active' : '')
-	  }, /*#__PURE__*/React.createElement("a", {
-	    onClick: () => onClearFilter()
-	  }, hasSomeFilter ? /*#__PURE__*/React.createElement(FilterRemove, {
-	    width: 16
-	  }) : /*#__PURE__*/React.createElement(FilterOff, {
-	    width: 16,
-	    enabled: false
-	  }))) : null, exportable ? /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-export"
-	  }, /*#__PURE__*/React.createElement("a", {
-	    onClick: () => onExportFile()
-	  }, /*#__PURE__*/React.createElement(ExcelFile, {
-	    width: 16
-	  }))) : null), /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-actions-middle"
-	  }, searchable ? /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-search"
-	  }, /*#__PURE__*/React.createElement("input", {
-	    type: "search",
-	    value: search,
-	    onChange: ev => onChangeSearch(ev.target.value),
-	    placeholder: "Busca..."
-	  })) : null), /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-actions-right"
-	  }, paginable ? /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-pagination"
-	  }, /*#__PURE__*/React.createElement("div", {
-	    className: "arrow ".concat(pageCurrent > 1 ? 'active' : 'disabled'),
-	    disabled: pageCurrent == 1,
-	    onClick: () => onChangePage(pageCurrent - 1)
-	  }, "⇐"), pageCurrent - 3 <= 0 ? /*#__PURE__*/React.createElement("div", {
-	    className: "ellipsis"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "ellipsis"
-	  }, "..."), pageCurrent - 2 <= 0 ? /*#__PURE__*/React.createElement("div", {
-	    className: "page-num"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "page-num",
-	    onClick: () => onChangePage(pageCurrent - 2)
-	  }, pageCurrent - 2), pageCurrent - 1 <= 0 ? /*#__PURE__*/React.createElement("div", {
-	    className: "page-num"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "page-num",
-	    onClick: () => onChangePage(pageCurrent - 1)
-	  }, pageCurrent - 1), /*#__PURE__*/React.createElement("div", {
-	    className: "page-num active"
-	  }, pageCurrent), pageCurrent + 1 > pageCount ? /*#__PURE__*/React.createElement("div", {
-	    className: "page-num"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "page-num",
-	    onClick: () => onChangePage(pageCurrent + 1)
-	  }, pageCurrent + 1), pageCurrent + 2 > pageCount ? /*#__PURE__*/React.createElement("div", {
-	    className: "page-num"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "page-num",
-	    onClick: () => onChangePage(pageCurrent + 2)
-	  }, pageCurrent + 2), pageCurrent + 3 > pageCount ? /*#__PURE__*/React.createElement("div", {
-	    className: "ellipsis"
-	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
-	    className: "ellipsis"
-	  }, "..."), /*#__PURE__*/React.createElement("div", {
-	    className: "arrow ".concat(pageCurrent < pageCount ? 'active' : 'disabled'),
-	    disabled: pageCurrent >= pageCount,
-	    onClick: () => onChangePage(pageCurrent + 1)
-	  }, "⇒"), /*#__PURE__*/React.createElement("div", {
-	    className: "select"
-	  }, /*#__PURE__*/React.createElement("select", {
-	    onChange: ev => onChangePageRows(ev.target.value),
-	    value: pageRows
-	  }, AXUSTABLE_PAGE_ROWS_OPTIONS.map(v => /*#__PURE__*/React.createElement("option", {
-	    key: "axustable_page_rows_val_".concat(v),
-	    value: v
-	  }, v)))), /*#__PURE__*/React.createElement("div", {
-	    className: "total"
-	  }, "".concat(pageCount, " p\xE1g, ").concat(dataLength, " reg."))) : null));
-	};
-
-	var uvl = (v1, v2) => {
-	  return v1 != undefined ? v1 : v2;
-	};
-
-	var AxustableHeaderField = _ref => {
-	  var {
-	    field,
-	    filterable,
-	    is_filtered,
-	    sortable,
-	    is_sorted,
-	    onChangeSort,
-	    onOpenFilter
-	  } = _ref;
-	  var fieldClassName = uvl(field.className, '').length > 0 ? 'axustable-header-field-' + uvl(field.className, '') : '';
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-header-field ".concat(fieldClassName)
-	  }, /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-header-field-inner"
-	  }, /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-header-field-label ".concat(is_filtered ? 'active' : '', " ").concat(filterable && field.value != undefined ? 'filterable' : ''),
-	    onClick: onOpenFilter
-	  }, field.label), field.value == undefined || !sortable ? null : /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-header-field-actions"
-	  }, /*#__PURE__*/React.createElement("a", {
-	    onClick: onChangeSort,
-	    className: "".concat(is_sorted != undefined ? 'active' : '')
-	  }, is_sorted === undefined ? "⇳" : is_sorted == 'asc' ? "⇧" : "⇩"))));
-	};
-	var AxustableHeader = _ref2 => {
-	  var {
-	    fields,
-	    sort,
-	    sortable,
-	    filterable,
-	    filteredIndexes,
-	    onChangeSort: _onChangeSort,
-	    onOpenFilter: _onOpenFilter
-	  } = _ref2;
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-header"
-	  }, fields.map((f, i) => /*#__PURE__*/React.createElement(AxustableHeaderField, {
-	    key: "axustable_field_".concat(i),
-	    field: f,
-	    filterable: filterable,
-	    is_filtered: filteredIndexes.indexOf(i) >= 0,
-	    sortable: sortable,
-	    is_sorted: sort === undefined ? undefined : i != sort[0] ? undefined : sort[1],
-	    onChangeSort: () => _onChangeSort(i),
-	    onOpenFilter: () => _onOpenFilter(i)
-	  })));
-	};
-
-	/*
-
-
-	      <div key={i}
-	           className={`axustable-header-field ${uvl(f.className,'').length>0 ? 'axustable-header-field-'+uvl(f.className,'') : ''}`}>
-	        <div className={`axustable-header-field-inner`}>
-	          <div className={`axustable-header-field-label ${filteredIndexes.indexOf(i)>=0 ? 'active' : ''} ${(filterable && f.value!=undefined) ? 'filterable' : ''}`} 
-	               onClick={() => onOpenFilter(i)}>
-	            {f.label}
-	          </div>  
-
-	         {f.value==undefined || !sortable
-	          ? null
-	          : <div className={`axustable-header-field-actions`}>
-	              <a onClick={() => onChangeSort(i)}
-	                  className={`${sort!=undefined && i==sort[0] ? 'active' : ''}`}>
-	                    {sort===undefined || i!=sort[0] 
-	                      ? "⇳"
-	                      : sort[1] == 'asc'
-	                        ? "⇧"
-	                        : "⇩"
-	                      }
-	              </a>
-	            </div>
-	            }
-	        
-	        </div>
-	      </div>
-
-	      */
-
-	var AxustableRow = _ref => {
-	  var {
-	    children,
-	    className
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-row ".concat(className || '')
-	  }, children);
-	};
-
-	function ownKeys(object, enumerableOnly) {
-	  var keys = Object.keys(object);
-	  if (Object.getOwnPropertySymbols) {
-	    var symbols = Object.getOwnPropertySymbols(object);
-	    enumerableOnly && (symbols = symbols.filter(function (sym) {
-	      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-	    })), keys.push.apply(keys, symbols);
-	  }
-	  return keys;
-	}
-	function _objectSpread2(target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = null != arguments[i] ? arguments[i] : {};
-	    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
-	      _defineProperty$1(target, key, source[key]);
-	    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
-	      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-	    });
-	  }
-	  return target;
-	}
-	function _defineProperty$1(obj, key, value) {
-	  key = _toPropertyKey$1(key);
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-	  return obj;
-	}
-	function _toPrimitive$1(input, hint) {
-	  if (typeof input !== "object" || input === null) return input;
-	  var prim = input[Symbol.toPrimitive];
-	  if (prim !== undefined) {
-	    var res = prim.call(input, hint || "default");
-	    if (typeof res !== "object") return res;
-	    throw new TypeError("@@toPrimitive must return a primitive value.");
-	  }
-	  return (hint === "string" ? String : Number)(input);
-	}
-	function _toPropertyKey$1(arg) {
-	  var key = _toPrimitive$1(arg, "string");
-	  return typeof key === "symbol" ? key : String(key);
-	}
-
-	// const isEmpty = (children) =>
-	//  (children===null || children===undefined || (typeof children == 'string' && children.length==0))
-
-	var makeClasses = cln => {
-	  if (!cln) {
-	    return '';
-	  }
-	  var clns = cln.split(' ');
-	  var out = '';
-	  clns.map(cl => {
-	    out += "axustable-item-".concat(cl, " ");
-	  });
-	  return out;
-	};
-	var AxustableItem = _ref => {
-	  var {
-	    name,
-	    className,
-	    children,
-	    style,
-	    empty
-	  } = _ref;
-	  return /*#__PURE__*/React.createElement("div", {
-	    "data-name": name,
-	    className: "axustable-item ".concat(makeClasses(className), " ").concat(empty ? 'axustable-item-empty' : ''),
-	    style: _objectSpread2({}, style)
-	  }, /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-item-inner"
-	  }, children));
-	};
-
-	function _extends() {
-	  _extends = Object.assign ? Object.assign.bind() : function (target) {
-	    for (var i = 1; i < arguments.length; i++) {
-	      var source = arguments[i];
-	      for (var key in source) {
-	        if (Object.prototype.hasOwnProperty.call(source, key)) {
-	          target[key] = source[key];
-	        }
-	      }
-	    }
-	    return target;
-	  };
-	  return _extends.apply(this, arguments);
-	}
-
-	function _objectWithoutPropertiesLoose$1(source, excluded) {
-	  if (source == null) return {};
-	  var target = {};
-	  var sourceKeys = Object.keys(source);
-	  var key, i;
-	  for (i = 0; i < sourceKeys.length; i++) {
-	    key = sourceKeys[i];
-	    if (excluded.indexOf(key) >= 0) continue;
-	    target[key] = source[key];
-	  }
-	  return target;
-	}
-
-	var propTypes$b = {exports: {}};
-
-	var reactIs = {exports: {}};
-
-	var reactIs_development = {};
-
-	/** @license React v16.13.1
-	 * react-is.development.js
-	 *
-	 * Copyright (c) Facebook, Inc. and its affiliates.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-
-
-
 	{
-	  (function() {
-
-	// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
-	// nor polyfill, then a plain number is used for performance.
-	var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-	var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
-	var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
-	var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
-	var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
-	var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
-	var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
-	var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
-	// (unstable) APIs that have been removed. Can we remove the symbols?
-
-	var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
-	var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
-	var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
-	var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
-	var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
-	var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
-	var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
-	var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
-	var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
-	var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
-	var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
-
-	function isValidElementType(type) {
-	  return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
-	  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+	  reactDom.exports = reactDom_development;
 	}
 
-	function typeOf(object) {
-	  if (typeof object === 'object' && object !== null) {
-	    var $$typeof = object.$$typeof;
-
-	    switch ($$typeof) {
-	      case REACT_ELEMENT_TYPE:
-	        var type = object.type;
-
-	        switch (type) {
-	          case REACT_ASYNC_MODE_TYPE:
-	          case REACT_CONCURRENT_MODE_TYPE:
-	          case REACT_FRAGMENT_TYPE:
-	          case REACT_PROFILER_TYPE:
-	          case REACT_STRICT_MODE_TYPE:
-	          case REACT_SUSPENSE_TYPE:
-	            return type;
-
-	          default:
-	            var $$typeofType = type && type.$$typeof;
-
-	            switch ($$typeofType) {
-	              case REACT_CONTEXT_TYPE:
-	              case REACT_FORWARD_REF_TYPE:
-	              case REACT_LAZY_TYPE:
-	              case REACT_MEMO_TYPE:
-	              case REACT_PROVIDER_TYPE:
-	                return $$typeofType;
-
-	              default:
-	                return $$typeof;
-	            }
-
-	        }
-
-	      case REACT_PORTAL_TYPE:
-	        return $$typeof;
-	    }
-	  }
-
-	  return undefined;
-	} // AsyncMode is deprecated along with isAsyncMode
-
-	var AsyncMode = REACT_ASYNC_MODE_TYPE;
-	var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
-	var ContextConsumer = REACT_CONTEXT_TYPE;
-	var ContextProvider = REACT_PROVIDER_TYPE;
-	var Element = REACT_ELEMENT_TYPE;
-	var ForwardRef = REACT_FORWARD_REF_TYPE;
-	var Fragment = REACT_FRAGMENT_TYPE;
-	var Lazy = REACT_LAZY_TYPE;
-	var Memo = REACT_MEMO_TYPE;
-	var Portal = REACT_PORTAL_TYPE;
-	var Profiler = REACT_PROFILER_TYPE;
-	var StrictMode = REACT_STRICT_MODE_TYPE;
-	var Suspense = REACT_SUSPENSE_TYPE;
-	var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
-
-	function isAsyncMode(object) {
-	  {
-	    if (!hasWarnedAboutDeprecatedIsAsyncMode) {
-	      hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
-
-	      console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
-	    }
-	  }
-
-	  return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
-	}
-	function isConcurrentMode(object) {
-	  return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
-	}
-	function isContextConsumer(object) {
-	  return typeOf(object) === REACT_CONTEXT_TYPE;
-	}
-	function isContextProvider(object) {
-	  return typeOf(object) === REACT_PROVIDER_TYPE;
-	}
-	function isElement(object) {
-	  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
-	}
-	function isForwardRef(object) {
-	  return typeOf(object) === REACT_FORWARD_REF_TYPE;
-	}
-	function isFragment(object) {
-	  return typeOf(object) === REACT_FRAGMENT_TYPE;
-	}
-	function isLazy(object) {
-	  return typeOf(object) === REACT_LAZY_TYPE;
-	}
-	function isMemo(object) {
-	  return typeOf(object) === REACT_MEMO_TYPE;
-	}
-	function isPortal(object) {
-	  return typeOf(object) === REACT_PORTAL_TYPE;
-	}
-	function isProfiler(object) {
-	  return typeOf(object) === REACT_PROFILER_TYPE;
-	}
-	function isStrictMode(object) {
-	  return typeOf(object) === REACT_STRICT_MODE_TYPE;
-	}
-	function isSuspense(object) {
-	  return typeOf(object) === REACT_SUSPENSE_TYPE;
-	}
-
-	reactIs_development.AsyncMode = AsyncMode;
-	reactIs_development.ConcurrentMode = ConcurrentMode;
-	reactIs_development.ContextConsumer = ContextConsumer;
-	reactIs_development.ContextProvider = ContextProvider;
-	reactIs_development.Element = Element;
-	reactIs_development.ForwardRef = ForwardRef;
-	reactIs_development.Fragment = Fragment;
-	reactIs_development.Lazy = Lazy;
-	reactIs_development.Memo = Memo;
-	reactIs_development.Portal = Portal;
-	reactIs_development.Profiler = Profiler;
-	reactIs_development.StrictMode = StrictMode;
-	reactIs_development.Suspense = Suspense;
-	reactIs_development.isAsyncMode = isAsyncMode;
-	reactIs_development.isConcurrentMode = isConcurrentMode;
-	reactIs_development.isContextConsumer = isContextConsumer;
-	reactIs_development.isContextProvider = isContextProvider;
-	reactIs_development.isElement = isElement;
-	reactIs_development.isForwardRef = isForwardRef;
-	reactIs_development.isFragment = isFragment;
-	reactIs_development.isLazy = isLazy;
-	reactIs_development.isMemo = isMemo;
-	reactIs_development.isPortal = isPortal;
-	reactIs_development.isProfiler = isProfiler;
-	reactIs_development.isStrictMode = isStrictMode;
-	reactIs_development.isSuspense = isSuspense;
-	reactIs_development.isValidElementType = isValidElementType;
-	reactIs_development.typeOf = typeOf;
-	  })();
-	}
-
-	(function (module) {
-
-		{
-		  module.exports = reactIs_development;
-		}
-	} (reactIs));
-
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-
-	var ReactIs$1 = reactIs.exports;
-	var assign = objectAssign;
-
-	var ReactPropTypesSecret = ReactPropTypesSecret_1;
-	var has = has$2;
-	var checkPropTypes = checkPropTypes_1;
-
-	var printWarning = function() {};
-
-	{
-	  printWarning = function(text) {
-	    var message = 'Warning: ' + text;
-	    if (typeof console !== 'undefined') {
-	      console.error(message);
-	    }
-	    try {
-	      // --- Welcome to debugging React ---
-	      // This error was thrown as a convenience so that you can use this stack
-	      // to find the callsite that caused this warning to fire.
-	      throw new Error(message);
-	    } catch (x) {}
-	  };
-	}
-
-	function emptyFunctionThatReturnsNull() {
-	  return null;
-	}
-
-	var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
-	  /* global Symbol */
-	  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
-	  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
-
-	  /**
-	   * Returns the iterator method function contained on the iterable object.
-	   *
-	   * Be sure to invoke the function with the iterable as context:
-	   *
-	   *     var iteratorFn = getIteratorFn(myIterable);
-	   *     if (iteratorFn) {
-	   *       var iterator = iteratorFn.call(myIterable);
-	   *       ...
-	   *     }
-	   *
-	   * @param {?object} maybeIterable
-	   * @return {?function}
-	   */
-	  function getIteratorFn(maybeIterable) {
-	    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
-	    if (typeof iteratorFn === 'function') {
-	      return iteratorFn;
-	    }
-	  }
-
-	  /**
-	   * Collection of methods that allow declaration and validation of props that are
-	   * supplied to React components. Example usage:
-	   *
-	   *   var Props = require('ReactPropTypes');
-	   *   var MyArticle = React.createClass({
-	   *     propTypes: {
-	   *       // An optional string prop named "description".
-	   *       description: Props.string,
-	   *
-	   *       // A required enum prop named "category".
-	   *       category: Props.oneOf(['News','Photos']).isRequired,
-	   *
-	   *       // A prop named "dialog" that requires an instance of Dialog.
-	   *       dialog: Props.instanceOf(Dialog).isRequired
-	   *     },
-	   *     render: function() { ... }
-	   *   });
-	   *
-	   * A more formal specification of how these methods are used:
-	   *
-	   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
-	   *   decl := ReactPropTypes.{type}(.isRequired)?
-	   *
-	   * Each and every declaration produces a function with the same signature. This
-	   * allows the creation of custom validation functions. For example:
-	   *
-	   *  var MyLink = React.createClass({
-	   *    propTypes: {
-	   *      // An optional string or URI prop named "href".
-	   *      href: function(props, propName, componentName) {
-	   *        var propValue = props[propName];
-	   *        if (propValue != null && typeof propValue !== 'string' &&
-	   *            !(propValue instanceof URI)) {
-	   *          return new Error(
-	   *            'Expected a string or an URI for ' + propName + ' in ' +
-	   *            componentName
-	   *          );
-	   *        }
-	   *      }
-	   *    },
-	   *    render: function() {...}
-	   *  });
-	   *
-	   * @internal
-	   */
-
-	  var ANONYMOUS = '<<anonymous>>';
-
-	  // Important!
-	  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
-	  var ReactPropTypes = {
-	    array: createPrimitiveTypeChecker('array'),
-	    bigint: createPrimitiveTypeChecker('bigint'),
-	    bool: createPrimitiveTypeChecker('boolean'),
-	    func: createPrimitiveTypeChecker('function'),
-	    number: createPrimitiveTypeChecker('number'),
-	    object: createPrimitiveTypeChecker('object'),
-	    string: createPrimitiveTypeChecker('string'),
-	    symbol: createPrimitiveTypeChecker('symbol'),
-
-	    any: createAnyTypeChecker(),
-	    arrayOf: createArrayOfTypeChecker,
-	    element: createElementTypeChecker(),
-	    elementType: createElementTypeTypeChecker(),
-	    instanceOf: createInstanceTypeChecker,
-	    node: createNodeChecker(),
-	    objectOf: createObjectOfTypeChecker,
-	    oneOf: createEnumTypeChecker,
-	    oneOfType: createUnionTypeChecker,
-	    shape: createShapeTypeChecker,
-	    exact: createStrictShapeTypeChecker,
-	  };
-
-	  /**
-	   * inlined Object.is polyfill to avoid requiring consumers ship their own
-	   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-	   */
-	  /*eslint-disable no-self-compare*/
-	  function is(x, y) {
-	    // SameValue algorithm
-	    if (x === y) {
-	      // Steps 1-5, 7-10
-	      // Steps 6.b-6.e: +0 != -0
-	      return x !== 0 || 1 / x === 1 / y;
-	    } else {
-	      // Step 6.a: NaN == NaN
-	      return x !== x && y !== y;
-	    }
-	  }
-	  /*eslint-enable no-self-compare*/
-
-	  /**
-	   * We use an Error-like object for backward compatibility as people may call
-	   * PropTypes directly and inspect their output. However, we don't use real
-	   * Errors anymore. We don't inspect their stack anyway, and creating them
-	   * is prohibitively expensive if they are created too often, such as what
-	   * happens in oneOfType() for any type before the one that matched.
-	   */
-	  function PropTypeError(message, data) {
-	    this.message = message;
-	    this.data = data && typeof data === 'object' ? data: {};
-	    this.stack = '';
-	  }
-	  // Make `instanceof Error` still work for returned errors.
-	  PropTypeError.prototype = Error.prototype;
-
-	  function createChainableTypeChecker(validate) {
-	    {
-	      var manualPropTypeCallCache = {};
-	      var manualPropTypeWarningCount = 0;
-	    }
-	    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
-	      componentName = componentName || ANONYMOUS;
-	      propFullName = propFullName || propName;
-
-	      if (secret !== ReactPropTypesSecret) {
-	        if (throwOnDirectAccess) {
-	          // New behavior only for users of `prop-types` package
-	          var err = new Error(
-	            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
-	            'Use `PropTypes.checkPropTypes()` to call them. ' +
-	            'Read more at http://fb.me/use-check-prop-types'
-	          );
-	          err.name = 'Invariant Violation';
-	          throw err;
-	        } else if (typeof console !== 'undefined') {
-	          // Old behavior for people using React.PropTypes
-	          var cacheKey = componentName + ':' + propName;
-	          if (
-	            !manualPropTypeCallCache[cacheKey] &&
-	            // Avoid spamming the console because they are often not actionable except for lib authors
-	            manualPropTypeWarningCount < 3
-	          ) {
-	            printWarning(
-	              'You are manually calling a React.PropTypes validation ' +
-	              'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' +
-	              'and will throw in the standalone `prop-types` package. ' +
-	              'You may be seeing this warning due to a third-party PropTypes ' +
-	              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
-	            );
-	            manualPropTypeCallCache[cacheKey] = true;
-	            manualPropTypeWarningCount++;
-	          }
-	        }
-	      }
-	      if (props[propName] == null) {
-	        if (isRequired) {
-	          if (props[propName] === null) {
-	            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
-	          }
-	          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
-	        }
-	        return null;
-	      } else {
-	        return validate(props, propName, componentName, location, propFullName);
-	      }
-	    }
-
-	    var chainedCheckType = checkType.bind(null, false);
-	    chainedCheckType.isRequired = checkType.bind(null, true);
-
-	    return chainedCheckType;
-	  }
-
-	  function createPrimitiveTypeChecker(expectedType) {
-	    function validate(props, propName, componentName, location, propFullName, secret) {
-	      var propValue = props[propName];
-	      var propType = getPropType(propValue);
-	      if (propType !== expectedType) {
-	        // `propValue` being instance of, say, date/regexp, pass the 'object'
-	        // check, but we can offer a more precise error message here rather than
-	        // 'of type `object`'.
-	        var preciseType = getPreciseType(propValue);
-
-	        return new PropTypeError(
-	          'Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'),
-	          {expectedType: expectedType}
-	        );
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createAnyTypeChecker() {
-	    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
-	  }
-
-	  function createArrayOfTypeChecker(typeChecker) {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      if (typeof typeChecker !== 'function') {
-	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
-	      }
-	      var propValue = props[propName];
-	      if (!Array.isArray(propValue)) {
-	        var propType = getPropType(propValue);
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
-	      }
-	      for (var i = 0; i < propValue.length; i++) {
-	        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
-	        if (error instanceof Error) {
-	          return error;
-	        }
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createElementTypeChecker() {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var propValue = props[propName];
-	      if (!isValidElement(propValue)) {
-	        var propType = getPropType(propValue);
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createElementTypeTypeChecker() {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var propValue = props[propName];
-	      if (!ReactIs$1.isValidElementType(propValue)) {
-	        var propType = getPropType(propValue);
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createInstanceTypeChecker(expectedClass) {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      if (!(props[propName] instanceof expectedClass)) {
-	        var expectedClassName = expectedClass.name || ANONYMOUS;
-	        var actualClassName = getClassName(props[propName]);
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createEnumTypeChecker(expectedValues) {
-	    if (!Array.isArray(expectedValues)) {
-	      {
-	        if (arguments.length > 1) {
-	          printWarning(
-	            'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
-	            'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
-	          );
-	        } else {
-	          printWarning('Invalid argument supplied to oneOf, expected an array.');
-	        }
-	      }
-	      return emptyFunctionThatReturnsNull;
-	    }
-
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var propValue = props[propName];
-	      for (var i = 0; i < expectedValues.length; i++) {
-	        if (is(propValue, expectedValues[i])) {
-	          return null;
-	        }
-	      }
-
-	      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
-	        var type = getPreciseType(value);
-	        if (type === 'symbol') {
-	          return String(value);
-	        }
-	        return value;
-	      });
-	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createObjectOfTypeChecker(typeChecker) {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      if (typeof typeChecker !== 'function') {
-	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
-	      }
-	      var propValue = props[propName];
-	      var propType = getPropType(propValue);
-	      if (propType !== 'object') {
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
-	      }
-	      for (var key in propValue) {
-	        if (has(propValue, key)) {
-	          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-	          if (error instanceof Error) {
-	            return error;
-	          }
-	        }
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createUnionTypeChecker(arrayOfTypeCheckers) {
-	    if (!Array.isArray(arrayOfTypeCheckers)) {
-	      printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') ;
-	      return emptyFunctionThatReturnsNull;
-	    }
-
-	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-	      var checker = arrayOfTypeCheckers[i];
-	      if (typeof checker !== 'function') {
-	        printWarning(
-	          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
-	          'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.'
-	        );
-	        return emptyFunctionThatReturnsNull;
-	      }
-	    }
-
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var expectedTypes = [];
-	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
-	        var checker = arrayOfTypeCheckers[i];
-	        var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret);
-	        if (checkerResult == null) {
-	          return null;
-	        }
-	        if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
-	          expectedTypes.push(checkerResult.data.expectedType);
-	        }
-	      }
-	      var expectedTypesMessage = (expectedTypes.length > 0) ? ', expected one of type [' + expectedTypes.join(', ') + ']': '';
-	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createNodeChecker() {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      if (!isNode(props[propName])) {
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function invalidValidatorError(componentName, location, propFullName, key, type) {
-	    return new PropTypeError(
-	      (componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' +
-	      'it must be a function, usually from the `prop-types` package, but received `' + type + '`.'
-	    );
-	  }
-
-	  function createShapeTypeChecker(shapeTypes) {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var propValue = props[propName];
-	      var propType = getPropType(propValue);
-	      if (propType !== 'object') {
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-	      }
-	      for (var key in shapeTypes) {
-	        var checker = shapeTypes[key];
-	        if (typeof checker !== 'function') {
-	          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
-	        }
-	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-	        if (error) {
-	          return error;
-	        }
-	      }
-	      return null;
-	    }
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function createStrictShapeTypeChecker(shapeTypes) {
-	    function validate(props, propName, componentName, location, propFullName) {
-	      var propValue = props[propName];
-	      var propType = getPropType(propValue);
-	      if (propType !== 'object') {
-	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
-	      }
-	      // We need to check all keys in case some are required but missing from props.
-	      var allKeys = assign({}, props[propName], shapeTypes);
-	      for (var key in allKeys) {
-	        var checker = shapeTypes[key];
-	        if (has(shapeTypes, key) && typeof checker !== 'function') {
-	          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
-	        }
-	        if (!checker) {
-	          return new PropTypeError(
-	            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
-	            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
-	            '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  ')
-	          );
-	        }
-	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
-	        if (error) {
-	          return error;
-	        }
-	      }
-	      return null;
-	    }
-
-	    return createChainableTypeChecker(validate);
-	  }
-
-	  function isNode(propValue) {
-	    switch (typeof propValue) {
-	      case 'number':
-	      case 'string':
-	      case 'undefined':
-	        return true;
-	      case 'boolean':
-	        return !propValue;
-	      case 'object':
-	        if (Array.isArray(propValue)) {
-	          return propValue.every(isNode);
-	        }
-	        if (propValue === null || isValidElement(propValue)) {
-	          return true;
-	        }
-
-	        var iteratorFn = getIteratorFn(propValue);
-	        if (iteratorFn) {
-	          var iterator = iteratorFn.call(propValue);
-	          var step;
-	          if (iteratorFn !== propValue.entries) {
-	            while (!(step = iterator.next()).done) {
-	              if (!isNode(step.value)) {
-	                return false;
-	              }
-	            }
-	          } else {
-	            // Iterator will provide entry [k,v] tuples rather than values.
-	            while (!(step = iterator.next()).done) {
-	              var entry = step.value;
-	              if (entry) {
-	                if (!isNode(entry[1])) {
-	                  return false;
-	                }
-	              }
-	            }
-	          }
-	        } else {
-	          return false;
-	        }
-
-	        return true;
-	      default:
-	        return false;
-	    }
-	  }
-
-	  function isSymbol(propType, propValue) {
-	    // Native Symbol.
-	    if (propType === 'symbol') {
-	      return true;
-	    }
-
-	    // falsy value can't be a Symbol
-	    if (!propValue) {
-	      return false;
-	    }
-
-	    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
-	    if (propValue['@@toStringTag'] === 'Symbol') {
-	      return true;
-	    }
-
-	    // Fallback for non-spec compliant Symbols which are polyfilled.
-	    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
-	      return true;
-	    }
-
-	    return false;
-	  }
-
-	  // Equivalent of `typeof` but with special handling for array and regexp.
-	  function getPropType(propValue) {
-	    var propType = typeof propValue;
-	    if (Array.isArray(propValue)) {
-	      return 'array';
-	    }
-	    if (propValue instanceof RegExp) {
-	      // Old webkits (at least until Android 4.0) return 'function' rather than
-	      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
-	      // passes PropTypes.object.
-	      return 'object';
-	    }
-	    if (isSymbol(propType, propValue)) {
-	      return 'symbol';
-	    }
-	    return propType;
-	  }
-
-	  // This handles more types than `getPropType`. Only used for error messages.
-	  // See `createPrimitiveTypeChecker`.
-	  function getPreciseType(propValue) {
-	    if (typeof propValue === 'undefined' || propValue === null) {
-	      return '' + propValue;
-	    }
-	    var propType = getPropType(propValue);
-	    if (propType === 'object') {
-	      if (propValue instanceof Date) {
-	        return 'date';
-	      } else if (propValue instanceof RegExp) {
-	        return 'regexp';
-	      }
-	    }
-	    return propType;
-	  }
-
-	  // Returns a string that is postfixed to a warning about an invalid type.
-	  // For example, "undefined" or "of type array"
-	  function getPostfixForTypeWarning(value) {
-	    var type = getPreciseType(value);
-	    switch (type) {
-	      case 'array':
-	      case 'object':
-	        return 'an ' + type;
-	      case 'boolean':
-	      case 'date':
-	      case 'regexp':
-	        return 'a ' + type;
-	      default:
-	        return type;
-	    }
-	  }
-
-	  // Returns class name of the object, if any.
-	  function getClassName(propValue) {
-	    if (!propValue.constructor || !propValue.constructor.name) {
-	      return ANONYMOUS;
-	    }
-	    return propValue.constructor.name;
-	  }
-
-	  ReactPropTypes.checkPropTypes = checkPropTypes;
-	  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
-	  ReactPropTypes.PropTypes = ReactPropTypes;
-
-	  return ReactPropTypes;
-	};
-
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-
-	{
-	  var ReactIs = reactIs.exports;
-
-	  // By explicitly using `prop-types` you are opting into new development behavior.
-	  // http://fb.me/prop-types-in-prod
-	  var throwOnDirectAccess = true;
-	  propTypes$b.exports = factoryWithTypeCheckers(ReactIs.isElement, throwOnDirectAccess);
-	}
-
-	var classnames = {exports: {}};
-
-	/*!
-		Copyright (c) 2018 Jed Watson.
-		Licensed under the MIT License (MIT), see
-		http://jedwatson.github.io/classnames
-	*/
-
-	(function (module) {
-		/* global define */
-
-		(function () {
-
-			var hasOwn = {}.hasOwnProperty;
-
-			function classNames() {
-				var classes = [];
-
-				for (var i = 0; i < arguments.length; i++) {
-					var arg = arguments[i];
-					if (!arg) continue;
-
-					var argType = typeof arg;
-
-					if (argType === 'string' || argType === 'number') {
-						classes.push(arg);
-					} else if (Array.isArray(arg)) {
-						if (arg.length) {
-							var inner = classNames.apply(null, arg);
-							if (inner) {
-								classes.push(inner);
-							}
-						}
-					} else if (argType === 'object') {
-						if (arg.toString !== Object.prototype.toString && !arg.toString.toString().includes('[native code]')) {
-							classes.push(arg.toString());
-							continue;
-						}
-
-						for (var key in arg) {
-							if (hasOwn.call(arg, key) && arg[key]) {
-								classes.push(key);
-							}
-						}
-					}
-				}
-
-				return classes.join(' ');
-			}
-
-			if (module.exports) {
-				classNames.default = classNames;
-				module.exports = classNames;
-			} else {
-				window.classNames = classNames;
-			}
-		}());
-	} (classnames));
-
-	var classNames = classnames.exports;
-
-	function getScrollbarWidth() {
-	  var scrollDiv = document.createElement('div'); // .modal-scrollbar-measure styles // https://github.com/twbs/bootstrap/blob/v4.0.0-alpha.4/scss/_modal.scss#L106-L113
-
-	  scrollDiv.style.position = 'absolute';
-	  scrollDiv.style.top = '-9999px';
-	  scrollDiv.style.width = '50px';
-	  scrollDiv.style.height = '50px';
-	  scrollDiv.style.overflow = 'scroll';
-	  document.body.appendChild(scrollDiv);
-	  var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-	  document.body.removeChild(scrollDiv);
-	  return scrollbarWidth;
-	}
-	function setScrollbarWidth(padding) {
-	  document.body.style.paddingRight = padding > 0 ? padding + "px" : null;
-	}
-	function isBodyOverflowing() {
-	  return document.body.clientWidth < window.innerWidth;
-	}
-	function getOriginalBodyPadding() {
-	  var style = window.getComputedStyle(document.body, null);
-	  return parseInt(style && style.getPropertyValue('padding-right') || 0, 10);
-	}
-	function conditionallyUpdateScrollbar() {
-	  var scrollbarWidth = getScrollbarWidth(); // https://github.com/twbs/bootstrap/blob/v4.0.0-alpha.6/js/src/modal.js#L433
-
-	  var fixedContent = document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top')[0];
-	  var bodyPadding = fixedContent ? parseInt(fixedContent.style.paddingRight || 0, 10) : 0;
-
-	  if (isBodyOverflowing()) {
-	    setScrollbarWidth(bodyPadding + scrollbarWidth);
-	  }
-	}
-	var globalCssModule;
-	function mapToCssModules(className, cssModule) {
-	  if (className === void 0) {
-	    className = '';
-	  }
-
-	  if (cssModule === void 0) {
-	    cssModule = globalCssModule;
-	  }
-
-	  if (!cssModule) return className;
-	  return className.split(' ').map(function (c) {
-	    return cssModule[c] || c;
-	  }).join(' ');
-	}
-	/**
-	 * Returns a new object with the key/value pairs from `obj` that are not in the array `omitKeys`.
-	 */
-
-	function omit(obj, omitKeys) {
-	  var result = {};
-	  Object.keys(obj).forEach(function (key) {
-	    if (omitKeys.indexOf(key) === -1) {
-	      result[key] = obj[key];
-	    }
-	  });
-	  return result;
-	}
-	/**
-	 * Returns a filtered copy of an object with only the specified keys.
-	 */
-
-	function pick(obj, keys) {
-	  var pickKeys = Array.isArray(keys) ? keys : [keys];
-	  var length = pickKeys.length;
-	  var key;
-	  var result = {};
-
-	  while (length > 0) {
-	    length -= 1;
-	    key = pickKeys[length];
-	    result[key] = obj[key];
-	  }
-
-	  return result;
-	}
-	var warned = {};
-	function warnOnce(message) {
-	  if (!warned[message]) {
-	    /* istanbul ignore else */
-	    if (typeof console !== 'undefined') {
-	      console.error(message); // eslint-disable-line no-console
-	    }
-
-	    warned[message] = true;
-	  }
-	}
-
-	var Element = typeof window === 'object' && window.Element || function () {};
-
-	function DOMElement(props, propName, componentName) {
-	  if (!(props[propName] instanceof Element)) {
-	    return new Error('Invalid prop `' + propName + '` supplied to `' + componentName + '`. Expected prop to be an instance of Element. Validation failed.');
-	  }
-	}
-	var targetPropType = propTypes$b.exports.oneOfType([propTypes$b.exports.string, propTypes$b.exports.func, DOMElement, propTypes$b.exports.shape({
-	  current: propTypes$b.exports.any
-	})]);
-	var tagPropType = propTypes$b.exports.oneOfType([propTypes$b.exports.func, propTypes$b.exports.string, propTypes$b.exports.shape({
-	  $$typeof: propTypes$b.exports.symbol,
-	  render: propTypes$b.exports.func
-	}), propTypes$b.exports.arrayOf(propTypes$b.exports.oneOfType([propTypes$b.exports.func, propTypes$b.exports.string, propTypes$b.exports.shape({
-	  $$typeof: propTypes$b.exports.symbol,
-	  render: propTypes$b.exports.func
-	})]))]);
-	/* eslint key-spacing: ["error", { afterColon: true, align: "value" }] */
-	// These are all setup to match what is in the bootstrap _variables.scss
-	// https://github.com/twbs/bootstrap/blob/v4-dev/scss/_variables.scss
-
-	var TransitionTimeouts = {
-	  Fade: 150,
-	  // $transition-fade
-	  Collapse: 350,
-	  // $transition-collapse
-	  Modal: 300,
-	  // $modal-transition
-	  Carousel: 600 // $carousel-transition
-
-	}; // Duplicated Transition.propType keys to ensure that Reactstrap builds
-	// for distribution properly exclude these keys for nested child HTML attributes
-	// since `react-transition-group` removes propTypes in production builds.
-
-	var TransitionPropTypeKeys = ['in', 'mountOnEnter', 'unmountOnExit', 'appear', 'enter', 'exit', 'timeout', 'onEnter', 'onEntering', 'onEntered', 'onExit', 'onExiting', 'onExited'];
-	var keyCodes = {
-	  esc: 27,
-	  space: 32,
-	  enter: 13,
-	  tab: 9,
-	  up: 38,
-	  down: 40,
-	  home: 36,
-	  end: 35,
-	  n: 78,
-	  p: 80
-	};
-	var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
-	function isReactRefObj(target) {
-	  if (target && typeof target === 'object') {
-	    return 'current' in target;
-	  }
-
-	  return false;
-	}
-
-	function getTag(value) {
-	  if (value == null) {
-	    return value === undefined ? '[object Undefined]' : '[object Null]';
-	  }
-
-	  return Object.prototype.toString.call(value);
-	}
-	function isObject(value) {
-	  var type = typeof value;
-	  return value != null && (type === 'object' || type === 'function');
-	}
-	function isFunction(value) {
-	  if (!isObject(value)) {
-	    return false;
-	  }
-
-	  var tag = getTag(value);
-	  return tag === '[object Function]' || tag === '[object AsyncFunction]' || tag === '[object GeneratorFunction]' || tag === '[object Proxy]';
-	}
-	function findDOMElements(target) {
-	  if (isReactRefObj(target)) {
-	    return target.current;
-	  }
-
-	  if (isFunction(target)) {
-	    return target();
-	  }
-
-	  if (typeof target === 'string' && canUseDOM) {
-	    var selection = document.querySelectorAll(target);
-
-	    if (!selection.length) {
-	      selection = document.querySelectorAll("#" + target);
-	    }
-
-	    if (!selection.length) {
-	      throw new Error("The target '" + target + "' could not be identified in the dom, tip: check spelling");
-	    }
-
-	    return selection;
-	  }
-
-	  return target;
-	}
-	function isArrayOrNodeList(els) {
-	  if (els === null) {
-	    return false;
-	  }
-
-	  return Array.isArray(els) || canUseDOM && typeof els.length === 'number';
-	}
-	function getTarget(target, allElements) {
-	  var els = findDOMElements(target);
-
-	  if (allElements) {
-	    if (isArrayOrNodeList(els)) {
-	      return els;
-	    }
-
-	    if (els === null) {
-	      return [];
-	    }
-
-	    return [els];
-	  } else {
-	    if (isArrayOrNodeList(els)) {
-	      return els[0];
-	    }
-
-	    return els;
-	  }
-	}
-	var focusableElements = ['a[href]', 'area[href]', 'input:not([disabled]):not([type=hidden])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'object', 'embed', '[tabindex]:not(.modal)', 'audio[controls]', 'video[controls]', '[contenteditable]:not([contenteditable="false"])'];
-
-	function _assertThisInitialized(self) {
-	  if (self === void 0) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-	  return self;
-	}
-
-	function _setPrototypeOf(o, p) {
-	  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-	    o.__proto__ = p;
-	    return o;
-	  };
-	  return _setPrototypeOf(o, p);
-	}
-
-	function _inheritsLoose$1(subClass, superClass) {
-	  subClass.prototype = Object.create(superClass.prototype);
-	  subClass.prototype.constructor = subClass;
-	  _setPrototypeOf(subClass, superClass);
-	}
-
-	function _typeof(obj) {
-	  "@babel/helpers - typeof";
-
-	  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-	    return typeof obj;
-	  } : function (obj) {
-	    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	  }, _typeof(obj);
-	}
-
-	function _toPrimitive(input, hint) {
-	  if (_typeof(input) !== "object" || input === null) return input;
-	  var prim = input[Symbol.toPrimitive];
-	  if (prim !== undefined) {
-	    var res = prim.call(input, hint || "default");
-	    if (_typeof(res) !== "object") return res;
-	    throw new TypeError("@@toPrimitive must return a primitive value.");
-	  }
-	  return (hint === "string" ? String : Number)(input);
-	}
-
-	function _toPropertyKey(arg) {
-	  var key = _toPrimitive(arg, "string");
-	  return _typeof(key) === "symbol" ? key : String(key);
-	}
-
-	function _defineProperty(obj, key, value) {
-	  key = _toPropertyKey(key);
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-	  return obj;
-	}
-
-	function _objectSpread(target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i] != null ? Object(arguments[i]) : {};
-	    var ownKeys = Object.keys(source);
-	    if (typeof Object.getOwnPropertySymbols === 'function') {
-	      ownKeys.push.apply(ownKeys, Object.getOwnPropertySymbols(source).filter(function (sym) {
-	        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-	      }));
-	    }
-	    ownKeys.forEach(function (key) {
-	      _defineProperty(target, key, source[key]);
-	    });
-	  }
-	  return target;
-	}
-
-	var CSSTransition = {exports: {}};
-
-	var addClass = {exports: {}};
-
-	var interopRequireDefault = {exports: {}};
-
-	(function (module) {
-		function _interopRequireDefault(obj) {
-		  return obj && obj.__esModule ? obj : {
-		    "default": obj
-		  };
-		}
-		module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
-	} (interopRequireDefault));
-
-	var hasClass = {exports: {}};
-
-	var hasRequiredHasClass;
-
-	function requireHasClass () {
-		if (hasRequiredHasClass) return hasClass.exports;
-		hasRequiredHasClass = 1;
-		(function (module, exports) {
-
-			exports.__esModule = true;
-			exports.default = hasClass;
-
-			function hasClass(element, className) {
-			  if (element.classList) return !!className && element.classList.contains(className);else return (" " + (element.className.baseVal || element.className) + " ").indexOf(" " + className + " ") !== -1;
-			}
-
-			module.exports = exports["default"];
-	} (hasClass, hasClass.exports));
-		return hasClass.exports;
-	}
-
-	(function (module, exports) {
-
-		var _interopRequireDefault = interopRequireDefault.exports;
-
-		exports.__esModule = true;
-		exports.default = addClass;
-
-		var _hasClass = _interopRequireDefault(requireHasClass());
-
-		function addClass(element, className) {
-		  if (element.classList) element.classList.add(className);else if (!(0, _hasClass.default)(element, className)) if (typeof element.className === 'string') element.className = element.className + ' ' + className;else element.setAttribute('class', (element.className && element.className.baseVal || '') + ' ' + className);
-		}
-
-		module.exports = exports["default"];
-	} (addClass, addClass.exports));
-
-	function replaceClassName(origClass, classToRemove) {
-	  return origClass.replace(new RegExp('(^|\\s)' + classToRemove + '(?:\\s|$)', 'g'), '$1').replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
-	}
-
-	var removeClass = function removeClass(element, className) {
-	  if (element.classList) element.classList.remove(className);else if (typeof element.className === 'string') element.className = replaceClassName(element.className, className);else element.setAttribute('class', replaceClassName(element.className && element.className.baseVal || '', className));
-	};
-
-	var Transition$1 = {};
-
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 *
-	 * This source code is licensed under the MIT license found in the
-	 * LICENSE file in the root directory of this source tree.
-	 */
-
-	function componentWillMount() {
-	  // Call this.constructor.gDSFP to support sub-classes.
-	  var state = this.constructor.getDerivedStateFromProps(this.props, this.state);
-	  if (state !== null && state !== undefined) {
-	    this.setState(state);
-	  }
-	}
-
-	function componentWillReceiveProps(nextProps) {
-	  // Call this.constructor.gDSFP to support sub-classes.
-	  // Use the setState() updater to ensure state isn't stale in certain edge cases.
-	  function updater(prevState) {
-	    var state = this.constructor.getDerivedStateFromProps(nextProps, prevState);
-	    return state !== null && state !== undefined ? state : null;
-	  }
-	  // Binding "this" is important for shallow renderer support.
-	  this.setState(updater.bind(this));
-	}
-
-	function componentWillUpdate(nextProps, nextState) {
-	  try {
-	    var prevProps = this.props;
-	    var prevState = this.state;
-	    this.props = nextProps;
-	    this.state = nextState;
-	    this.__reactInternalSnapshotFlag = true;
-	    this.__reactInternalSnapshot = this.getSnapshotBeforeUpdate(
-	      prevProps,
-	      prevState
-	    );
-	  } finally {
-	    this.props = prevProps;
-	    this.state = prevState;
-	  }
-	}
-
-	// React may warn about cWM/cWRP/cWU methods being deprecated.
-	// Add a flag to suppress these warnings for this special case.
-	componentWillMount.__suppressDeprecationWarning = true;
-	componentWillReceiveProps.__suppressDeprecationWarning = true;
-	componentWillUpdate.__suppressDeprecationWarning = true;
-
-	function polyfill(Component) {
-	  var prototype = Component.prototype;
-
-	  if (!prototype || !prototype.isReactComponent) {
-	    throw new Error('Can only polyfill class components');
-	  }
-
-	  if (
-	    typeof Component.getDerivedStateFromProps !== 'function' &&
-	    typeof prototype.getSnapshotBeforeUpdate !== 'function'
-	  ) {
-	    return Component;
-	  }
-
-	  // If new component APIs are defined, "unsafe" lifecycles won't be called.
-	  // Error if any of these lifecycles are present,
-	  // Because they would work differently between older and newer (16.3+) versions of React.
-	  var foundWillMountName = null;
-	  var foundWillReceivePropsName = null;
-	  var foundWillUpdateName = null;
-	  if (typeof prototype.componentWillMount === 'function') {
-	    foundWillMountName = 'componentWillMount';
-	  } else if (typeof prototype.UNSAFE_componentWillMount === 'function') {
-	    foundWillMountName = 'UNSAFE_componentWillMount';
-	  }
-	  if (typeof prototype.componentWillReceiveProps === 'function') {
-	    foundWillReceivePropsName = 'componentWillReceiveProps';
-	  } else if (typeof prototype.UNSAFE_componentWillReceiveProps === 'function') {
-	    foundWillReceivePropsName = 'UNSAFE_componentWillReceiveProps';
-	  }
-	  if (typeof prototype.componentWillUpdate === 'function') {
-	    foundWillUpdateName = 'componentWillUpdate';
-	  } else if (typeof prototype.UNSAFE_componentWillUpdate === 'function') {
-	    foundWillUpdateName = 'UNSAFE_componentWillUpdate';
-	  }
-	  if (
-	    foundWillMountName !== null ||
-	    foundWillReceivePropsName !== null ||
-	    foundWillUpdateName !== null
-	  ) {
-	    var componentName = Component.displayName || Component.name;
-	    var newApiName =
-	      typeof Component.getDerivedStateFromProps === 'function'
-	        ? 'getDerivedStateFromProps()'
-	        : 'getSnapshotBeforeUpdate()';
-
-	    throw Error(
-	      'Unsafe legacy lifecycles will not be called for components using new component APIs.\n\n' +
-	        componentName +
-	        ' uses ' +
-	        newApiName +
-	        ' but also contains the following legacy lifecycles:' +
-	        (foundWillMountName !== null ? '\n  ' + foundWillMountName : '') +
-	        (foundWillReceivePropsName !== null
-	          ? '\n  ' + foundWillReceivePropsName
-	          : '') +
-	        (foundWillUpdateName !== null ? '\n  ' + foundWillUpdateName : '') +
-	        '\n\nThe above lifecycles should be removed. Learn more about this warning here:\n' +
-	        'https://fb.me/react-async-component-lifecycle-hooks'
-	    );
-	  }
-
-	  // React <= 16.2 does not support static getDerivedStateFromProps.
-	  // As a workaround, use cWM and cWRP to invoke the new static lifecycle.
-	  // Newer versions of React will ignore these lifecycles if gDSFP exists.
-	  if (typeof Component.getDerivedStateFromProps === 'function') {
-	    prototype.componentWillMount = componentWillMount;
-	    prototype.componentWillReceiveProps = componentWillReceiveProps;
-	  }
-
-	  // React <= 16.2 does not support getSnapshotBeforeUpdate.
-	  // As a workaround, use cWU to invoke the new lifecycle.
-	  // Newer versions of React will ignore that lifecycle if gSBU exists.
-	  if (typeof prototype.getSnapshotBeforeUpdate === 'function') {
-	    if (typeof prototype.componentDidUpdate !== 'function') {
-	      throw new Error(
-	        'Cannot polyfill getSnapshotBeforeUpdate() for components that do not define componentDidUpdate() on the prototype'
-	      );
-	    }
-
-	    prototype.componentWillUpdate = componentWillUpdate;
-
-	    var componentDidUpdate = prototype.componentDidUpdate;
-
-	    prototype.componentDidUpdate = function componentDidUpdatePolyfill(
-	      prevProps,
-	      prevState,
-	      maybeSnapshot
-	    ) {
-	      // 16.3+ will not execute our will-update method;
-	      // It will pass a snapshot value to did-update though.
-	      // Older versions will require our polyfilled will-update value.
-	      // We need to handle both cases, but can't just check for the presence of "maybeSnapshot",
-	      // Because for <= 15.x versions this might be a "prevContext" object.
-	      // We also can't just check "__reactInternalSnapshot",
-	      // Because get-snapshot might return a falsy value.
-	      // So check for the explicit __reactInternalSnapshotFlag flag to determine behavior.
-	      var snapshot = this.__reactInternalSnapshotFlag
-	        ? this.__reactInternalSnapshot
-	        : maybeSnapshot;
-
-	      componentDidUpdate.call(this, prevProps, prevState, snapshot);
-	    };
-	  }
-
-	  return Component;
-	}
-
-	var reactLifecyclesCompat_es = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		polyfill: polyfill
-	});
-
-	var require$$2 = /*@__PURE__*/getAugmentedNamespace(reactLifecyclesCompat_es);
-
-	var PropTypes$1 = {};
-
-	PropTypes$1.__esModule = true;
-	PropTypes$1.classNamesShape = PropTypes$1.timeoutsShape = void 0;
-
-	var _propTypes = _interopRequireDefault$2(propTypes$b.exports);
-
-	function _interopRequireDefault$2(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var timeoutsShape = _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.shape({
-	  enter: _propTypes.default.number,
-	  exit: _propTypes.default.number,
-	  appear: _propTypes.default.number
-	}).isRequired]) ;
-	PropTypes$1.timeoutsShape = timeoutsShape;
-	var classNamesShape = _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.shape({
-	  enter: _propTypes.default.string,
-	  exit: _propTypes.default.string,
-	  active: _propTypes.default.string
-	}), _propTypes.default.shape({
-	  enter: _propTypes.default.string,
-	  enterDone: _propTypes.default.string,
-	  enterActive: _propTypes.default.string,
-	  exit: _propTypes.default.string,
-	  exitDone: _propTypes.default.string,
-	  exitActive: _propTypes.default.string
-	})]) ;
-	PropTypes$1.classNamesShape = classNamesShape;
-
-	Transition$1.__esModule = true;
-	Transition$1.default = Transition$1.EXITING = Transition$1.ENTERED = Transition$1.ENTERING = Transition$1.EXITED = Transition$1.UNMOUNTED = void 0;
-
-	var PropTypes = _interopRequireWildcard(propTypes$b.exports);
-
-	var _react$1 = _interopRequireDefault$1(react.exports);
-
-	var _reactDom = _interopRequireDefault$1(reactDom.exports);
-
-	var _reactLifecyclesCompat = require$$2;
-
-	var _PropTypes = PropTypes$1;
-
-	function _interopRequireDefault$1(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-	function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
-
-	function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
-	var UNMOUNTED = 'unmounted';
-	Transition$1.UNMOUNTED = UNMOUNTED;
-	var EXITED = 'exited';
-	Transition$1.EXITED = EXITED;
-	var ENTERING = 'entering';
-	Transition$1.ENTERING = ENTERING;
-	var ENTERED = 'entered';
-	Transition$1.ENTERED = ENTERED;
-	var EXITING = 'exiting';
-	/**
-	 * The Transition component lets you describe a transition from one component
-	 * state to another _over time_ with a simple declarative API. Most commonly
-	 * it's used to animate the mounting and unmounting of a component, but can also
-	 * be used to describe in-place transition states as well.
-	 *
-	 * ---
-	 *
-	 * **Note**: `Transition` is a platform-agnostic base component. If you're using
-	 * transitions in CSS, you'll probably want to use
-	 * [`CSSTransition`](https://reactcommunity.org/react-transition-group/css-transition)
-	 * instead. It inherits all the features of `Transition`, but contains
-	 * additional features necessary to play nice with CSS transitions (hence the
-	 * name of the component).
-	 *
-	 * ---
-	 *
-	 * By default the `Transition` component does not alter the behavior of the
-	 * component it renders, it only tracks "enter" and "exit" states for the
-	 * components. It's up to you to give meaning and effect to those states. For
-	 * example we can add styles to a component when it enters or exits:
-	 *
-	 * ```jsx
-	 * import { Transition } from 'react-transition-group';
-	 *
-	 * const duration = 300;
-	 *
-	 * const defaultStyle = {
-	 *   transition: `opacity ${duration}ms ease-in-out`,
-	 *   opacity: 0,
-	 * }
-	 *
-	 * const transitionStyles = {
-	 *   entering: { opacity: 0 },
-	 *   entered:  { opacity: 1 },
-	 * };
-	 *
-	 * const Fade = ({ in: inProp }) => (
-	 *   <Transition in={inProp} timeout={duration}>
-	 *     {state => (
-	 *       <div style={{
-	 *         ...defaultStyle,
-	 *         ...transitionStyles[state]
-	 *       }}>
-	 *         I'm a fade Transition!
-	 *       </div>
-	 *     )}
-	 *   </Transition>
-	 * );
-	 * ```
-	 *
-	 * There are 4 main states a Transition can be in:
-	 *  - `'entering'`
-	 *  - `'entered'`
-	 *  - `'exiting'`
-	 *  - `'exited'`
-	 *
-	 * Transition state is toggled via the `in` prop. When `true` the component
-	 * begins the "Enter" stage. During this stage, the component will shift from
-	 * its current transition state, to `'entering'` for the duration of the
-	 * transition and then to the `'entered'` stage once it's complete. Let's take
-	 * the following example (we'll use the
-	 * [useState](https://reactjs.org/docs/hooks-reference.html#usestate) hook):
-	 *
-	 * ```jsx
-	 * function App() {
-	 *   const [inProp, setInProp] = useState(false);
-	 *   return (
-	 *     <div>
-	 *       <Transition in={inProp} timeout={500}>
-	 *         {state => (
-	 *           // ...
-	 *         )}
-	 *       </Transition>
-	 *       <button onClick={() => setInProp(true)}>
-	 *         Click to Enter
-	 *       </button>
-	 *     </div>
-	 *   );
-	 * }
-	 * ```
-	 *
-	 * When the button is clicked the component will shift to the `'entering'` state
-	 * and stay there for 500ms (the value of `timeout`) before it finally switches
-	 * to `'entered'`.
-	 *
-	 * When `in` is `false` the same thing happens except the state moves from
-	 * `'exiting'` to `'exited'`.
-	 */
-
-	Transition$1.EXITING = EXITING;
-
-	var Transition =
-	/*#__PURE__*/
-	function (_React$Component) {
-	  _inheritsLoose(Transition, _React$Component);
-
-	  function Transition(props, context) {
-	    var _this;
-
-	    _this = _React$Component.call(this, props, context) || this;
-	    var parentGroup = context.transitionGroup; // In the context of a TransitionGroup all enters are really appears
-
-	    var appear = parentGroup && !parentGroup.isMounting ? props.enter : props.appear;
-	    var initialStatus;
-	    _this.appearStatus = null;
-
-	    if (props.in) {
-	      if (appear) {
-	        initialStatus = EXITED;
-	        _this.appearStatus = ENTERING;
-	      } else {
-	        initialStatus = ENTERED;
-	      }
-	    } else {
-	      if (props.unmountOnExit || props.mountOnEnter) {
-	        initialStatus = UNMOUNTED;
-	      } else {
-	        initialStatus = EXITED;
-	      }
-	    }
-
-	    _this.state = {
-	      status: initialStatus
-	    };
-	    _this.nextCallback = null;
-	    return _this;
-	  }
-
-	  var _proto = Transition.prototype;
-
-	  _proto.getChildContext = function getChildContext() {
-	    return {
-	      transitionGroup: null // allows for nested Transitions
-
-	    };
-	  };
-
-	  Transition.getDerivedStateFromProps = function getDerivedStateFromProps(_ref, prevState) {
-	    var nextIn = _ref.in;
-
-	    if (nextIn && prevState.status === UNMOUNTED) {
-	      return {
-	        status: EXITED
-	      };
-	    }
-
-	    return null;
-	  }; // getSnapshotBeforeUpdate(prevProps) {
-	  //   let nextStatus = null
-	  //   if (prevProps !== this.props) {
-	  //     const { status } = this.state
-	  //     if (this.props.in) {
-	  //       if (status !== ENTERING && status !== ENTERED) {
-	  //         nextStatus = ENTERING
-	  //       }
-	  //     } else {
-	  //       if (status === ENTERING || status === ENTERED) {
-	  //         nextStatus = EXITING
-	  //       }
-	  //     }
-	  //   }
-	  //   return { nextStatus }
-	  // }
-
-
-	  _proto.componentDidMount = function componentDidMount() {
-	    this.updateStatus(true, this.appearStatus);
-	  };
-
-	  _proto.componentDidUpdate = function componentDidUpdate(prevProps) {
-	    var nextStatus = null;
-
-	    if (prevProps !== this.props) {
-	      var status = this.state.status;
-
-	      if (this.props.in) {
-	        if (status !== ENTERING && status !== ENTERED) {
-	          nextStatus = ENTERING;
-	        }
-	      } else {
-	        if (status === ENTERING || status === ENTERED) {
-	          nextStatus = EXITING;
-	        }
-	      }
-	    }
-
-	    this.updateStatus(false, nextStatus);
-	  };
-
-	  _proto.componentWillUnmount = function componentWillUnmount() {
-	    this.cancelNextCallback();
-	  };
-
-	  _proto.getTimeouts = function getTimeouts() {
-	    var timeout = this.props.timeout;
-	    var exit, enter, appear;
-	    exit = enter = appear = timeout;
-
-	    if (timeout != null && typeof timeout !== 'number') {
-	      exit = timeout.exit;
-	      enter = timeout.enter; // TODO: remove fallback for next major
-
-	      appear = timeout.appear !== undefined ? timeout.appear : enter;
-	    }
-
-	    return {
-	      exit: exit,
-	      enter: enter,
-	      appear: appear
-	    };
-	  };
-
-	  _proto.updateStatus = function updateStatus(mounting, nextStatus) {
-	    if (mounting === void 0) {
-	      mounting = false;
-	    }
-
-	    if (nextStatus !== null) {
-	      // nextStatus will always be ENTERING or EXITING.
-	      this.cancelNextCallback();
-
-	      var node = _reactDom.default.findDOMNode(this);
-
-	      if (nextStatus === ENTERING) {
-	        this.performEnter(node, mounting);
-	      } else {
-	        this.performExit(node);
-	      }
-	    } else if (this.props.unmountOnExit && this.state.status === EXITED) {
-	      this.setState({
-	        status: UNMOUNTED
-	      });
-	    }
-	  };
-
-	  _proto.performEnter = function performEnter(node, mounting) {
-	    var _this2 = this;
-
-	    var enter = this.props.enter;
-	    var appearing = this.context.transitionGroup ? this.context.transitionGroup.isMounting : mounting;
-	    var timeouts = this.getTimeouts();
-	    var enterTimeout = appearing ? timeouts.appear : timeouts.enter; // no enter animation skip right to ENTERED
-	    // if we are mounting and running this it means appear _must_ be set
-
-	    if (!mounting && !enter) {
-	      this.safeSetState({
-	        status: ENTERED
-	      }, function () {
-	        _this2.props.onEntered(node);
-	      });
-	      return;
-	    }
-
-	    this.props.onEnter(node, appearing);
-	    this.safeSetState({
-	      status: ENTERING
-	    }, function () {
-	      _this2.props.onEntering(node, appearing);
-
-	      _this2.onTransitionEnd(node, enterTimeout, function () {
-	        _this2.safeSetState({
-	          status: ENTERED
-	        }, function () {
-	          _this2.props.onEntered(node, appearing);
-	        });
-	      });
-	    });
-	  };
-
-	  _proto.performExit = function performExit(node) {
-	    var _this3 = this;
-
-	    var exit = this.props.exit;
-	    var timeouts = this.getTimeouts(); // no exit animation skip right to EXITED
-
-	    if (!exit) {
-	      this.safeSetState({
-	        status: EXITED
-	      }, function () {
-	        _this3.props.onExited(node);
-	      });
-	      return;
-	    }
-
-	    this.props.onExit(node);
-	    this.safeSetState({
-	      status: EXITING
-	    }, function () {
-	      _this3.props.onExiting(node);
-
-	      _this3.onTransitionEnd(node, timeouts.exit, function () {
-	        _this3.safeSetState({
-	          status: EXITED
-	        }, function () {
-	          _this3.props.onExited(node);
-	        });
-	      });
-	    });
-	  };
-
-	  _proto.cancelNextCallback = function cancelNextCallback() {
-	    if (this.nextCallback !== null) {
-	      this.nextCallback.cancel();
-	      this.nextCallback = null;
-	    }
-	  };
-
-	  _proto.safeSetState = function safeSetState(nextState, callback) {
-	    // This shouldn't be necessary, but there are weird race conditions with
-	    // setState callbacks and unmounting in testing, so always make sure that
-	    // we can cancel any pending setState callbacks after we unmount.
-	    callback = this.setNextCallback(callback);
-	    this.setState(nextState, callback);
-	  };
-
-	  _proto.setNextCallback = function setNextCallback(callback) {
-	    var _this4 = this;
-
-	    var active = true;
-
-	    this.nextCallback = function (event) {
-	      if (active) {
-	        active = false;
-	        _this4.nextCallback = null;
-	        callback(event);
-	      }
-	    };
-
-	    this.nextCallback.cancel = function () {
-	      active = false;
-	    };
-
-	    return this.nextCallback;
-	  };
-
-	  _proto.onTransitionEnd = function onTransitionEnd(node, timeout, handler) {
-	    this.setNextCallback(handler);
-	    var doesNotHaveTimeoutOrListener = timeout == null && !this.props.addEndListener;
-
-	    if (!node || doesNotHaveTimeoutOrListener) {
-	      setTimeout(this.nextCallback, 0);
-	      return;
-	    }
-
-	    if (this.props.addEndListener) {
-	      this.props.addEndListener(node, this.nextCallback);
-	    }
-
-	    if (timeout != null) {
-	      setTimeout(this.nextCallback, timeout);
-	    }
-	  };
-
-	  _proto.render = function render() {
-	    var status = this.state.status;
-
-	    if (status === UNMOUNTED) {
-	      return null;
-	    }
-
-	    var _this$props = this.props,
-	        children = _this$props.children,
-	        childProps = _objectWithoutPropertiesLoose(_this$props, ["children"]); // filter props for Transtition
-
-
-	    delete childProps.in;
-	    delete childProps.mountOnEnter;
-	    delete childProps.unmountOnExit;
-	    delete childProps.appear;
-	    delete childProps.enter;
-	    delete childProps.exit;
-	    delete childProps.timeout;
-	    delete childProps.addEndListener;
-	    delete childProps.onEnter;
-	    delete childProps.onEntering;
-	    delete childProps.onEntered;
-	    delete childProps.onExit;
-	    delete childProps.onExiting;
-	    delete childProps.onExited;
-
-	    if (typeof children === 'function') {
-	      return children(status, childProps);
-	    }
-
-	    var child = _react$1.default.Children.only(children);
-
-	    return _react$1.default.cloneElement(child, childProps);
-	  };
-
-	  return Transition;
-	}(_react$1.default.Component);
-
-	Transition.contextTypes = {
-	  transitionGroup: PropTypes.object
-	};
-	Transition.childContextTypes = {
-	  transitionGroup: function transitionGroup() {}
-	};
-	Transition.propTypes = {
-	  /**
-	   * A `function` child can be used instead of a React element. This function is
-	   * called with the current transition status (`'entering'`, `'entered'`,
-	   * `'exiting'`, `'exited'`, `'unmounted'`), which can be used to apply context
-	   * specific props to a component.
-	   *
-	   * ```jsx
-	   * <Transition in={this.state.in} timeout={150}>
-	   *   {state => (
-	   *     <MyComponent className={`fade fade-${state}`} />
-	   *   )}
-	   * </Transition>
-	   * ```
-	   */
-	  children: PropTypes.oneOfType([PropTypes.func.isRequired, PropTypes.element.isRequired]).isRequired,
-
-	  /**
-	   * Show the component; triggers the enter or exit states
-	   */
-	  in: PropTypes.bool,
-
-	  /**
-	   * By default the child component is mounted immediately along with
-	   * the parent `Transition` component. If you want to "lazy mount" the component on the
-	   * first `in={true}` you can set `mountOnEnter`. After the first enter transition the component will stay
-	   * mounted, even on "exited", unless you also specify `unmountOnExit`.
-	   */
-	  mountOnEnter: PropTypes.bool,
-
-	  /**
-	   * By default the child component stays mounted after it reaches the `'exited'` state.
-	   * Set `unmountOnExit` if you'd prefer to unmount the component after it finishes exiting.
-	   */
-	  unmountOnExit: PropTypes.bool,
-
-	  /**
-	   * Normally a component is not transitioned if it is shown when the `<Transition>` component mounts.
-	   * If you want to transition on the first mount set `appear` to `true`, and the
-	   * component will transition in as soon as the `<Transition>` mounts.
-	   *
-	   * > Note: there are no specific "appear" states. `appear` only adds an additional `enter` transition.
-	   */
-	  appear: PropTypes.bool,
-
-	  /**
-	   * Enable or disable enter transitions.
-	   */
-	  enter: PropTypes.bool,
-
-	  /**
-	   * Enable or disable exit transitions.
-	   */
-	  exit: PropTypes.bool,
-
-	  /**
-	   * The duration of the transition, in milliseconds.
-	   * Required unless `addEndListener` is provided.
-	   *
-	   * You may specify a single timeout for all transitions:
-	   *
-	   * ```jsx
-	   * timeout={500}
-	   * ```
-	   *
-	   * or individually:
-	   *
-	   * ```jsx
-	   * timeout={{
-	   *  appear: 500,
-	   *  enter: 300,
-	   *  exit: 500,
-	   * }}
-	   * ```
-	   *
-	   * - `appear` defaults to the value of `enter`
-	   * - `enter` defaults to `0`
-	   * - `exit` defaults to `0`
-	   *
-	   * @type {number | { enter?: number, exit?: number, appear?: number }}
-	   */
-	  timeout: function timeout(props) {
-	    var pt = _PropTypes.timeoutsShape;
-	    if (!props.addEndListener) pt = pt.isRequired;
-
-	    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	      args[_key - 1] = arguments[_key];
-	    }
-
-	    return pt.apply(void 0, [props].concat(args));
-	  },
-
-	  /**
-	   * Add a custom transition end trigger. Called with the transitioning
-	   * DOM node and a `done` callback. Allows for more fine grained transition end
-	   * logic. **Note:** Timeouts are still used as a fallback if provided.
-	   *
-	   * ```jsx
-	   * addEndListener={(node, done) => {
-	   *   // use the css transitionend event to mark the finish of a transition
-	   *   node.addEventListener('transitionend', done, false);
-	   * }}
-	   * ```
-	   */
-	  addEndListener: PropTypes.func,
-
-	  /**
-	   * Callback fired before the "entering" status is applied. An extra parameter
-	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
-	   *
-	   * @type Function(node: HtmlElement, isAppearing: bool) -> void
-	   */
-	  onEnter: PropTypes.func,
-
-	  /**
-	   * Callback fired after the "entering" status is applied. An extra parameter
-	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
-	   *
-	   * @type Function(node: HtmlElement, isAppearing: bool)
-	   */
-	  onEntering: PropTypes.func,
-
-	  /**
-	   * Callback fired after the "entered" status is applied. An extra parameter
-	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
-	   *
-	   * @type Function(node: HtmlElement, isAppearing: bool) -> void
-	   */
-	  onEntered: PropTypes.func,
-
-	  /**
-	   * Callback fired before the "exiting" status is applied.
-	   *
-	   * @type Function(node: HtmlElement) -> void
-	   */
-	  onExit: PropTypes.func,
-
-	  /**
-	   * Callback fired after the "exiting" status is applied.
-	   *
-	   * @type Function(node: HtmlElement) -> void
-	   */
-	  onExiting: PropTypes.func,
-
-	  /**
-	   * Callback fired after the "exited" status is applied.
-	   *
-	   * @type Function(node: HtmlElement) -> void
-	   */
-	  onExited: PropTypes.func // Name the function so it is clearer in the documentation
-
-	} ;
-
-	function noop$1() {}
-
-	Transition.defaultProps = {
-	  in: false,
-	  mountOnEnter: false,
-	  unmountOnExit: false,
-	  appear: false,
-	  enter: true,
-	  exit: true,
-	  onEnter: noop$1,
-	  onEntering: noop$1,
-	  onEntered: noop$1,
-	  onExit: noop$1,
-	  onExiting: noop$1,
-	  onExited: noop$1
-	};
-	Transition.UNMOUNTED = 0;
-	Transition.EXITED = 1;
-	Transition.ENTERING = 2;
-	Transition.ENTERED = 3;
-	Transition.EXITING = 4;
-
-	var _default = (0, _reactLifecyclesCompat.polyfill)(Transition);
-
-	Transition$1.default = _default;
-
-	(function (module, exports) {
-
-		exports.__esModule = true;
-		exports.default = void 0;
-
-		var PropTypes = _interopRequireWildcard(propTypes$b.exports);
-
-		var _addClass = _interopRequireDefault(addClass.exports);
-
-		var _removeClass = _interopRequireDefault(removeClass);
-
-		var _react = _interopRequireDefault(react.exports);
-
-		var _Transition = _interopRequireDefault(Transition$1);
-
-		var _PropTypes = PropTypes$1;
-
-		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-		function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
-
-		function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
-		var addClass$1 = function addClass(node, classes) {
-		  return node && classes && classes.split(' ').forEach(function (c) {
-		    return (0, _addClass.default)(node, c);
-		  });
-		};
-
-		var removeClass$1 = function removeClass(node, classes) {
-		  return node && classes && classes.split(' ').forEach(function (c) {
-		    return (0, _removeClass.default)(node, c);
-		  });
-		};
-		/**
-		 * A transition component inspired by the excellent
-		 * [ng-animate](http://www.nganimate.org/) library, you should use it if you're
-		 * using CSS transitions or animations. It's built upon the
-		 * [`Transition`](https://reactcommunity.org/react-transition-group/transition)
-		 * component, so it inherits all of its props.
-		 *
-		 * `CSSTransition` applies a pair of class names during the `appear`, `enter`,
-		 * and `exit` states of the transition. The first class is applied and then a
-		 * second `*-active` class in order to activate the CSSS transition. After the
-		 * transition, matching `*-done` class names are applied to persist the
-		 * transition state.
-		 *
-		 * ```jsx
-		 * function App() {
-		 *   const [inProp, setInProp] = useState(false);
-		 *   return (
-		 *     <div>
-		 *       <CSSTransition in={inProp} timeout={200} classNames="my-node">
-		 *         <div>
-		 *           {"I'll receive my-node-* classes"}
-		 *         </div>
-		 *       </CSSTransition>
-		 *       <button type="button" onClick={() => setInProp(true)}>
-		 *         Click to Enter
-		 *       </button>
-		 *     </div>
-		 *   );
-		 * }
-		 * ```
-		 *
-		 * When the `in` prop is set to `true`, the child component will first receive
-		 * the class `example-enter`, then the `example-enter-active` will be added in
-		 * the next tick. `CSSTransition` [forces a
-		 * reflow](https://github.com/reactjs/react-transition-group/blob/5007303e729a74be66a21c3e2205e4916821524b/src/CSSTransition.js#L208-L215)
-		 * between before adding the `example-enter-active`. This is an important trick
-		 * because it allows us to transition between `example-enter` and
-		 * `example-enter-active` even though they were added immediately one after
-		 * another. Most notably, this is what makes it possible for us to animate
-		 * _appearance_.
-		 *
-		 * ```css
-		 * .my-node-enter {
-		 *   opacity: 0;
-		 * }
-		 * .my-node-enter-active {
-		 *   opacity: 1;
-		 *   transition: opacity 200ms;
-		 * }
-		 * .my-node-exit {
-		 *   opacity: 1;
-		 * }
-		 * .my-node-exit-active {
-		 *   opacity: 0;
-		 *   transition: opacity: 200ms;
-		 * }
-		 * ```
-		 *
-		 * `*-active` classes represent which styles you want to animate **to**.
-		 */
-
-
-		var CSSTransition =
-		/*#__PURE__*/
-		function (_React$Component) {
-		  _inheritsLoose(CSSTransition, _React$Component);
-
-		  function CSSTransition() {
-		    var _this;
-
-		    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-		      args[_key] = arguments[_key];
-		    }
-
-		    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
-
-		    _this.onEnter = function (node, appearing) {
-		      var _this$getClassNames = _this.getClassNames(appearing ? 'appear' : 'enter'),
-		          className = _this$getClassNames.className;
-
-		      _this.removeClasses(node, 'exit');
-
-		      addClass$1(node, className);
-
-		      if (_this.props.onEnter) {
-		        _this.props.onEnter(node, appearing);
-		      }
-		    };
-
-		    _this.onEntering = function (node, appearing) {
-		      var _this$getClassNames2 = _this.getClassNames(appearing ? 'appear' : 'enter'),
-		          activeClassName = _this$getClassNames2.activeClassName;
-
-		      _this.reflowAndAddClass(node, activeClassName);
-
-		      if (_this.props.onEntering) {
-		        _this.props.onEntering(node, appearing);
-		      }
-		    };
-
-		    _this.onEntered = function (node, appearing) {
-		      var appearClassName = _this.getClassNames('appear').doneClassName;
-
-		      var enterClassName = _this.getClassNames('enter').doneClassName;
-
-		      var doneClassName = appearing ? appearClassName + " " + enterClassName : enterClassName;
-
-		      _this.removeClasses(node, appearing ? 'appear' : 'enter');
-
-		      addClass$1(node, doneClassName);
-
-		      if (_this.props.onEntered) {
-		        _this.props.onEntered(node, appearing);
-		      }
-		    };
-
-		    _this.onExit = function (node) {
-		      var _this$getClassNames3 = _this.getClassNames('exit'),
-		          className = _this$getClassNames3.className;
-
-		      _this.removeClasses(node, 'appear');
-
-		      _this.removeClasses(node, 'enter');
-
-		      addClass$1(node, className);
-
-		      if (_this.props.onExit) {
-		        _this.props.onExit(node);
-		      }
-		    };
-
-		    _this.onExiting = function (node) {
-		      var _this$getClassNames4 = _this.getClassNames('exit'),
-		          activeClassName = _this$getClassNames4.activeClassName;
-
-		      _this.reflowAndAddClass(node, activeClassName);
-
-		      if (_this.props.onExiting) {
-		        _this.props.onExiting(node);
-		      }
-		    };
-
-		    _this.onExited = function (node) {
-		      var _this$getClassNames5 = _this.getClassNames('exit'),
-		          doneClassName = _this$getClassNames5.doneClassName;
-
-		      _this.removeClasses(node, 'exit');
-
-		      addClass$1(node, doneClassName);
-
-		      if (_this.props.onExited) {
-		        _this.props.onExited(node);
-		      }
-		    };
-
-		    _this.getClassNames = function (type) {
-		      var classNames = _this.props.classNames;
-		      var isStringClassNames = typeof classNames === 'string';
-		      var prefix = isStringClassNames && classNames ? classNames + '-' : '';
-		      var className = isStringClassNames ? prefix + type : classNames[type];
-		      var activeClassName = isStringClassNames ? className + '-active' : classNames[type + 'Active'];
-		      var doneClassName = isStringClassNames ? className + '-done' : classNames[type + 'Done'];
-		      return {
-		        className: className,
-		        activeClassName: activeClassName,
-		        doneClassName: doneClassName
-		      };
-		    };
-
-		    return _this;
-		  }
-
-		  var _proto = CSSTransition.prototype;
-
-		  _proto.removeClasses = function removeClasses(node, type) {
-		    var _this$getClassNames6 = this.getClassNames(type),
-		        className = _this$getClassNames6.className,
-		        activeClassName = _this$getClassNames6.activeClassName,
-		        doneClassName = _this$getClassNames6.doneClassName;
-
-		    className && removeClass$1(node, className);
-		    activeClassName && removeClass$1(node, activeClassName);
-		    doneClassName && removeClass$1(node, doneClassName);
-		  };
-
-		  _proto.reflowAndAddClass = function reflowAndAddClass(node, className) {
-		    // This is for to force a repaint,
-		    // which is necessary in order to transition styles when adding a class name.
-		    if (className) {
-		      /* eslint-disable no-unused-expressions */
-		      node && node.scrollTop;
-		      /* eslint-enable no-unused-expressions */
-
-		      addClass$1(node, className);
-		    }
-		  };
-
-		  _proto.render = function render() {
-		    var props = _extends({}, this.props);
-
-		    delete props.classNames;
-		    return _react.default.createElement(_Transition.default, _extends({}, props, {
-		      onEnter: this.onEnter,
-		      onEntered: this.onEntered,
-		      onEntering: this.onEntering,
-		      onExit: this.onExit,
-		      onExiting: this.onExiting,
-		      onExited: this.onExited
-		    }));
-		  };
-
-		  return CSSTransition;
-		}(_react.default.Component);
-
-		CSSTransition.defaultProps = {
-		  classNames: ''
-		};
-		CSSTransition.propTypes = _extends({}, _Transition.default.propTypes, {
-		  /**
-		   * The animation classNames applied to the component as it enters, exits or
-		   * has finished the transition. A single name can be provided and it will be
-		   * suffixed for each stage: e.g.
-		   *
-		   * `classNames="fade"` applies `fade-enter`, `fade-enter-active`,
-		   * `fade-enter-done`, `fade-exit`, `fade-exit-active`, `fade-exit-done`,
-		   * `fade-appear`, `fade-appear-active`, and `fade-appear-done`.
-		   *
-		   * **Note**: `fade-appear-done` and `fade-enter-done` will _both_ be applied.
-		   * This allows you to define different behavior for when appearing is done and
-		   * when regular entering is done, using selectors like
-		   * `.fade-enter-done:not(.fade-appear-done)`. For example, you could apply an
-		   * epic entrance animation when element first appears in the DOM using
-		   * [Animate.css](https://daneden.github.io/animate.css/). Otherwise you can
-		   * simply use `fade-enter-done` for defining both cases.
-		   *
-		   * Each individual classNames can also be specified independently like:
-		   *
-		   * ```js
-		   * classNames={{
-		   *  appear: 'my-appear',
-		   *  appearActive: 'my-active-appear',
-		   *  appearDone: 'my-done-appear',
-		   *  enter: 'my-enter',
-		   *  enterActive: 'my-active-enter',
-		   *  enterDone: 'my-done-enter',
-		   *  exit: 'my-exit',
-		   *  exitActive: 'my-active-exit',
-		   *  exitDone: 'my-done-exit',
-		   * }}
-		   * ```
-		   *
-		   * If you want to set these classes using CSS Modules:
-		   *
-		   * ```js
-		   * import styles from './styles.css';
-		   * ```
-		   *
-		   * you might want to use camelCase in your CSS file, that way could simply
-		   * spread them instead of listing them one by one:
-		   *
-		   * ```js
-		   * classNames={{ ...styles }}
-		   * ```
-		   *
-		   * @type {string | {
-		   *  appear?: string,
-		   *  appearActive?: string,
-		   *  appearDone?: string,
-		   *  enter?: string,
-		   *  enterActive?: string,
-		   *  enterDone?: string,
-		   *  exit?: string,
-		   *  exitActive?: string,
-		   *  exitDone?: string,
-		   * }}
-		   */
-		  classNames: _PropTypes.classNamesShape,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'enter' or 'appear' class is
-		   * applied.
-		   *
-		   * @type Function(node: HtmlElement, isAppearing: bool)
-		   */
-		  onEnter: PropTypes.func,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'enter-active' or
-		   * 'appear-active' class is applied.
-		   *
-		   * @type Function(node: HtmlElement, isAppearing: bool)
-		   */
-		  onEntering: PropTypes.func,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'enter' or
-		   * 'appear' classes are **removed** and the `done` class is added to the DOM node.
-		   *
-		   * @type Function(node: HtmlElement, isAppearing: bool)
-		   */
-		  onEntered: PropTypes.func,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'exit' class is
-		   * applied.
-		   *
-		   * @type Function(node: HtmlElement)
-		   */
-		  onExit: PropTypes.func,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'exit-active' is applied.
-		   *
-		   * @type Function(node: HtmlElement)
-		   */
-		  onExiting: PropTypes.func,
-
-		  /**
-		   * A `<Transition>` callback fired immediately after the 'exit' classes
-		   * are **removed** and the `exit-done` class is added to the DOM node.
-		   *
-		   * @type Function(node: HtmlElement)
-		   */
-		  onExited: PropTypes.func
-		}) ;
-		var _default = CSSTransition;
-		exports.default = _default;
-		module.exports = exports["default"];
-	} (CSSTransition, CSSTransition.exports));
-
-	var ReplaceTransition = {exports: {}};
-
-	var TransitionGroup = {exports: {}};
-
-	var ChildMapping = {};
-
-	ChildMapping.__esModule = true;
-	ChildMapping.getChildMapping = getChildMapping;
-	ChildMapping.mergeChildMappings = mergeChildMappings;
-	ChildMapping.getInitialChildMapping = getInitialChildMapping;
-	ChildMapping.getNextChildMapping = getNextChildMapping;
-
-	var _react = react.exports;
-
-	/**
-	 * Given `this.props.children`, return an object mapping key to child.
-	 *
-	 * @param {*} children `this.props.children`
-	 * @return {object} Mapping of key to child
-	 */
-	function getChildMapping(children, mapFn) {
-	  var mapper = function mapper(child) {
-	    return mapFn && (0, _react.isValidElement)(child) ? mapFn(child) : child;
-	  };
-
-	  var result = Object.create(null);
-	  if (children) _react.Children.map(children, function (c) {
-	    return c;
-	  }).forEach(function (child) {
-	    // run the map function here instead so that the key is the computed one
-	    result[child.key] = mapper(child);
-	  });
-	  return result;
-	}
-	/**
-	 * When you're adding or removing children some may be added or removed in the
-	 * same render pass. We want to show *both* since we want to simultaneously
-	 * animate elements in and out. This function takes a previous set of keys
-	 * and a new set of keys and merges them with its best guess of the correct
-	 * ordering. In the future we may expose some of the utilities in
-	 * ReactMultiChild to make this easy, but for now React itself does not
-	 * directly have this concept of the union of prevChildren and nextChildren
-	 * so we implement it here.
-	 *
-	 * @param {object} prev prev children as returned from
-	 * `ReactTransitionChildMapping.getChildMapping()`.
-	 * @param {object} next next children as returned from
-	 * `ReactTransitionChildMapping.getChildMapping()`.
-	 * @return {object} a key set that contains all keys in `prev` and all keys
-	 * in `next` in a reasonable order.
-	 */
-
-
-	function mergeChildMappings(prev, next) {
-	  prev = prev || {};
-	  next = next || {};
-
-	  function getValueForKey(key) {
-	    return key in next ? next[key] : prev[key];
-	  } // For each key of `next`, the list of keys to insert before that key in
-	  // the combined list
-
-
-	  var nextKeysPending = Object.create(null);
-	  var pendingKeys = [];
-
-	  for (var prevKey in prev) {
-	    if (prevKey in next) {
-	      if (pendingKeys.length) {
-	        nextKeysPending[prevKey] = pendingKeys;
-	        pendingKeys = [];
-	      }
-	    } else {
-	      pendingKeys.push(prevKey);
-	    }
-	  }
-
-	  var i;
-	  var childMapping = {};
-
-	  for (var nextKey in next) {
-	    if (nextKeysPending[nextKey]) {
-	      for (i = 0; i < nextKeysPending[nextKey].length; i++) {
-	        var pendingNextKey = nextKeysPending[nextKey][i];
-	        childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey);
-	      }
-	    }
-
-	    childMapping[nextKey] = getValueForKey(nextKey);
-	  } // Finally, add the keys which didn't appear before any key in `next`
-
-
-	  for (i = 0; i < pendingKeys.length; i++) {
-	    childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
-	  }
-
-	  return childMapping;
-	}
-
-	function getProp(child, prop, props) {
-	  return props[prop] != null ? props[prop] : child.props[prop];
-	}
-
-	function getInitialChildMapping(props, onExited) {
-	  return getChildMapping(props.children, function (child) {
-	    return (0, _react.cloneElement)(child, {
-	      onExited: onExited.bind(null, child),
-	      in: true,
-	      appear: getProp(child, 'appear', props),
-	      enter: getProp(child, 'enter', props),
-	      exit: getProp(child, 'exit', props)
-	    });
-	  });
-	}
-
-	function getNextChildMapping(nextProps, prevChildMapping, onExited) {
-	  var nextChildMapping = getChildMapping(nextProps.children);
-	  var children = mergeChildMappings(prevChildMapping, nextChildMapping);
-	  Object.keys(children).forEach(function (key) {
-	    var child = children[key];
-	    if (!(0, _react.isValidElement)(child)) return;
-	    var hasPrev = key in prevChildMapping;
-	    var hasNext = key in nextChildMapping;
-	    var prevChild = prevChildMapping[key];
-	    var isLeaving = (0, _react.isValidElement)(prevChild) && !prevChild.props.in; // item is new (entering)
-
-	    if (hasNext && (!hasPrev || isLeaving)) {
-	      // console.log('entering', key)
-	      children[key] = (0, _react.cloneElement)(child, {
-	        onExited: onExited.bind(null, child),
-	        in: true,
-	        exit: getProp(child, 'exit', nextProps),
-	        enter: getProp(child, 'enter', nextProps)
-	      });
-	    } else if (!hasNext && hasPrev && !isLeaving) {
-	      // item is old (exiting)
-	      // console.log('leaving', key)
-	      children[key] = (0, _react.cloneElement)(child, {
-	        in: false
-	      });
-	    } else if (hasNext && hasPrev && (0, _react.isValidElement)(prevChild)) {
-	      // item hasn't changed transition states
-	      // copy over the last transition props;
-	      // console.log('unchanged', key)
-	      children[key] = (0, _react.cloneElement)(child, {
-	        onExited: onExited.bind(null, child),
-	        in: prevChild.props.in,
-	        exit: getProp(child, 'exit', nextProps),
-	        enter: getProp(child, 'enter', nextProps)
-	      });
-	    }
-	  });
-	  return children;
-	}
-
-	(function (module, exports) {
-
-		exports.__esModule = true;
-		exports.default = void 0;
-
-		var _propTypes = _interopRequireDefault(propTypes$b.exports);
-
-		var _react = _interopRequireDefault(react.exports);
-
-		var _reactLifecyclesCompat = require$$2;
-
-		var _ChildMapping = ChildMapping;
-
-		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-		function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
-
-		function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-
-		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
-		function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-		var values = Object.values || function (obj) {
-		  return Object.keys(obj).map(function (k) {
-		    return obj[k];
-		  });
-		};
-
-		var defaultProps = {
-		  component: 'div',
-		  childFactory: function childFactory(child) {
-		    return child;
-		  }
-		  /**
-		   * The `<TransitionGroup>` component manages a set of transition components
-		   * (`<Transition>` and `<CSSTransition>`) in a list. Like with the transition
-		   * components, `<TransitionGroup>` is a state machine for managing the mounting
-		   * and unmounting of components over time.
-		   *
-		   * Consider the example below. As items are removed or added to the TodoList the
-		   * `in` prop is toggled automatically by the `<TransitionGroup>`.
-		   *
-		   * Note that `<TransitionGroup>`  does not define any animation behavior!
-		   * Exactly _how_ a list item animates is up to the individual transition
-		   * component. This means you can mix and match animations across different list
-		   * items.
-		   */
-
-		};
-
-		var TransitionGroup =
-		/*#__PURE__*/
-		function (_React$Component) {
-		  _inheritsLoose(TransitionGroup, _React$Component);
-
-		  function TransitionGroup(props, context) {
-		    var _this;
-
-		    _this = _React$Component.call(this, props, context) || this;
-
-		    var handleExited = _this.handleExited.bind(_assertThisInitialized(_assertThisInitialized(_this))); // Initial children should all be entering, dependent on appear
-
-
-		    _this.state = {
-		      handleExited: handleExited,
-		      firstRender: true
-		    };
-		    return _this;
-		  }
-
-		  var _proto = TransitionGroup.prototype;
-
-		  _proto.getChildContext = function getChildContext() {
-		    return {
-		      transitionGroup: {
-		        isMounting: !this.appeared
-		      }
-		    };
-		  };
-
-		  _proto.componentDidMount = function componentDidMount() {
-		    this.appeared = true;
-		    this.mounted = true;
-		  };
-
-		  _proto.componentWillUnmount = function componentWillUnmount() {
-		    this.mounted = false;
-		  };
-
-		  TransitionGroup.getDerivedStateFromProps = function getDerivedStateFromProps(nextProps, _ref) {
-		    var prevChildMapping = _ref.children,
-		        handleExited = _ref.handleExited,
-		        firstRender = _ref.firstRender;
-		    return {
-		      children: firstRender ? (0, _ChildMapping.getInitialChildMapping)(nextProps, handleExited) : (0, _ChildMapping.getNextChildMapping)(nextProps, prevChildMapping, handleExited),
-		      firstRender: false
-		    };
-		  };
-
-		  _proto.handleExited = function handleExited(child, node) {
-		    var currentChildMapping = (0, _ChildMapping.getChildMapping)(this.props.children);
-		    if (child.key in currentChildMapping) return;
-
-		    if (child.props.onExited) {
-		      child.props.onExited(node);
-		    }
-
-		    if (this.mounted) {
-		      this.setState(function (state) {
-		        var children = _extends({}, state.children);
-
-		        delete children[child.key];
-		        return {
-		          children: children
-		        };
-		      });
-		    }
-		  };
-
-		  _proto.render = function render() {
-		    var _this$props = this.props,
-		        Component = _this$props.component,
-		        childFactory = _this$props.childFactory,
-		        props = _objectWithoutPropertiesLoose(_this$props, ["component", "childFactory"]);
-
-		    var children = values(this.state.children).map(childFactory);
-		    delete props.appear;
-		    delete props.enter;
-		    delete props.exit;
-
-		    if (Component === null) {
-		      return children;
-		    }
-
-		    return _react.default.createElement(Component, props, children);
-		  };
-
-		  return TransitionGroup;
-		}(_react.default.Component);
-
-		TransitionGroup.childContextTypes = {
-		  transitionGroup: _propTypes.default.object.isRequired
-		};
-		TransitionGroup.propTypes = {
-		  /**
-		   * `<TransitionGroup>` renders a `<div>` by default. You can change this
-		   * behavior by providing a `component` prop.
-		   * If you use React v16+ and would like to avoid a wrapping `<div>` element
-		   * you can pass in `component={null}`. This is useful if the wrapping div
-		   * borks your css styles.
-		   */
-		  component: _propTypes.default.any,
-
-		  /**
-		   * A set of `<Transition>` components, that are toggled `in` and out as they
-		   * leave. the `<TransitionGroup>` will inject specific transition props, so
-		   * remember to spread them through if you are wrapping the `<Transition>` as
-		   * with our `<Fade>` example.
-		   *
-		   * While this component is meant for multiple `Transition` or `CSSTransition`
-		   * children, sometimes you may want to have a single transition child with
-		   * content that you want to be transitioned out and in when you change it
-		   * (e.g. routes, images etc.) In that case you can change the `key` prop of
-		   * the transition child as you change its content, this will cause
-		   * `TransitionGroup` to transition the child out and back in.
-		   */
-		  children: _propTypes.default.node,
-
-		  /**
-		   * A convenience prop that enables or disables appear animations
-		   * for all children. Note that specifying this will override any defaults set
-		   * on individual children Transitions.
-		   */
-		  appear: _propTypes.default.bool,
-
-		  /**
-		   * A convenience prop that enables or disables enter animations
-		   * for all children. Note that specifying this will override any defaults set
-		   * on individual children Transitions.
-		   */
-		  enter: _propTypes.default.bool,
-
-		  /**
-		   * A convenience prop that enables or disables exit animations
-		   * for all children. Note that specifying this will override any defaults set
-		   * on individual children Transitions.
-		   */
-		  exit: _propTypes.default.bool,
-
-		  /**
-		   * You may need to apply reactive updates to a child as it is exiting.
-		   * This is generally done by using `cloneElement` however in the case of an exiting
-		   * child the element has already been removed and not accessible to the consumer.
-		   *
-		   * If you do need to update a child as it leaves you can provide a `childFactory`
-		   * to wrap every child, even the ones that are leaving.
-		   *
-		   * @type Function(child: ReactElement) -> ReactElement
-		   */
-		  childFactory: _propTypes.default.func
-		} ;
-		TransitionGroup.defaultProps = defaultProps;
-
-		var _default = (0, _reactLifecyclesCompat.polyfill)(TransitionGroup);
-
-		exports.default = _default;
-		module.exports = exports["default"];
-	} (TransitionGroup, TransitionGroup.exports));
-
-	(function (module, exports) {
-
-		exports.__esModule = true;
-		exports.default = void 0;
-
-		var _propTypes = _interopRequireDefault(propTypes$b.exports);
-
-		var _react = _interopRequireDefault(react.exports);
-
-		var _reactDom = reactDom.exports;
-
-		var _TransitionGroup = _interopRequireDefault(TransitionGroup.exports);
-
-		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-		function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
-
-		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
-
-		/**
-		 * The `<ReplaceTransition>` component is a specialized `Transition` component
-		 * that animates between two children.
-		 *
-		 * ```jsx
-		 * <ReplaceTransition in>
-		 *   <Fade><div>I appear first</div></Fade>
-		 *   <Fade><div>I replace the above</div></Fade>
-		 * </ReplaceTransition>
-		 * ```
-		 */
-		var ReplaceTransition =
-		/*#__PURE__*/
-		function (_React$Component) {
-		  _inheritsLoose(ReplaceTransition, _React$Component);
-
-		  function ReplaceTransition() {
-		    var _this;
-
-		    for (var _len = arguments.length, _args = new Array(_len), _key = 0; _key < _len; _key++) {
-		      _args[_key] = arguments[_key];
-		    }
-
-		    _this = _React$Component.call.apply(_React$Component, [this].concat(_args)) || this;
-
-		    _this.handleEnter = function () {
-		      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-		        args[_key2] = arguments[_key2];
-		      }
-
-		      return _this.handleLifecycle('onEnter', 0, args);
-		    };
-
-		    _this.handleEntering = function () {
-		      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-		        args[_key3] = arguments[_key3];
-		      }
-
-		      return _this.handleLifecycle('onEntering', 0, args);
-		    };
-
-		    _this.handleEntered = function () {
-		      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-		        args[_key4] = arguments[_key4];
-		      }
-
-		      return _this.handleLifecycle('onEntered', 0, args);
-		    };
-
-		    _this.handleExit = function () {
-		      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-		        args[_key5] = arguments[_key5];
-		      }
-
-		      return _this.handleLifecycle('onExit', 1, args);
-		    };
-
-		    _this.handleExiting = function () {
-		      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-		        args[_key6] = arguments[_key6];
-		      }
-
-		      return _this.handleLifecycle('onExiting', 1, args);
-		    };
-
-		    _this.handleExited = function () {
-		      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-		        args[_key7] = arguments[_key7];
-		      }
-
-		      return _this.handleLifecycle('onExited', 1, args);
-		    };
-
-		    return _this;
-		  }
-
-		  var _proto = ReplaceTransition.prototype;
-
-		  _proto.handleLifecycle = function handleLifecycle(handler, idx, originalArgs) {
-		    var _child$props;
-
-		    var children = this.props.children;
-
-		    var child = _react.default.Children.toArray(children)[idx];
-
-		    if (child.props[handler]) (_child$props = child.props)[handler].apply(_child$props, originalArgs);
-		    if (this.props[handler]) this.props[handler]((0, _reactDom.findDOMNode)(this));
-		  };
-
-		  _proto.render = function render() {
-		    var _this$props = this.props,
-		        children = _this$props.children,
-		        inProp = _this$props.in,
-		        props = _objectWithoutPropertiesLoose(_this$props, ["children", "in"]);
-
-		    var _React$Children$toArr = _react.default.Children.toArray(children),
-		        first = _React$Children$toArr[0],
-		        second = _React$Children$toArr[1];
-
-		    delete props.onEnter;
-		    delete props.onEntering;
-		    delete props.onEntered;
-		    delete props.onExit;
-		    delete props.onExiting;
-		    delete props.onExited;
-		    return _react.default.createElement(_TransitionGroup.default, props, inProp ? _react.default.cloneElement(first, {
-		      key: 'first',
-		      onEnter: this.handleEnter,
-		      onEntering: this.handleEntering,
-		      onEntered: this.handleEntered
-		    }) : _react.default.cloneElement(second, {
-		      key: 'second',
-		      onEnter: this.handleExit,
-		      onEntering: this.handleExiting,
-		      onEntered: this.handleExited
-		    }));
-		  };
-
-		  return ReplaceTransition;
-		}(_react.default.Component);
-
-		ReplaceTransition.propTypes = {
-		  in: _propTypes.default.bool.isRequired,
-		  children: function children(props, propName) {
-		    if (_react.default.Children.count(props[propName]) !== 2) return new Error("\"" + propName + "\" must be exactly two transition components.");
-		    return null;
-		  }
-		} ;
-		var _default = ReplaceTransition;
-		exports.default = _default;
-		module.exports = exports["default"];
-	} (ReplaceTransition, ReplaceTransition.exports));
-
-	var _CSSTransition = _interopRequireDefault(CSSTransition.exports);
-
-	var _ReplaceTransition = _interopRequireDefault(ReplaceTransition.exports);
-
-	var _TransitionGroup = _interopRequireDefault(TransitionGroup.exports);
-
-	var _Transition = _interopRequireDefault(Transition$1);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var reactTransitionGroup = {
-	  Transition: _Transition.default,
-	  TransitionGroup: _TransitionGroup.default,
-	  ReplaceTransition: _ReplaceTransition.default,
-	  CSSTransition: _CSSTransition.default
-	};
-
-	var propTypes$a = _objectSpread({}, reactTransitionGroup.Transition.propTypes, {
-	  children: propTypes$b.exports.oneOfType([propTypes$b.exports.arrayOf(propTypes$b.exports.node), propTypes$b.exports.node]),
-	  tag: tagPropType,
-	  baseClass: propTypes$b.exports.string,
-	  baseClassActive: propTypes$b.exports.string,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object,
-	  innerRef: propTypes$b.exports.oneOfType([propTypes$b.exports.object, propTypes$b.exports.string, propTypes$b.exports.func])
-	});
-
-	var defaultProps$9 = _objectSpread({}, reactTransitionGroup.Transition.defaultProps, {
-	  tag: 'div',
-	  baseClass: 'fade',
-	  baseClassActive: 'show',
-	  timeout: TransitionTimeouts.Fade,
-	  appear: true,
-	  enter: true,
-	  exit: true,
-	  in: true
-	});
-
-	function Fade(props) {
-	  var Tag = props.tag,
-	      baseClass = props.baseClass,
-	      baseClassActive = props.baseClassActive,
-	      className = props.className,
-	      cssModule = props.cssModule,
-	      children = props.children,
-	      innerRef = props.innerRef,
-	      otherProps = _objectWithoutPropertiesLoose$1(props, ["tag", "baseClass", "baseClassActive", "className", "cssModule", "children", "innerRef"]);
-
-	  var transitionProps = pick(otherProps, TransitionPropTypeKeys);
-	  var childProps = omit(otherProps, TransitionPropTypeKeys);
-	  return React.createElement(reactTransitionGroup.Transition, transitionProps, function (status) {
-	    var isActive = status === 'entered';
-	    var classes = mapToCssModules(classNames(className, baseClass, isActive && baseClassActive), cssModule);
-	    return React.createElement(Tag, _extends({
-	      className: classes
-	    }, childProps, {
-	      ref: innerRef
-	    }), children);
-	  });
-	}
-
-	Fade.propTypes = propTypes$a;
-	Fade.defaultProps = defaultProps$9;
-
-	var propTypes$9 = {
-	  children: propTypes$b.exports.node.isRequired,
-	  node: propTypes$b.exports.any
-	};
-
-	var Portal =
-	/*#__PURE__*/
-	function (_React$Component) {
-	  _inheritsLoose$1(Portal, _React$Component);
-
-	  function Portal() {
-	    return _React$Component.apply(this, arguments) || this;
-	  }
-
-	  var _proto = Portal.prototype;
-
-	  _proto.componentWillUnmount = function componentWillUnmount() {
-	    if (this.defaultNode) {
-	      document.body.removeChild(this.defaultNode);
-	    }
-
-	    this.defaultNode = null;
-	  };
-
-	  _proto.render = function render() {
-	    if (!canUseDOM) {
-	      return null;
-	    }
-
-	    if (!this.props.node && !this.defaultNode) {
-	      this.defaultNode = document.createElement('div');
-	      document.body.appendChild(this.defaultNode);
-	    }
-
-	    return ReactDOM.createPortal(this.props.children, this.props.node || this.defaultNode);
-	  };
-
-	  return Portal;
-	}(React.Component);
-
-	Portal.propTypes = propTypes$9;
-	var Portal$1 = Portal;
-
-	function noop() {}
-
-	var FadePropTypes = propTypes$b.exports.shape(Fade.propTypes);
-	var propTypes$8 = {
-	  isOpen: propTypes$b.exports.bool,
-	  autoFocus: propTypes$b.exports.bool,
-	  centered: propTypes$b.exports.bool,
-	  scrollable: propTypes$b.exports.bool,
-	  size: propTypes$b.exports.string,
-	  toggle: propTypes$b.exports.func,
-	  keyboard: propTypes$b.exports.bool,
-	  role: propTypes$b.exports.string,
-	  labelledBy: propTypes$b.exports.string,
-	  backdrop: propTypes$b.exports.oneOfType([propTypes$b.exports.bool, propTypes$b.exports.oneOf(['static'])]),
-	  onEnter: propTypes$b.exports.func,
-	  onExit: propTypes$b.exports.func,
-	  onOpened: propTypes$b.exports.func,
-	  onClosed: propTypes$b.exports.func,
-	  children: propTypes$b.exports.node,
-	  className: propTypes$b.exports.string,
-	  wrapClassName: propTypes$b.exports.string,
-	  modalClassName: propTypes$b.exports.string,
-	  backdropClassName: propTypes$b.exports.string,
-	  contentClassName: propTypes$b.exports.string,
-	  external: propTypes$b.exports.node,
-	  fade: propTypes$b.exports.bool,
-	  cssModule: propTypes$b.exports.object,
-	  zIndex: propTypes$b.exports.oneOfType([propTypes$b.exports.number, propTypes$b.exports.string]),
-	  backdropTransition: FadePropTypes,
-	  modalTransition: FadePropTypes,
-	  innerRef: propTypes$b.exports.oneOfType([propTypes$b.exports.object, propTypes$b.exports.string, propTypes$b.exports.func]),
-	  unmountOnClose: propTypes$b.exports.bool,
-	  returnFocusAfterClose: propTypes$b.exports.bool,
-	  container: targetPropType
-	};
-	var propsToOmit = Object.keys(propTypes$8);
-	var defaultProps$8 = {
-	  isOpen: false,
-	  autoFocus: true,
-	  centered: false,
-	  scrollable: false,
-	  role: 'dialog',
-	  backdrop: true,
-	  keyboard: true,
-	  zIndex: 1050,
-	  fade: true,
-	  onOpened: noop,
-	  onClosed: noop,
-	  modalTransition: {
-	    timeout: TransitionTimeouts.Modal
-	  },
-	  backdropTransition: {
-	    mountOnEnter: true,
-	    timeout: TransitionTimeouts.Fade // uses standard fade transition
-
-	  },
-	  unmountOnClose: true,
-	  returnFocusAfterClose: true,
-	  container: 'body'
-	};
-
-	var Modal =
-	/*#__PURE__*/
-	function (_React$Component) {
-	  _inheritsLoose$1(Modal, _React$Component);
-
-	  function Modal(props) {
-	    var _this;
-
-	    _this = _React$Component.call(this, props) || this;
-	    _this._element = null;
-	    _this._originalBodyPadding = null;
-	    _this.getFocusableChildren = _this.getFocusableChildren.bind(_assertThisInitialized(_this));
-	    _this.handleBackdropClick = _this.handleBackdropClick.bind(_assertThisInitialized(_this));
-	    _this.handleBackdropMouseDown = _this.handleBackdropMouseDown.bind(_assertThisInitialized(_this));
-	    _this.handleEscape = _this.handleEscape.bind(_assertThisInitialized(_this));
-	    _this.handleStaticBackdropAnimation = _this.handleStaticBackdropAnimation.bind(_assertThisInitialized(_this));
-	    _this.handleTab = _this.handleTab.bind(_assertThisInitialized(_this));
-	    _this.onOpened = _this.onOpened.bind(_assertThisInitialized(_this));
-	    _this.onClosed = _this.onClosed.bind(_assertThisInitialized(_this));
-	    _this.manageFocusAfterClose = _this.manageFocusAfterClose.bind(_assertThisInitialized(_this));
-	    _this.clearBackdropAnimationTimeout = _this.clearBackdropAnimationTimeout.bind(_assertThisInitialized(_this));
-	    _this.state = {
-	      isOpen: false,
-	      showStaticBackdropAnimation: false
-	    };
-	    return _this;
-	  }
-
-	  var _proto = Modal.prototype;
-
-	  _proto.componentDidMount = function componentDidMount() {
-	    var _this$props = this.props,
-	        isOpen = _this$props.isOpen,
-	        autoFocus = _this$props.autoFocus,
-	        onEnter = _this$props.onEnter;
-
-	    if (isOpen) {
-	      this.init();
-	      this.setState({
-	        isOpen: true
-	      });
-
-	      if (autoFocus) {
-	        this.setFocus();
-	      }
-	    }
-
-	    if (onEnter) {
-	      onEnter();
-	    }
-
-	    this._isMounted = true;
-	  };
-
-	  _proto.componentDidUpdate = function componentDidUpdate(prevProps, prevState) {
-	    if (this.props.isOpen && !prevProps.isOpen) {
-	      this.init();
-	      this.setState({
-	        isOpen: true
-	      }); // let render() renders Modal Dialog first
-
-	      return;
-	    } // now Modal Dialog is rendered and we can refer this._element and this._dialog
-
-
-	    if (this.props.autoFocus && this.state.isOpen && !prevState.isOpen) {
-	      this.setFocus();
-	    }
-
-	    if (this._element && prevProps.zIndex !== this.props.zIndex) {
-	      this._element.style.zIndex = this.props.zIndex;
-	    }
-	  };
-
-	  _proto.componentWillUnmount = function componentWillUnmount() {
-	    this.clearBackdropAnimationTimeout();
-
-	    if (this.props.onExit) {
-	      this.props.onExit();
-	    }
-
-	    if (this._element) {
-	      this.destroy();
-
-	      if (this.props.isOpen || this.state.isOpen) {
-	        this.close();
-	      }
-	    }
-
-	    this._isMounted = false;
-	  };
-
-	  _proto.onOpened = function onOpened(node, isAppearing) {
-	    this.props.onOpened();
-	    (this.props.modalTransition.onEntered || noop)(node, isAppearing);
-	  };
-
-	  _proto.onClosed = function onClosed(node) {
-	    var unmountOnClose = this.props.unmountOnClose; // so all methods get called before it is unmounted
-
-	    this.props.onClosed();
-	    (this.props.modalTransition.onExited || noop)(node);
-
-	    if (unmountOnClose) {
-	      this.destroy();
-	    }
-
-	    this.close();
-
-	    if (this._isMounted) {
-	      this.setState({
-	        isOpen: false
-	      });
-	    }
-	  };
-
-	  _proto.setFocus = function setFocus() {
-	    if (this._dialog && this._dialog.parentNode && typeof this._dialog.parentNode.focus === 'function') {
-	      this._dialog.parentNode.focus();
-	    }
-	  };
-
-	  _proto.getFocusableChildren = function getFocusableChildren() {
-	    return this._element.querySelectorAll(focusableElements.join(', '));
-	  };
-
-	  _proto.getFocusedChild = function getFocusedChild() {
-	    var currentFocus;
-	    var focusableChildren = this.getFocusableChildren();
-
-	    try {
-	      currentFocus = document.activeElement;
-	    } catch (err) {
-	      currentFocus = focusableChildren[0];
-	    }
-
-	    return currentFocus;
-	  } // not mouseUp because scrollbar fires it, shouldn't close when user scrolls
-	  ;
-
-	  _proto.handleBackdropClick = function handleBackdropClick(e) {
-	    if (e.target === this._mouseDownElement) {
-	      e.stopPropagation();
-	      var backdrop = this._dialog ? this._dialog.parentNode : null;
-
-	      if (backdrop && e.target === backdrop && this.props.backdrop === 'static') {
-	        this.handleStaticBackdropAnimation();
-	      }
-
-	      if (!this.props.isOpen || this.props.backdrop !== true) return;
-
-	      if (backdrop && e.target === backdrop && this.props.toggle) {
-	        this.props.toggle(e);
-	      }
-	    }
-	  };
-
-	  _proto.handleTab = function handleTab(e) {
-	    if (e.which !== 9) return;
-	    var focusableChildren = this.getFocusableChildren();
-	    var totalFocusable = focusableChildren.length;
-	    if (totalFocusable === 0) return;
-	    var currentFocus = this.getFocusedChild();
-	    var focusedIndex = 0;
-
-	    for (var i = 0; i < totalFocusable; i += 1) {
-	      if (focusableChildren[i] === currentFocus) {
-	        focusedIndex = i;
-	        break;
-	      }
-	    }
-
-	    if (e.shiftKey && focusedIndex === 0) {
-	      e.preventDefault();
-	      focusableChildren[totalFocusable - 1].focus();
-	    } else if (!e.shiftKey && focusedIndex === totalFocusable - 1) {
-	      e.preventDefault();
-	      focusableChildren[0].focus();
-	    }
-	  };
-
-	  _proto.handleBackdropMouseDown = function handleBackdropMouseDown(e) {
-	    this._mouseDownElement = e.target;
-	  };
-
-	  _proto.handleEscape = function handleEscape(e) {
-	    if (this.props.isOpen && e.keyCode === keyCodes.esc && this.props.toggle) {
-	      if (this.props.keyboard) {
-	        e.preventDefault();
-	        e.stopPropagation();
-	        this.props.toggle(e);
-	      } else if (this.props.backdrop === 'static') {
-	        e.preventDefault();
-	        e.stopPropagation();
-	        this.handleStaticBackdropAnimation();
-	      }
-	    }
-	  };
-
-	  _proto.handleStaticBackdropAnimation = function handleStaticBackdropAnimation() {
-	    var _this2 = this;
-
-	    this.clearBackdropAnimationTimeout();
-	    this.setState({
-	      showStaticBackdropAnimation: true
-	    });
-	    this._backdropAnimationTimeout = setTimeout(function () {
-	      _this2.setState({
-	        showStaticBackdropAnimation: false
-	      });
-	    }, 100);
-	  };
-
-	  _proto.init = function init() {
-	    try {
-	      this._triggeringElement = document.activeElement;
-	    } catch (err) {
-	      this._triggeringElement = null;
-	    }
-
-	    if (!this._element) {
-	      this._element = document.createElement('div');
-
-	      this._element.setAttribute('tabindex', '-1');
-
-	      this._element.style.position = 'relative';
-	      this._element.style.zIndex = this.props.zIndex;
-	      this._mountContainer = getTarget(this.props.container);
-
-	      this._mountContainer.appendChild(this._element);
-	    }
-
-	    this._originalBodyPadding = getOriginalBodyPadding();
-	    conditionallyUpdateScrollbar();
-
-	    if (Modal.openCount === 0) {
-	      document.body.className = classNames(document.body.className, mapToCssModules('modal-open', this.props.cssModule));
-	    }
-
-	    Modal.openCount += 1;
-	  };
-
-	  _proto.destroy = function destroy() {
-	    if (this._element) {
-	      this._mountContainer.removeChild(this._element);
-
-	      this._element = null;
-	    }
-
-	    this.manageFocusAfterClose();
-	  };
-
-	  _proto.manageFocusAfterClose = function manageFocusAfterClose() {
-	    if (this._triggeringElement) {
-	      var returnFocusAfterClose = this.props.returnFocusAfterClose;
-	      if (this._triggeringElement.focus && returnFocusAfterClose) this._triggeringElement.focus();
-	      this._triggeringElement = null;
-	    }
-	  };
-
-	  _proto.close = function close() {
-	    if (Modal.openCount <= 1) {
-	      var modalOpenClassName = mapToCssModules('modal-open', this.props.cssModule); // Use regex to prevent matching `modal-open` as part of a different class, e.g. `my-modal-opened`
-
-	      var modalOpenClassNameRegex = new RegExp("(^| )" + modalOpenClassName + "( |$)");
-	      document.body.className = document.body.className.replace(modalOpenClassNameRegex, ' ').trim();
-	    }
-
-	    this.manageFocusAfterClose();
-	    Modal.openCount = Math.max(0, Modal.openCount - 1);
-	    setScrollbarWidth(this._originalBodyPadding);
-	  };
-
-	  _proto.renderModalDialog = function renderModalDialog() {
-	    var _classNames,
-	        _this3 = this;
-
-	    var attributes = omit(this.props, propsToOmit);
-	    var dialogBaseClass = 'modal-dialog';
-	    return React.createElement("div", _extends({}, attributes, {
-	      className: mapToCssModules(classNames(dialogBaseClass, this.props.className, (_classNames = {}, _classNames["modal-" + this.props.size] = this.props.size, _classNames[dialogBaseClass + "-centered"] = this.props.centered, _classNames[dialogBaseClass + "-scrollable"] = this.props.scrollable, _classNames)), this.props.cssModule),
-	      role: "document",
-	      ref: function ref(c) {
-	        _this3._dialog = c;
-	      }
-	    }), React.createElement("div", {
-	      className: mapToCssModules(classNames('modal-content', this.props.contentClassName), this.props.cssModule)
-	    }, this.props.children));
-	  };
-
-	  _proto.render = function render() {
-	    var unmountOnClose = this.props.unmountOnClose;
-
-	    if (!!this._element && (this.state.isOpen || !unmountOnClose)) {
-	      var isModalHidden = !!this._element && !this.state.isOpen && !unmountOnClose;
-	      this._element.style.display = isModalHidden ? 'none' : 'block';
-	      var _this$props2 = this.props,
-	          wrapClassName = _this$props2.wrapClassName,
-	          modalClassName = _this$props2.modalClassName,
-	          backdropClassName = _this$props2.backdropClassName,
-	          cssModule = _this$props2.cssModule,
-	          isOpen = _this$props2.isOpen,
-	          backdrop = _this$props2.backdrop,
-	          role = _this$props2.role,
-	          labelledBy = _this$props2.labelledBy,
-	          external = _this$props2.external,
-	          innerRef = _this$props2.innerRef;
-	      var modalAttributes = {
-	        onClick: this.handleBackdropClick,
-	        onMouseDown: this.handleBackdropMouseDown,
-	        onKeyUp: this.handleEscape,
-	        onKeyDown: this.handleTab,
-	        style: {
-	          display: 'block'
-	        },
-	        'aria-labelledby': labelledBy,
-	        role: role,
-	        tabIndex: '-1'
-	      };
-	      var hasTransition = this.props.fade;
-
-	      var modalTransition = _objectSpread({}, Fade.defaultProps, {}, this.props.modalTransition, {
-	        baseClass: hasTransition ? this.props.modalTransition.baseClass : '',
-	        timeout: hasTransition ? this.props.modalTransition.timeout : 0
-	      });
-
-	      var backdropTransition = _objectSpread({}, Fade.defaultProps, {}, this.props.backdropTransition, {
-	        baseClass: hasTransition ? this.props.backdropTransition.baseClass : '',
-	        timeout: hasTransition ? this.props.backdropTransition.timeout : 0
-	      });
-
-	      var Backdrop = backdrop && (hasTransition ? React.createElement(Fade, _extends({}, backdropTransition, {
-	        in: isOpen && !!backdrop,
-	        cssModule: cssModule,
-	        className: mapToCssModules(classNames('modal-backdrop', backdropClassName), cssModule)
-	      })) : React.createElement("div", {
-	        className: mapToCssModules(classNames('modal-backdrop', 'show', backdropClassName), cssModule)
-	      }));
-	      return React.createElement(Portal$1, {
-	        node: this._element
-	      }, React.createElement("div", {
-	        className: mapToCssModules(wrapClassName)
-	      }, React.createElement(Fade, _extends({}, modalAttributes, modalTransition, {
-	        in: isOpen,
-	        onEntered: this.onOpened,
-	        onExited: this.onClosed,
-	        cssModule: cssModule,
-	        className: mapToCssModules(classNames('modal', modalClassName, this.state.showStaticBackdropAnimation && 'modal-static'), cssModule),
-	        innerRef: innerRef
-	      }), external, this.renderModalDialog()), Backdrop));
-	    }
-
-	    return null;
-	  };
-
-	  _proto.clearBackdropAnimationTimeout = function clearBackdropAnimationTimeout() {
-	    if (this._backdropAnimationTimeout) {
-	      clearTimeout(this._backdropAnimationTimeout);
-	      this._backdropAnimationTimeout = undefined;
-	    }
-	  };
-
-	  return Modal;
-	}(React.Component);
-
-	Modal.propTypes = propTypes$8;
-	Modal.defaultProps = defaultProps$8;
-	Modal.openCount = 0;
-	var Modal$1 = Modal;
-
-	var propTypes$7 = {
-	  tag: tagPropType,
-	  wrapTag: tagPropType,
-	  toggle: propTypes$b.exports.func,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object,
-	  children: propTypes$b.exports.node,
-	  closeAriaLabel: propTypes$b.exports.string,
-	  charCode: propTypes$b.exports.oneOfType([propTypes$b.exports.string, propTypes$b.exports.number]),
-	  close: propTypes$b.exports.object
-	};
-	var defaultProps$7 = {
-	  tag: 'h5',
-	  wrapTag: 'div',
-	  closeAriaLabel: 'Close',
-	  charCode: 215
-	};
-
-	var ModalHeader = function ModalHeader(props) {
-	  var closeButton;
-
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      children = props.children,
-	      toggle = props.toggle,
-	      Tag = props.tag,
-	      WrapTag = props.wrapTag,
-	      closeAriaLabel = props.closeAriaLabel,
-	      charCode = props.charCode,
-	      close = props.close,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "children", "toggle", "tag", "wrapTag", "closeAriaLabel", "charCode", "close"]);
-
-	  var classes = mapToCssModules(classNames(className, 'modal-header'), cssModule);
-
-	  if (!close && toggle) {
-	    var closeIcon = typeof charCode === 'number' ? String.fromCharCode(charCode) : charCode;
-	    closeButton = React.createElement("button", {
-	      type: "button",
-	      onClick: toggle,
-	      className: mapToCssModules('close', cssModule),
-	      "aria-label": closeAriaLabel
-	    }, React.createElement("span", {
-	      "aria-hidden": "true"
-	    }, closeIcon));
-	  }
-
-	  return React.createElement(WrapTag, _extends({}, attributes, {
-	    className: classes
-	  }), React.createElement(Tag, {
-	    className: mapToCssModules('modal-title', cssModule)
-	  }, children), close || closeButton);
-	};
-
-	ModalHeader.propTypes = propTypes$7;
-	ModalHeader.defaultProps = defaultProps$7;
-	var ModalHeader$1 = ModalHeader;
-
-	var propTypes$6 = {
-	  tag: tagPropType,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$6 = {
-	  tag: 'div'
-	};
-
-	var ModalBody = function ModalBody(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      Tag = props.tag,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
-
-	  var classes = mapToCssModules(classNames(className, 'modal-body'), cssModule);
-	  return React.createElement(Tag, _extends({}, attributes, {
-	    className: classes
-	  }));
-	};
-
-	ModalBody.propTypes = propTypes$6;
-	ModalBody.defaultProps = defaultProps$6;
-	var ModalBody$1 = ModalBody;
-
-	var propTypes$5 = {
-	  tag: tagPropType,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$5 = {
-	  tag: 'div'
-	};
-
-	var ModalFooter = function ModalFooter(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      Tag = props.tag,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
-
-	  var classes = mapToCssModules(classNames(className, 'modal-footer'), cssModule);
-	  return React.createElement(Tag, _extends({}, attributes, {
-	    className: classes
-	  }));
-	};
-
-	ModalFooter.propTypes = propTypes$5;
-	ModalFooter.defaultProps = defaultProps$5;
-	var ModalFooter$1 = ModalFooter;
-
-	var propTypes$4 = {
-	  children: propTypes$b.exports.node,
-	  row: propTypes$b.exports.bool,
-	  check: propTypes$b.exports.bool,
-	  inline: propTypes$b.exports.bool,
-	  disabled: propTypes$b.exports.bool,
-	  tag: tagPropType,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$4 = {
-	  tag: 'div'
-	};
-
-	var FormGroup = function FormGroup(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      row = props.row,
-	      disabled = props.disabled,
-	      check = props.check,
-	      inline = props.inline,
-	      Tag = props.tag,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "row", "disabled", "check", "inline", "tag"]);
-
-	  var classes = mapToCssModules(classNames(className, row ? 'row' : false, check ? 'form-check' : 'form-group', check && inline ? 'form-check-inline' : false, check && disabled ? 'disabled' : false), cssModule);
-
-	  if (Tag === 'fieldset') {
-	    attributes.disabled = disabled;
-	  }
-
-	  return React.createElement(Tag, _extends({}, attributes, {
-	    className: classes
-	  }));
-	};
-
-	FormGroup.propTypes = propTypes$4;
-	FormGroup.defaultProps = defaultProps$4;
-	var FormGroup$1 = FormGroup;
-
-	var propTypes$3 = {
-	  children: propTypes$b.exports.node,
-	  type: propTypes$b.exports.string,
-	  size: propTypes$b.exports.string,
-	  bsSize: propTypes$b.exports.string,
-	  valid: propTypes$b.exports.bool,
-	  invalid: propTypes$b.exports.bool,
-	  tag: tagPropType,
-	  innerRef: propTypes$b.exports.oneOfType([propTypes$b.exports.object, propTypes$b.exports.func, propTypes$b.exports.string]),
-	  plaintext: propTypes$b.exports.bool,
-	  addon: propTypes$b.exports.bool,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$3 = {
-	  type: 'text'
-	};
-
-	var Input =
-	/*#__PURE__*/
-	function (_React$Component) {
-	  _inheritsLoose$1(Input, _React$Component);
-
-	  function Input(props) {
-	    var _this;
-
-	    _this = _React$Component.call(this, props) || this;
-	    _this.getRef = _this.getRef.bind(_assertThisInitialized(_this));
-	    _this.focus = _this.focus.bind(_assertThisInitialized(_this));
-	    return _this;
-	  }
-
-	  var _proto = Input.prototype;
-
-	  _proto.getRef = function getRef(ref) {
-	    if (this.props.innerRef) {
-	      this.props.innerRef(ref);
-	    }
-
-	    this.ref = ref;
-	  };
-
-	  _proto.focus = function focus() {
-	    if (this.ref) {
-	      this.ref.focus();
-	    }
-	  };
-
-	  _proto.render = function render() {
-	    var _this$props = this.props,
-	        className = _this$props.className,
-	        cssModule = _this$props.cssModule,
-	        type = _this$props.type,
-	        bsSize = _this$props.bsSize,
-	        valid = _this$props.valid,
-	        invalid = _this$props.invalid,
-	        tag = _this$props.tag,
-	        addon = _this$props.addon,
-	        plaintext = _this$props.plaintext,
-	        innerRef = _this$props.innerRef,
-	        attributes = _objectWithoutPropertiesLoose$1(_this$props, ["className", "cssModule", "type", "bsSize", "valid", "invalid", "tag", "addon", "plaintext", "innerRef"]);
-
-	    var checkInput = ['radio', 'checkbox'].indexOf(type) > -1;
-	    var isNotaNumber = new RegExp('\\D', 'g');
-	    var fileInput = type === 'file';
-	    var textareaInput = type === 'textarea';
-	    var selectInput = type === 'select';
-	    var rangeInput = type === 'range';
-	    var Tag = tag || (selectInput || textareaInput ? type : 'input');
-	    var formControlClass = 'form-control';
-
-	    if (plaintext) {
-	      formControlClass = formControlClass + "-plaintext";
-	      Tag = tag || 'input';
-	    } else if (fileInput) {
-	      formControlClass = formControlClass + "-file";
-	    } else if (rangeInput) {
-	      formControlClass = formControlClass + "-range";
-	    } else if (checkInput) {
-	      if (addon) {
-	        formControlClass = null;
-	      } else {
-	        formControlClass = 'form-check-input';
-	      }
-	    }
-
-	    if (attributes.size && isNotaNumber.test(attributes.size)) {
-	      warnOnce('Please use the prop "bsSize" instead of the "size" to bootstrap\'s input sizing.');
-	      bsSize = attributes.size;
-	      delete attributes.size;
-	    }
-
-	    var classes = mapToCssModules(classNames(className, invalid && 'is-invalid', valid && 'is-valid', bsSize ? "form-control-" + bsSize : false, formControlClass), cssModule);
-
-	    if (Tag === 'input' || tag && typeof tag === 'function') {
-	      attributes.type = type;
-	    }
-
-	    if (attributes.children && !(plaintext || type === 'select' || typeof Tag !== 'string' || Tag === 'select')) {
-	      warnOnce("Input with a type of \"" + type + "\" cannot have children. Please use \"value\"/\"defaultValue\" instead.");
-	      delete attributes.children;
-	    }
-
-	    return React.createElement(Tag, _extends({}, attributes, {
-	      ref: innerRef,
-	      className: classes,
-	      "aria-invalid": invalid
-	    }));
-	  };
-
-	  return Input;
-	}(React.Component);
-
-	Input.propTypes = propTypes$3;
-	Input.defaultProps = defaultProps$3;
-	var Input$1 = Input;
-
-	var propTypes$2 = {
-	  tag: tagPropType,
-	  size: propTypes$b.exports.string,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$2 = {
-	  tag: 'div'
-	};
-
-	var InputGroup = function InputGroup(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      Tag = props.tag,
-	      size = props.size,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag", "size"]);
-
-	  var classes = mapToCssModules(classNames(className, 'input-group', size ? "input-group-" + size : null), cssModule);
-	  return React.createElement(Tag, _extends({}, attributes, {
-	    className: classes
-	  }));
-	};
-
-	InputGroup.propTypes = propTypes$2;
-	InputGroup.defaultProps = defaultProps$2;
-	var InputGroup$1 = InputGroup;
-
-	var propTypes$1 = {
-	  tag: tagPropType,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object
-	};
-	var defaultProps$1 = {
-	  tag: 'span'
-	};
-
-	var InputGroupText = function InputGroupText(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      Tag = props.tag,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
-
-	  var classes = mapToCssModules(classNames(className, 'input-group-text'), cssModule);
-	  return React.createElement(Tag, _extends({}, attributes, {
-	    className: classes
-	  }));
-	};
-
-	InputGroupText.propTypes = propTypes$1;
-	InputGroupText.defaultProps = defaultProps$1;
-	var InputGroupText$1 = InputGroupText;
-
-	var colWidths = ['xs', 'sm', 'md', 'lg', 'xl'];
-	var stringOrNumberProp = propTypes$b.exports.oneOfType([propTypes$b.exports.number, propTypes$b.exports.string]);
-	var columnProps = propTypes$b.exports.oneOfType([propTypes$b.exports.bool, propTypes$b.exports.string, propTypes$b.exports.number, propTypes$b.exports.shape({
-	  size: stringOrNumberProp,
-	  order: stringOrNumberProp,
-	  offset: stringOrNumberProp
-	})]);
-	var propTypes = {
-	  children: propTypes$b.exports.node,
-	  hidden: propTypes$b.exports.bool,
-	  check: propTypes$b.exports.bool,
-	  size: propTypes$b.exports.string,
-	  for: propTypes$b.exports.string,
-	  tag: tagPropType,
-	  className: propTypes$b.exports.string,
-	  cssModule: propTypes$b.exports.object,
-	  xs: columnProps,
-	  sm: columnProps,
-	  md: columnProps,
-	  lg: columnProps,
-	  xl: columnProps,
-	  widths: propTypes$b.exports.array
-	};
-	var defaultProps = {
-	  tag: 'label',
-	  widths: colWidths
-	};
-
-	var getColumnSizeClass = function getColumnSizeClass(isXs, colWidth, colSize) {
-	  if (colSize === true || colSize === '') {
-	    return isXs ? 'col' : "col-" + colWidth;
-	  } else if (colSize === 'auto') {
-	    return isXs ? 'col-auto' : "col-" + colWidth + "-auto";
-	  }
-
-	  return isXs ? "col-" + colSize : "col-" + colWidth + "-" + colSize;
-	};
-
-	var Label = function Label(props) {
-	  var className = props.className,
-	      cssModule = props.cssModule,
-	      hidden = props.hidden,
-	      widths = props.widths,
-	      Tag = props.tag,
-	      check = props.check,
-	      size = props.size,
-	      htmlFor = props.for,
-	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "hidden", "widths", "tag", "check", "size", "for"]);
-
-	  var colClasses = [];
-	  widths.forEach(function (colWidth, i) {
-	    var columnProp = props[colWidth];
-	    delete attributes[colWidth];
-
-	    if (!columnProp && columnProp !== '') {
-	      return;
-	    }
-
-	    var isXs = !i;
-	    var colClass;
-
-	    if (isObject(columnProp)) {
-	      var _classNames;
-
-	      var colSizeInterfix = isXs ? '-' : "-" + colWidth + "-";
-	      colClass = getColumnSizeClass(isXs, colWidth, columnProp.size);
-	      colClasses.push(mapToCssModules(classNames((_classNames = {}, _classNames[colClass] = columnProp.size || columnProp.size === '', _classNames["order" + colSizeInterfix + columnProp.order] = columnProp.order || columnProp.order === 0, _classNames["offset" + colSizeInterfix + columnProp.offset] = columnProp.offset || columnProp.offset === 0, _classNames))), cssModule);
-	    } else {
-	      colClass = getColumnSizeClass(isXs, colWidth, columnProp);
-	      colClasses.push(colClass);
-	    }
-	  });
-	  var classes = mapToCssModules(classNames(className, hidden ? 'sr-only' : false, check ? 'form-check-label' : false, size ? "col-form-label-" + size : false, colClasses, colClasses.length ? 'col-form-label' : false), cssModule);
-	  return React.createElement(Tag, _extends({
-	    htmlFor: htmlFor
-	  }, attributes, {
-	    className: classes
-	  }));
-	};
-
-	Label.propTypes = propTypes;
-	Label.defaultProps = defaultProps;
-	var Label$1 = Label;
-
-	var AxustableFilterModal = _ref => {
-	  var {
-	    title,
-	    show,
-	    filterData,
-	    onClose,
-	    onSubmit
-	  } = _ref;
-	  var [values, setValues] = react.exports.useState(filterData);
-	  var [searchText, setSearchText] = react.exports.useState('');
-	  react.exports.useEffect(() => {
-	    setSearchText('');
-	  }, [show]);
-	  react.exports.useEffect(() => {
-	    setValues(filterData);
-	  }, [filterData]);
-	  var toggleValue = idx => {
-	    var nValues = [...values];
-	    nValues[idx][1] = !nValues[idx][1];
-	    setValues(nValues);
-	  };
-	  var toggleAll = to => {
-	    var nValues = [...values];
-	    nValues.map(v => v[1] = to);
-	    setValues(nValues);
-	  };
-	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Modal$1, {
-	    isOpen: show,
-	    toggle: e => onClose(e),
-	    backdrop: true,
-	    modalTransition: {
-	      timeout: 20
-	    },
-	    backdropTransition: {
-	      timeout: 10
-	    },
-	    className: "axustable-filter-modal"
-	  }, /*#__PURE__*/React.createElement(ModalHeader$1, {
-	    toggle: e => onClose(e)
-	  }, /*#__PURE__*/React.createElement("div", null, title), /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-filter-search"
-	  }, /*#__PURE__*/React.createElement(InputGroup$1, null, /*#__PURE__*/React.createElement(Input$1, {
-	    type: "text",
-	    value: searchText,
-	    onChange: ev => setSearchText(ev.target.value)
-	  }), /*#__PURE__*/React.createElement(InputGroupText$1, null, "☌")))), /*#__PURE__*/React.createElement(ModalBody$1, null, /*#__PURE__*/React.createElement("div", {
-	    className: "axustable-filter-list"
-	  }, values.map((v, i) => {
-	    if (searchText && v[0] ? v[0].toLowerCase().indexOf(searchText.toLowerCase()) >= 0 : true) {
-	      return /*#__PURE__*/React.createElement("div", {
-	        key: "axustable-filter-val-".concat(i),
-	        className: "axustable-filter-val ".concat(v[1] ? 'active' : 'inactive')
-	        /*onClick  = {() => toggleValue(i)}*/
-	      }, /*#__PURE__*/React.createElement(FormGroup$1, {
-	        size: "sm",
-	        check: true
-	      }, /*#__PURE__*/React.createElement(Input$1, {
-	        type: "checkbox",
-	        id: "axustable-filter-val-".concat(i, "-check"),
-	        checked: v[1],
-	        onChange: () => {},
-	        onClick: () => toggleValue(i)
-	      }), /*#__PURE__*/React.createElement(Label$1, null, v[0] != undefined ? v[0].toString() : '')));
-	    }
-	  }))), /*#__PURE__*/React.createElement(ModalFooter$1, null, /*#__PURE__*/React.createElement(FormGroup$1, {
-	    check: true
-	  }, /*#__PURE__*/React.createElement(Input$1, {
-	    type: "checkbox",
-	    id: "axustable-filter-sall-check",
-	    defaultChecked: true,
-	    onClick: ev => toggleAll(ev.target.checked)
-	  }), /*#__PURE__*/React.createElement(Label$1, null, /*#__PURE__*/React.createElement("i", null, "Seleccionar todos"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
-	    onClick: () => onClose()
-	  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
-	    onClick: () => onSubmit(values)
-	  }, "Filtrar")))));
-	};
-
-	// not complete, but probably good enough
-
-
-	function slugify(str) {
-	  return str.replace(/[ÀÁÂÃÄÅàáâãäåæÆ]/g, 'a').replace(/[çÇ]/g, 'c').replace(/[ðÐ]/g, 'd').replace(/[ÈÉÊËéèêë]/g, 'e').replace(/[ÏïÎîÍíÌì]/g, 'i').replace(/[Ññ]/g, 'n').replace(/[øØœŒÕõÔôÓóÒò]/g, 'o').replace(/[ÜüÛûÚúÙù]/g, 'u').replace(/[ŸÿÝý]/g, 'y').replace(/[^a-z0-9- ]/gi, '').replace(/ /gi, '-').toLowerCase();
-	}
-
-	function _deepGet(obj, path) {
-	  return path.split('.').reduce(function (prev, curr) {
-	    return prev ? prev[curr] : undefined;
-	  }, obj || self);
-	}
-
-	function collSort(coll, by, order) {
-	  if (by == undefined) {
-	    return coll;
-	  }
-
-	  var ft = order == 'desc' ? -1 : 1;
-	  return coll.slice().sort(function (a, b) {
-	    /*
-	    const fa = a[by].toLowerCase(), fb = b[by].toLowerCase()
-	    if (fa < fb) //sort string ascending
-	      return -1 * ft
-	    if (fa > fb)
-	      return 1 * ft
-	    return 0 //default return value (no sorting)
-	    */
-	    //return (a[by]-b[by])*ft
-	    var av, bv;
-
-	    if (typeof by == 'object') {
-	      av = _deepGet(a, by.field);
-	      bv = _deepGet(b, by.field);
-	      av = by.map[av] || '';
-	      bv = by.map[bv] || '';
-	    } else if (typeof by == 'function') {
-	      av = by(a) || '';
-	      bv = by(b) || '';
-	    } else {
-	      av = _deepGet(a, by);
-	      bv = _deepGet(b, by);
-	    }
-
-	    if (typeof av == 'string' && typeof bv == 'string') {
-	      av = av.toLowerCase();
-	      bv = bv.toLowerCase();
-	    }
-
-	    if (av < bv) //sort string ascending
-	      return -1 * ft;
-	    if (av > bv) return 1 * ft;
-	    return 0;
-	  });
-	}
-
-	try {
-	  var _process, _process$env;
-	  process = ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.BROWSER) != undefined;
-	} catch (_) {}
-	var getPersisted = (key, defValue) => {
-	  return defValue;
-	};
-	var useStoragedState = (defValue, key) => {
-	  var [value, setValue] = react.exports.useState(getPersisted(key, defValue));
-
-	  /*
-	    const setStoragedValue = useCallback((newValue) => {
-	      setPersisted(key, newValue)
-	      setValue(newValue)
-	    }, [key])
-	    return [value, setStoragedValue]
-	  
-	  */
-
-	  //
-	  // Returning and exposing setValue, we allow
-	  // to use functional setValue() too!
-	  //
-
-	  react.exports.useEffect(() => {
-	  }, [key, value]);
-
-	  /*
-	  const wrapSetValue = useCallback((nValue) => {
-	    setPersisted(key, typeof nValue =='function' ? nValue(value) : nValue)
-	    setValue(nValue)
-	  }, [key, value])*/
-
-	  return [value, setValue];
-	};
+	var reactDomExports = reactDom.exports;
+	var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(reactDomExports);
 
 	/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
 	/* vim: set ts=2: */
@@ -48715,6 +44290,4468 @@
 		}
 	};
 
+	// based on https://stackoverflow.com/a/18123682/1141611
+	// not complete, but probably good enough
+	function slugify(str) {
+	  return str
+	      .replace(/[ÀÁÂÃÄÅàáâãäåæÆ]/g, 'a')
+	      .replace(/[çÇ]/g, 'c')
+	      .replace(/[ðÐ]/g, 'd')
+	      .replace(/[ÈÉÊËéèêë]/g, 'e')
+	      .replace(/[ÏïÎîÍíÌì]/g, 'i')
+	      .replace(/[Ññ]/g, 'n')
+	      .replace(/[øØœŒÕõÔôÓóÒò]/g, 'o')
+	      .replace(/[ÜüÛûÚúÙù]/g, 'u')
+	      .replace(/[ŸÿÝý]/g, 'y')
+	      .replace(/[^a-z0-9- ]/gi, '')
+	      .replace(/ /gi, '-')
+	      .toLowerCase();
+	}
+
+	function _deepGet(obj, path) {
+	  return path.split('.').reduce(function (prev, curr) {
+	    return prev ? prev[curr] : undefined
+	  }, obj || self)
+	}
+
+
+	function collSort(coll, by, order) {
+	  if (by==undefined) {
+	    return coll
+	  }
+	  const ft = order=='desc' ? -1 : 1;
+	  return coll.slice().sort(function (a, b) {
+	    /*
+	    const fa = a[by].toLowerCase(), fb = b[by].toLowerCase()
+	    if (fa < fb) //sort string ascending
+	      return -1 * ft
+	    if (fa > fb)
+	      return 1 * ft
+	    return 0 //default return value (no sorting)
+	    */
+	   //return (a[by]-b[by])*ft
+	   let av,bv;
+
+	   if (typeof by == 'object') {
+	    
+	    av = _deepGet(a, by.field);
+	    bv = _deepGet(b, by.field);
+	    av= by.map[av] || '';
+	    bv= by.map[bv] || '';
+	   } else if (typeof by == 'function') {
+	    av = by(a) || '';
+	    bv = by(b) || '';
+	   } else {
+	    av = _deepGet(a, by);
+	    bv = _deepGet(b, by);
+	   }
+	   if (typeof av == 'string' && typeof bv == 'string') {
+	     av= av.toLowerCase();
+	     bv= bv.toLowerCase();
+	   }
+
+	    if (av < bv) //sort string ascending
+	      return -1 * ft
+	    if (av > bv)
+	      return 1 * ft
+	    return 0
+	  })  
+	}
+
+	var _isBrowser = false;
+	try {
+	  var _process, _process$env;
+	  _isBrowser = ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.BROWSER) != undefined;
+	} catch (_) {}
+	var getStorageKey = key => {
+	  if (_isBrowser) {
+	    return "".concat(encodeURIComponent(window.location.pathname), "_").concat(key || '');
+	  }
+	  return undefined;
+	};
+	var getPersisted = (key, defValue) => {
+	  if (_isBrowser) {
+	    var k = getStorageKey(key);
+	    var v = localStorage.getItem(k);
+	    try {
+	      var p = JSON.parse(v);
+	      if (p != undefined && p != null) {
+	        return p;
+	      }
+	    } catch (e) {}
+	  }
+	  return defValue;
+	};
+	var setPersisted = (key, value) => {
+	  if (_isBrowser) {
+	    var k = getStorageKey(key);
+	    localStorage.setItem(k, JSON.stringify(value));
+	  }
+	};
+	var useStoragedState = (defValue, key) => {
+	  var [value, setValue] = reactExports.useState(getPersisted(key, defValue));
+
+	  /*
+	    const setStoragedValue = useCallback((newValue) => {
+	      setPersisted(key, newValue)
+	      setValue(newValue)
+	    }, [key])
+	    return [value, setStoragedValue]
+	  
+	  */
+
+	  //
+	  // Returning and exposing setValue, we allow
+	  // to use functional setValue() too!
+	  //
+
+	  reactExports.useEffect(() => {
+	    setPersisted(key, value);
+	  }, [key, value]);
+
+	  /*
+	  const wrapSetValue = useCallback((nValue) => {
+	    setPersisted(key, typeof nValue =='function' ? nValue(value) : nValue)
+	    setValue(nValue)
+	  }, [key, value])*/
+
+	  return [value, setValue];
+	};
+
+	function ownKeys(object, enumerableOnly) {
+	  var keys = Object.keys(object);
+	  if (Object.getOwnPropertySymbols) {
+	    var symbols = Object.getOwnPropertySymbols(object);
+	    enumerableOnly && (symbols = symbols.filter(function (sym) {
+	      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+	    })), keys.push.apply(keys, symbols);
+	  }
+	  return keys;
+	}
+	function _objectSpread2(target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = null != arguments[i] ? arguments[i] : {};
+	    i % 2 ? ownKeys(Object(source), !0).forEach(function (key) {
+	      _defineProperty$1(target, key, source[key]);
+	    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) {
+	      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+	    });
+	  }
+	  return target;
+	}
+	function _defineProperty$1(obj, key, value) {
+	  key = _toPropertyKey$1(key);
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+	  return obj;
+	}
+	function _extends$1() {
+	  _extends$1 = Object.assign ? Object.assign.bind() : function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	      var source = arguments[i];
+	      for (var key in source) {
+	        if (Object.prototype.hasOwnProperty.call(source, key)) {
+	          target[key] = source[key];
+	        }
+	      }
+	    }
+	    return target;
+	  };
+	  return _extends$1.apply(this, arguments);
+	}
+	function _toPrimitive$1(input, hint) {
+	  if (typeof input !== "object" || input === null) return input;
+	  var prim = input[Symbol.toPrimitive];
+	  if (prim !== undefined) {
+	    var res = prim.call(input, hint || "default");
+	    if (typeof res !== "object") return res;
+	    throw new TypeError("@@toPrimitive must return a primitive value.");
+	  }
+	  return (hint === "string" ? String : Number)(input);
+	}
+	function _toPropertyKey$1(arg) {
+	  var key = _toPrimitive$1(arg, "string");
+	  return typeof key === "symbol" ? key : String(key);
+	}
+
+	var ButtonBase = _ref => {
+	  var {
+	    color = 'black',
+	    enabled,
+	    onClick,
+	    children
+	  } = _ref;
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-action-button ".concat(enabled === false ? 'disabled' : ''),
+	    style: {
+	      color,
+	      cursor: "pointer"
+	    },
+	    onClick: onClick
+	  }, children);
+	};
+
+	/**
+	 * https://tabler-icons.io/
+	 */
+
+	var ButtonSVGBase = props => /*#__PURE__*/React.createElement(ButtonBase, props, /*#__PURE__*/React.createElement("svg", {
+	  xmlns: "http://www.w3.org/2000/svg",
+	  className: "icon icon-tabler icon-tabler-".concat(props.className),
+	  width: props.width || "24",
+	  height: props.width || "24",
+	  viewBox: "0 0 24 24",
+	  strokeWidth: "2",
+	  stroke: "currentColor",
+	  fill: "none",
+	  strokeLinecap: "round",
+	  strokeLinejoin: "round"
+	}, props.children));
+
+	var Download = props => /*#__PURE__*/React.createElement(ButtonSVGBase, _extends$1({}, props, {
+	  className: "filter-off"
+	}), /*#__PURE__*/React.createElement("path", {
+	  stroke: "none",
+	  d: "M0 0h24v24H0z",
+	  fill: "none"
+	}), /*#__PURE__*/React.createElement("path", {
+	  d: "M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"
+	}), /*#__PURE__*/React.createElement("polyline", {
+	  points: "7 11 12 16 17 11"
+	}), /*#__PURE__*/React.createElement("line", {
+	  x1: "12",
+	  y1: "4",
+	  x2: "12",
+	  y2: "16"
+	}));
+
+	var Search = props => /*#__PURE__*/React.createElement(ButtonSVGBase, _extends$1({}, props, {
+	  className: "search"
+	}), /*#__PURE__*/React.createElement("path", {
+	  stroke: "none",
+	  d: "M0 0h24v24H0z",
+	  fill: "none"
+	}), /*#__PURE__*/React.createElement("circle", {
+	  cx: "10",
+	  cy: "10",
+	  r: "7"
+	}), /*#__PURE__*/React.createElement("line", {
+	  x1: "21",
+	  y1: "21",
+	  x2: "15",
+	  y2: "15"
+	}));
+
+	var FilterOn = props => /*#__PURE__*/React.createElement(ButtonSVGBase, _extends$1({}, props, {
+	  className: "filter-on"
+	}), /*#__PURE__*/React.createElement("path", {
+	  stroke: "none",
+	  d: "M0 0h24v24H0z",
+	  fill: "none"
+	}), /*#__PURE__*/React.createElement("path", {
+	  d: "M5.5 5h13a1 1 0 0 1 .5 1.5l-5 5.5l0 7l-4 -3l0 -4l-5 -5.5a1 1 0 0 1 .5 -1.5"
+	}));
+
+	var FilterRemove = props => /*#__PURE__*/React.createElement(ButtonSVGBase, _extends$1({}, props, {
+	  className: "eraser"
+	}), /*#__PURE__*/React.createElement("path", {
+	  stroke: "none",
+	  d: "M0 0h24v24H0z",
+	  fill: "none"
+	}), /*#__PURE__*/React.createElement("path", {
+	  d: "M19 20h-10.5l-4.21 -4.3a1 1 0 0 1 0 -1.41l10 -10a1 1 0 0 1 1.41 0l5 5a1 1 0 0 1 0 1.41l-9.2 9.3"
+	}), /*#__PURE__*/React.createElement("path", {
+	  d: "M18 13.3l-6.3 -6.3"
+	}));
+
+	var AXUSTABLE_PAGE_ROWS_OPTIONS = [5, 10, 12, 15, 25, 50];
+
+	// ⅄
+	// ☷
+
+	var AxustableActions = _ref => {
+	  var {
+	    pageCurrent,
+	    pageCount,
+	    pageRows,
+	    dataLength,
+	    onChangePage,
+	    onChangePageRows,
+	    filterable,
+	    searchable,
+	    paginable,
+	    hasSomeFilter,
+	    onClearFilter,
+	    exportable,
+	    onExportFile,
+	    search,
+	    onChangeSearch
+	  } = _ref;
+	  var [showSearch, setShowSearch] = reactExports.useState(false);
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-actions"
+	  }, /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-actions-left"
+	  }, exportable ? /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-export"
+	  }, /*#__PURE__*/React.createElement("a", {
+	    onClick: () => onExportFile()
+	  }, /*#__PURE__*/React.createElement(Download, null))) : null, filterable ? /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-clear-filter ".concat(hasSomeFilter ? 'active' : '')
+	  }, /*#__PURE__*/React.createElement("a", {
+	    onClick: () => onClearFilter()
+	  }, hasSomeFilter ? /*#__PURE__*/React.createElement(FilterRemove, null) : /*#__PURE__*/React.createElement(FilterOn, {
+	    enabled: false
+	  }))) : null, searchable ? /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-search"
+	  }, /*#__PURE__*/React.createElement("a", {
+	    onClick: () => setShowSearch(!showSearch)
+	  }, /*#__PURE__*/React.createElement(Search, null))) : null, showSearch === true ? /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-search-input"
+	  }, /*#__PURE__*/React.createElement("input", {
+	    type: "search",
+	    value: search,
+	    onChange: ev => onChangeSearch(ev.target.value),
+	    placeholder: "Busca..."
+	  })) : null), /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-actions-right"
+	  }, paginable ? /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-pagination"
+	  }, /*#__PURE__*/React.createElement("div", {
+	    className: "arrow ".concat(pageCurrent > 1 ? 'active' : 'disabled'),
+	    disabled: pageCurrent == 1,
+	    onClick: () => onChangePage(pageCurrent - 1)
+	  }, "⇐"), pageCurrent - 3 <= 0 ? /*#__PURE__*/React.createElement("div", {
+	    className: "ellipsis"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "ellipsis"
+	  }, "..."), pageCurrent - 2 <= 0 ? /*#__PURE__*/React.createElement("div", {
+	    className: "page-num"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "page-num",
+	    onClick: () => onChangePage(pageCurrent - 2)
+	  }, pageCurrent - 2), pageCurrent - 1 <= 0 ? /*#__PURE__*/React.createElement("div", {
+	    className: "page-num"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "page-num",
+	    onClick: () => onChangePage(pageCurrent - 1)
+	  }, pageCurrent - 1), /*#__PURE__*/React.createElement("div", {
+	    className: "page-num active"
+	  }, pageCurrent), pageCurrent + 1 > pageCount ? /*#__PURE__*/React.createElement("div", {
+	    className: "page-num"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "page-num",
+	    onClick: () => onChangePage(pageCurrent + 1)
+	  }, pageCurrent + 1), pageCurrent + 2 > pageCount ? /*#__PURE__*/React.createElement("div", {
+	    className: "page-num"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "page-num",
+	    onClick: () => onChangePage(pageCurrent + 2)
+	  }, pageCurrent + 2), pageCurrent + 3 > pageCount ? /*#__PURE__*/React.createElement("div", {
+	    className: "ellipsis"
+	  }, "\xA0") : /*#__PURE__*/React.createElement("div", {
+	    className: "ellipsis"
+	  }, "..."), /*#__PURE__*/React.createElement("div", {
+	    className: "arrow ".concat(pageCurrent < pageCount ? 'active' : 'disabled'),
+	    disabled: pageCurrent >= pageCount,
+	    onClick: () => onChangePage(pageCurrent + 1)
+	  }, "⇒"), /*#__PURE__*/React.createElement("div", {
+	    className: "select"
+	  }, /*#__PURE__*/React.createElement("select", {
+	    onChange: ev => onChangePageRows(ev.target.value),
+	    value: pageRows
+	  }, AXUSTABLE_PAGE_ROWS_OPTIONS.map(v => /*#__PURE__*/React.createElement("option", {
+	    key: "axustable_page_rows_val_".concat(v),
+	    value: v
+	  }, v)))), /*#__PURE__*/React.createElement("div", {
+	    className: "total"
+	  }, "".concat(pageCount, " p\xE1g, ").concat(dataLength, " reg."))) : null));
+	};
+
+	//⊶⊡
+
+	var AxustableHeaderField = _ref => {
+	  var {
+	    field,
+	    filterable,
+	    is_filtered,
+	    sortable,
+	    is_sorted,
+	    onChangeSort,
+	    onOpenFilter
+	  } = _ref;
+	  var fieldClassName = !field.className ? '' : "axustable-header-field-".concat(field.className);
+	  var labelClassName = "".concat(is_filtered ? 'active' : '', " ").concat(filterable && field.value != undefined ? 'filterable' : '');
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-header-field ".concat(fieldClassName)
+	  }, /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-header-field-inner"
+	  }, field.value == undefined || !sortable ? null : /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-header-field-actions"
+	  }, is_sorted === undefined ? null : /*#__PURE__*/React.createElement("a", {
+	    onClick: onChangeSort,
+	    className: "".concat(is_sorted != undefined ? 'active' : '')
+	  }, is_sorted === undefined ? "⇳" : is_sorted == 'asc' ? "⇧" : "⇩"), /*#__PURE__*/React.createElement("a", {
+	    onClick: onOpenFilter,
+	    className: ""
+	  }, "\u22A1")), /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-header-field-label ".concat(labelClassName),
+	    onClick: onChangeSort
+	  }, field.label)));
+	};
+
+	var AxustableHeader = _ref => {
+	  var {
+	    fields,
+	    sort,
+	    sortable,
+	    filterable,
+	    filteredIndexes,
+	    onChangeSort: _onChangeSort,
+	    onOpenFilter: _onOpenFilter
+	  } = _ref;
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-header"
+	  }, fields.map((f, i) => /*#__PURE__*/React.createElement(AxustableHeaderField, {
+	    key: "axustable_field_".concat(i),
+	    field: f,
+	    filterable: filterable,
+	    is_filtered: filteredIndexes.indexOf(i) >= 0,
+	    sortable: sortable,
+	    is_sorted: sort === undefined ? undefined : i != sort[0] ? undefined : sort[1],
+	    onChangeSort: () => _onChangeSort(i),
+	    onOpenFilter: () => _onOpenFilter(i)
+	  })));
+	};
+
+	var AxustableRow = _ref => {
+	  var {
+	    children,
+	    className
+	  } = _ref;
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-row ".concat(className || '')
+	  }, children);
+	};
+
+	// const isEmpty = (children) =>
+	//  (children===null || children===undefined || (typeof children == 'string' && children.length==0))
+
+	var makeClasses = cln => {
+	  if (!cln) {
+	    return '';
+	  }
+	  var clns = cln.split(' ');
+	  var out = '';
+	  clns.map(cl => {
+	    out += "axustable-item-".concat(cl, " ");
+	  });
+	  return out;
+	};
+	var AxustableItem = _ref => {
+	  var {
+	    name,
+	    className,
+	    children,
+	    style,
+	    empty
+	  } = _ref;
+	  return /*#__PURE__*/React.createElement("div", {
+	    "data-name": name,
+	    className: "axustable-item ".concat(makeClasses(className), " ").concat(empty ? 'axustable-item-empty' : ''),
+	    style: _objectSpread2({}, style)
+	  }, /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-item-inner"
+	  }, children));
+	};
+
+	function _extends() {
+	  _extends = Object.assign ? Object.assign.bind() : function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	      var source = arguments[i];
+	      for (var key in source) {
+	        if (Object.prototype.hasOwnProperty.call(source, key)) {
+	          target[key] = source[key];
+	        }
+	      }
+	    }
+	    return target;
+	  };
+	  return _extends.apply(this, arguments);
+	}
+
+	function _objectWithoutPropertiesLoose$1(source, excluded) {
+	  if (source == null) return {};
+	  var target = {};
+	  var sourceKeys = Object.keys(source);
+	  var key, i;
+	  for (i = 0; i < sourceKeys.length; i++) {
+	    key = sourceKeys[i];
+	    if (excluded.indexOf(key) >= 0) continue;
+	    target[key] = source[key];
+	  }
+	  return target;
+	}
+
+	var propTypes$b = {exports: {}};
+
+	var reactIs = {exports: {}};
+
+	var reactIs_development = {};
+
+	/** @license React v16.13.1
+	 * react-is.development.js
+	 *
+	 * Copyright (c) Facebook, Inc. and its affiliates.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+
+
+
+	{
+	  (function() {
+
+	// The Symbol used to tag the ReactElement-like types. If there is no native Symbol
+	// nor polyfill, then a plain number is used for performance.
+	var hasSymbol = typeof Symbol === 'function' && Symbol.for;
+	var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
+	var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
+	var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
+	var REACT_STRICT_MODE_TYPE = hasSymbol ? Symbol.for('react.strict_mode') : 0xeacc;
+	var REACT_PROFILER_TYPE = hasSymbol ? Symbol.for('react.profiler') : 0xead2;
+	var REACT_PROVIDER_TYPE = hasSymbol ? Symbol.for('react.provider') : 0xeacd;
+	var REACT_CONTEXT_TYPE = hasSymbol ? Symbol.for('react.context') : 0xeace; // TODO: We don't use AsyncMode or ConcurrentMode anymore. They were temporary
+	// (unstable) APIs that have been removed. Can we remove the symbols?
+
+	var REACT_ASYNC_MODE_TYPE = hasSymbol ? Symbol.for('react.async_mode') : 0xeacf;
+	var REACT_CONCURRENT_MODE_TYPE = hasSymbol ? Symbol.for('react.concurrent_mode') : 0xeacf;
+	var REACT_FORWARD_REF_TYPE = hasSymbol ? Symbol.for('react.forward_ref') : 0xead0;
+	var REACT_SUSPENSE_TYPE = hasSymbol ? Symbol.for('react.suspense') : 0xead1;
+	var REACT_SUSPENSE_LIST_TYPE = hasSymbol ? Symbol.for('react.suspense_list') : 0xead8;
+	var REACT_MEMO_TYPE = hasSymbol ? Symbol.for('react.memo') : 0xead3;
+	var REACT_LAZY_TYPE = hasSymbol ? Symbol.for('react.lazy') : 0xead4;
+	var REACT_BLOCK_TYPE = hasSymbol ? Symbol.for('react.block') : 0xead9;
+	var REACT_FUNDAMENTAL_TYPE = hasSymbol ? Symbol.for('react.fundamental') : 0xead5;
+	var REACT_RESPONDER_TYPE = hasSymbol ? Symbol.for('react.responder') : 0xead6;
+	var REACT_SCOPE_TYPE = hasSymbol ? Symbol.for('react.scope') : 0xead7;
+
+	function isValidElementType(type) {
+	  return typeof type === 'string' || typeof type === 'function' || // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
+	  type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || type === REACT_SUSPENSE_LIST_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE || type.$$typeof === REACT_FUNDAMENTAL_TYPE || type.$$typeof === REACT_RESPONDER_TYPE || type.$$typeof === REACT_SCOPE_TYPE || type.$$typeof === REACT_BLOCK_TYPE);
+	}
+
+	function typeOf(object) {
+	  if (typeof object === 'object' && object !== null) {
+	    var $$typeof = object.$$typeof;
+
+	    switch ($$typeof) {
+	      case REACT_ELEMENT_TYPE:
+	        var type = object.type;
+
+	        switch (type) {
+	          case REACT_ASYNC_MODE_TYPE:
+	          case REACT_CONCURRENT_MODE_TYPE:
+	          case REACT_FRAGMENT_TYPE:
+	          case REACT_PROFILER_TYPE:
+	          case REACT_STRICT_MODE_TYPE:
+	          case REACT_SUSPENSE_TYPE:
+	            return type;
+
+	          default:
+	            var $$typeofType = type && type.$$typeof;
+
+	            switch ($$typeofType) {
+	              case REACT_CONTEXT_TYPE:
+	              case REACT_FORWARD_REF_TYPE:
+	              case REACT_LAZY_TYPE:
+	              case REACT_MEMO_TYPE:
+	              case REACT_PROVIDER_TYPE:
+	                return $$typeofType;
+
+	              default:
+	                return $$typeof;
+	            }
+
+	        }
+
+	      case REACT_PORTAL_TYPE:
+	        return $$typeof;
+	    }
+	  }
+
+	  return undefined;
+	} // AsyncMode is deprecated along with isAsyncMode
+
+	var AsyncMode = REACT_ASYNC_MODE_TYPE;
+	var ConcurrentMode = REACT_CONCURRENT_MODE_TYPE;
+	var ContextConsumer = REACT_CONTEXT_TYPE;
+	var ContextProvider = REACT_PROVIDER_TYPE;
+	var Element = REACT_ELEMENT_TYPE;
+	var ForwardRef = REACT_FORWARD_REF_TYPE;
+	var Fragment = REACT_FRAGMENT_TYPE;
+	var Lazy = REACT_LAZY_TYPE;
+	var Memo = REACT_MEMO_TYPE;
+	var Portal = REACT_PORTAL_TYPE;
+	var Profiler = REACT_PROFILER_TYPE;
+	var StrictMode = REACT_STRICT_MODE_TYPE;
+	var Suspense = REACT_SUSPENSE_TYPE;
+	var hasWarnedAboutDeprecatedIsAsyncMode = false; // AsyncMode should be deprecated
+
+	function isAsyncMode(object) {
+	  {
+	    if (!hasWarnedAboutDeprecatedIsAsyncMode) {
+	      hasWarnedAboutDeprecatedIsAsyncMode = true; // Using console['warn'] to evade Babel and ESLint
+
+	      console['warn']('The ReactIs.isAsyncMode() alias has been deprecated, ' + 'and will be removed in React 17+. Update your code to use ' + 'ReactIs.isConcurrentMode() instead. It has the exact same API.');
+	    }
+	  }
+
+	  return isConcurrentMode(object) || typeOf(object) === REACT_ASYNC_MODE_TYPE;
+	}
+	function isConcurrentMode(object) {
+	  return typeOf(object) === REACT_CONCURRENT_MODE_TYPE;
+	}
+	function isContextConsumer(object) {
+	  return typeOf(object) === REACT_CONTEXT_TYPE;
+	}
+	function isContextProvider(object) {
+	  return typeOf(object) === REACT_PROVIDER_TYPE;
+	}
+	function isElement(object) {
+	  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+	}
+	function isForwardRef(object) {
+	  return typeOf(object) === REACT_FORWARD_REF_TYPE;
+	}
+	function isFragment(object) {
+	  return typeOf(object) === REACT_FRAGMENT_TYPE;
+	}
+	function isLazy(object) {
+	  return typeOf(object) === REACT_LAZY_TYPE;
+	}
+	function isMemo(object) {
+	  return typeOf(object) === REACT_MEMO_TYPE;
+	}
+	function isPortal(object) {
+	  return typeOf(object) === REACT_PORTAL_TYPE;
+	}
+	function isProfiler(object) {
+	  return typeOf(object) === REACT_PROFILER_TYPE;
+	}
+	function isStrictMode(object) {
+	  return typeOf(object) === REACT_STRICT_MODE_TYPE;
+	}
+	function isSuspense(object) {
+	  return typeOf(object) === REACT_SUSPENSE_TYPE;
+	}
+
+	reactIs_development.AsyncMode = AsyncMode;
+	reactIs_development.ConcurrentMode = ConcurrentMode;
+	reactIs_development.ContextConsumer = ContextConsumer;
+	reactIs_development.ContextProvider = ContextProvider;
+	reactIs_development.Element = Element;
+	reactIs_development.ForwardRef = ForwardRef;
+	reactIs_development.Fragment = Fragment;
+	reactIs_development.Lazy = Lazy;
+	reactIs_development.Memo = Memo;
+	reactIs_development.Portal = Portal;
+	reactIs_development.Profiler = Profiler;
+	reactIs_development.StrictMode = StrictMode;
+	reactIs_development.Suspense = Suspense;
+	reactIs_development.isAsyncMode = isAsyncMode;
+	reactIs_development.isConcurrentMode = isConcurrentMode;
+	reactIs_development.isContextConsumer = isContextConsumer;
+	reactIs_development.isContextProvider = isContextProvider;
+	reactIs_development.isElement = isElement;
+	reactIs_development.isForwardRef = isForwardRef;
+	reactIs_development.isFragment = isFragment;
+	reactIs_development.isLazy = isLazy;
+	reactIs_development.isMemo = isMemo;
+	reactIs_development.isPortal = isPortal;
+	reactIs_development.isProfiler = isProfiler;
+	reactIs_development.isStrictMode = isStrictMode;
+	reactIs_development.isSuspense = isSuspense;
+	reactIs_development.isValidElementType = isValidElementType;
+	reactIs_development.typeOf = typeOf;
+	  })();
+	}
+
+	{
+	  reactIs.exports = reactIs_development;
+	}
+
+	var reactIsExports = reactIs.exports;
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+
+	var ReactIs$1 = reactIsExports;
+	var assign = objectAssign;
+
+	var ReactPropTypesSecret = ReactPropTypesSecret_1;
+	var has = has$2;
+	var checkPropTypes = checkPropTypes_1;
+
+	var printWarning = function() {};
+
+	{
+	  printWarning = function(text) {
+	    var message = 'Warning: ' + text;
+	    if (typeof console !== 'undefined') {
+	      console.error(message);
+	    }
+	    try {
+	      // --- Welcome to debugging React ---
+	      // This error was thrown as a convenience so that you can use this stack
+	      // to find the callsite that caused this warning to fire.
+	      throw new Error(message);
+	    } catch (x) {}
+	  };
+	}
+
+	function emptyFunctionThatReturnsNull() {
+	  return null;
+	}
+
+	var factoryWithTypeCheckers = function(isValidElement, throwOnDirectAccess) {
+	  /* global Symbol */
+	  var ITERATOR_SYMBOL = typeof Symbol === 'function' && Symbol.iterator;
+	  var FAUX_ITERATOR_SYMBOL = '@@iterator'; // Before Symbol spec.
+
+	  /**
+	   * Returns the iterator method function contained on the iterable object.
+	   *
+	   * Be sure to invoke the function with the iterable as context:
+	   *
+	   *     var iteratorFn = getIteratorFn(myIterable);
+	   *     if (iteratorFn) {
+	   *       var iterator = iteratorFn.call(myIterable);
+	   *       ...
+	   *     }
+	   *
+	   * @param {?object} maybeIterable
+	   * @return {?function}
+	   */
+	  function getIteratorFn(maybeIterable) {
+	    var iteratorFn = maybeIterable && (ITERATOR_SYMBOL && maybeIterable[ITERATOR_SYMBOL] || maybeIterable[FAUX_ITERATOR_SYMBOL]);
+	    if (typeof iteratorFn === 'function') {
+	      return iteratorFn;
+	    }
+	  }
+
+	  /**
+	   * Collection of methods that allow declaration and validation of props that are
+	   * supplied to React components. Example usage:
+	   *
+	   *   var Props = require('ReactPropTypes');
+	   *   var MyArticle = React.createClass({
+	   *     propTypes: {
+	   *       // An optional string prop named "description".
+	   *       description: Props.string,
+	   *
+	   *       // A required enum prop named "category".
+	   *       category: Props.oneOf(['News','Photos']).isRequired,
+	   *
+	   *       // A prop named "dialog" that requires an instance of Dialog.
+	   *       dialog: Props.instanceOf(Dialog).isRequired
+	   *     },
+	   *     render: function() { ... }
+	   *   });
+	   *
+	   * A more formal specification of how these methods are used:
+	   *
+	   *   type := array|bool|func|object|number|string|oneOf([...])|instanceOf(...)
+	   *   decl := ReactPropTypes.{type}(.isRequired)?
+	   *
+	   * Each and every declaration produces a function with the same signature. This
+	   * allows the creation of custom validation functions. For example:
+	   *
+	   *  var MyLink = React.createClass({
+	   *    propTypes: {
+	   *      // An optional string or URI prop named "href".
+	   *      href: function(props, propName, componentName) {
+	   *        var propValue = props[propName];
+	   *        if (propValue != null && typeof propValue !== 'string' &&
+	   *            !(propValue instanceof URI)) {
+	   *          return new Error(
+	   *            'Expected a string or an URI for ' + propName + ' in ' +
+	   *            componentName
+	   *          );
+	   *        }
+	   *      }
+	   *    },
+	   *    render: function() {...}
+	   *  });
+	   *
+	   * @internal
+	   */
+
+	  var ANONYMOUS = '<<anonymous>>';
+
+	  // Important!
+	  // Keep this list in sync with production version in `./factoryWithThrowingShims.js`.
+	  var ReactPropTypes = {
+	    array: createPrimitiveTypeChecker('array'),
+	    bigint: createPrimitiveTypeChecker('bigint'),
+	    bool: createPrimitiveTypeChecker('boolean'),
+	    func: createPrimitiveTypeChecker('function'),
+	    number: createPrimitiveTypeChecker('number'),
+	    object: createPrimitiveTypeChecker('object'),
+	    string: createPrimitiveTypeChecker('string'),
+	    symbol: createPrimitiveTypeChecker('symbol'),
+
+	    any: createAnyTypeChecker(),
+	    arrayOf: createArrayOfTypeChecker,
+	    element: createElementTypeChecker(),
+	    elementType: createElementTypeTypeChecker(),
+	    instanceOf: createInstanceTypeChecker,
+	    node: createNodeChecker(),
+	    objectOf: createObjectOfTypeChecker,
+	    oneOf: createEnumTypeChecker,
+	    oneOfType: createUnionTypeChecker,
+	    shape: createShapeTypeChecker,
+	    exact: createStrictShapeTypeChecker,
+	  };
+
+	  /**
+	   * inlined Object.is polyfill to avoid requiring consumers ship their own
+	   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+	   */
+	  /*eslint-disable no-self-compare*/
+	  function is(x, y) {
+	    // SameValue algorithm
+	    if (x === y) {
+	      // Steps 1-5, 7-10
+	      // Steps 6.b-6.e: +0 != -0
+	      return x !== 0 || 1 / x === 1 / y;
+	    } else {
+	      // Step 6.a: NaN == NaN
+	      return x !== x && y !== y;
+	    }
+	  }
+	  /*eslint-enable no-self-compare*/
+
+	  /**
+	   * We use an Error-like object for backward compatibility as people may call
+	   * PropTypes directly and inspect their output. However, we don't use real
+	   * Errors anymore. We don't inspect their stack anyway, and creating them
+	   * is prohibitively expensive if they are created too often, such as what
+	   * happens in oneOfType() for any type before the one that matched.
+	   */
+	  function PropTypeError(message, data) {
+	    this.message = message;
+	    this.data = data && typeof data === 'object' ? data: {};
+	    this.stack = '';
+	  }
+	  // Make `instanceof Error` still work for returned errors.
+	  PropTypeError.prototype = Error.prototype;
+
+	  function createChainableTypeChecker(validate) {
+	    {
+	      var manualPropTypeCallCache = {};
+	      var manualPropTypeWarningCount = 0;
+	    }
+	    function checkType(isRequired, props, propName, componentName, location, propFullName, secret) {
+	      componentName = componentName || ANONYMOUS;
+	      propFullName = propFullName || propName;
+
+	      if (secret !== ReactPropTypesSecret) {
+	        if (throwOnDirectAccess) {
+	          // New behavior only for users of `prop-types` package
+	          var err = new Error(
+	            'Calling PropTypes validators directly is not supported by the `prop-types` package. ' +
+	            'Use `PropTypes.checkPropTypes()` to call them. ' +
+	            'Read more at http://fb.me/use-check-prop-types'
+	          );
+	          err.name = 'Invariant Violation';
+	          throw err;
+	        } else if (typeof console !== 'undefined') {
+	          // Old behavior for people using React.PropTypes
+	          var cacheKey = componentName + ':' + propName;
+	          if (
+	            !manualPropTypeCallCache[cacheKey] &&
+	            // Avoid spamming the console because they are often not actionable except for lib authors
+	            manualPropTypeWarningCount < 3
+	          ) {
+	            printWarning(
+	              'You are manually calling a React.PropTypes validation ' +
+	              'function for the `' + propFullName + '` prop on `' + componentName + '`. This is deprecated ' +
+	              'and will throw in the standalone `prop-types` package. ' +
+	              'You may be seeing this warning due to a third-party PropTypes ' +
+	              'library. See https://fb.me/react-warning-dont-call-proptypes ' + 'for details.'
+	            );
+	            manualPropTypeCallCache[cacheKey] = true;
+	            manualPropTypeWarningCount++;
+	          }
+	        }
+	      }
+	      if (props[propName] == null) {
+	        if (isRequired) {
+	          if (props[propName] === null) {
+	            return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required ' + ('in `' + componentName + '`, but its value is `null`.'));
+	          }
+	          return new PropTypeError('The ' + location + ' `' + propFullName + '` is marked as required in ' + ('`' + componentName + '`, but its value is `undefined`.'));
+	        }
+	        return null;
+	      } else {
+	        return validate(props, propName, componentName, location, propFullName);
+	      }
+	    }
+
+	    var chainedCheckType = checkType.bind(null, false);
+	    chainedCheckType.isRequired = checkType.bind(null, true);
+
+	    return chainedCheckType;
+	  }
+
+	  function createPrimitiveTypeChecker(expectedType) {
+	    function validate(props, propName, componentName, location, propFullName, secret) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== expectedType) {
+	        // `propValue` being instance of, say, date/regexp, pass the 'object'
+	        // check, but we can offer a more precise error message here rather than
+	        // 'of type `object`'.
+	        var preciseType = getPreciseType(propValue);
+
+	        return new PropTypeError(
+	          'Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + preciseType + '` supplied to `' + componentName + '`, expected ') + ('`' + expectedType + '`.'),
+	          {expectedType: expectedType}
+	        );
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createAnyTypeChecker() {
+	    return createChainableTypeChecker(emptyFunctionThatReturnsNull);
+	  }
+
+	  function createArrayOfTypeChecker(typeChecker) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (typeof typeChecker !== 'function') {
+	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside arrayOf.');
+	      }
+	      var propValue = props[propName];
+	      if (!Array.isArray(propValue)) {
+	        var propType = getPropType(propValue);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an array.'));
+	      }
+	      for (var i = 0; i < propValue.length; i++) {
+	        var error = typeChecker(propValue, i, componentName, location, propFullName + '[' + i + ']', ReactPropTypesSecret);
+	        if (error instanceof Error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createElementTypeChecker() {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      if (!isValidElement(propValue)) {
+	        var propType = getPropType(propValue);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createElementTypeTypeChecker() {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      if (!ReactIs$1.isValidElementType(propValue)) {
+	        var propType = getPropType(propValue);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected a single ReactElement type.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createInstanceTypeChecker(expectedClass) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (!(props[propName] instanceof expectedClass)) {
+	        var expectedClassName = expectedClass.name || ANONYMOUS;
+	        var actualClassName = getClassName(props[propName]);
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + actualClassName + '` supplied to `' + componentName + '`, expected ') + ('instance of `' + expectedClassName + '`.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createEnumTypeChecker(expectedValues) {
+	    if (!Array.isArray(expectedValues)) {
+	      {
+	        if (arguments.length > 1) {
+	          printWarning(
+	            'Invalid arguments supplied to oneOf, expected an array, got ' + arguments.length + ' arguments. ' +
+	            'A common mistake is to write oneOf(x, y, z) instead of oneOf([x, y, z]).'
+	          );
+	        } else {
+	          printWarning('Invalid argument supplied to oneOf, expected an array.');
+	        }
+	      }
+	      return emptyFunctionThatReturnsNull;
+	    }
+
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      for (var i = 0; i < expectedValues.length; i++) {
+	        if (is(propValue, expectedValues[i])) {
+	          return null;
+	        }
+	      }
+
+	      var valuesString = JSON.stringify(expectedValues, function replacer(key, value) {
+	        var type = getPreciseType(value);
+	        if (type === 'symbol') {
+	          return String(value);
+	        }
+	        return value;
+	      });
+	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of value `' + String(propValue) + '` ' + ('supplied to `' + componentName + '`, expected one of ' + valuesString + '.'));
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createObjectOfTypeChecker(typeChecker) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (typeof typeChecker !== 'function') {
+	        return new PropTypeError('Property `' + propFullName + '` of component `' + componentName + '` has invalid PropType notation inside objectOf.');
+	      }
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type ' + ('`' + propType + '` supplied to `' + componentName + '`, expected an object.'));
+	      }
+	      for (var key in propValue) {
+	        if (has(propValue, key)) {
+	          var error = typeChecker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	          if (error instanceof Error) {
+	            return error;
+	          }
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createUnionTypeChecker(arrayOfTypeCheckers) {
+	    if (!Array.isArray(arrayOfTypeCheckers)) {
+	      printWarning('Invalid argument supplied to oneOfType, expected an instance of array.') ;
+	      return emptyFunctionThatReturnsNull;
+	    }
+
+	    for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	      var checker = arrayOfTypeCheckers[i];
+	      if (typeof checker !== 'function') {
+	        printWarning(
+	          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
+	          'received ' + getPostfixForTypeWarning(checker) + ' at index ' + i + '.'
+	        );
+	        return emptyFunctionThatReturnsNull;
+	      }
+	    }
+
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var expectedTypes = [];
+	      for (var i = 0; i < arrayOfTypeCheckers.length; i++) {
+	        var checker = arrayOfTypeCheckers[i];
+	        var checkerResult = checker(props, propName, componentName, location, propFullName, ReactPropTypesSecret);
+	        if (checkerResult == null) {
+	          return null;
+	        }
+	        if (checkerResult.data && has(checkerResult.data, 'expectedType')) {
+	          expectedTypes.push(checkerResult.data.expectedType);
+	        }
+	      }
+	      var expectedTypesMessage = (expectedTypes.length > 0) ? ', expected one of type [' + expectedTypes.join(', ') + ']': '';
+	      return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`' + expectedTypesMessage + '.'));
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createNodeChecker() {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      if (!isNode(props[propName])) {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` supplied to ' + ('`' + componentName + '`, expected a ReactNode.'));
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function invalidValidatorError(componentName, location, propFullName, key, type) {
+	    return new PropTypeError(
+	      (componentName || 'React class') + ': ' + location + ' type `' + propFullName + '.' + key + '` is invalid; ' +
+	      'it must be a function, usually from the `prop-types` package, but received `' + type + '`.'
+	    );
+	  }
+
+	  function createShapeTypeChecker(shapeTypes) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	      }
+	      for (var key in shapeTypes) {
+	        var checker = shapeTypes[key];
+	        if (typeof checker !== 'function') {
+	          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+	        }
+	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	        if (error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function createStrictShapeTypeChecker(shapeTypes) {
+	    function validate(props, propName, componentName, location, propFullName) {
+	      var propValue = props[propName];
+	      var propType = getPropType(propValue);
+	      if (propType !== 'object') {
+	        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+	      }
+	      // We need to check all keys in case some are required but missing from props.
+	      var allKeys = assign({}, props[propName], shapeTypes);
+	      for (var key in allKeys) {
+	        var checker = shapeTypes[key];
+	        if (has(shapeTypes, key) && typeof checker !== 'function') {
+	          return invalidValidatorError(componentName, location, propFullName, key, getPreciseType(checker));
+	        }
+	        if (!checker) {
+	          return new PropTypeError(
+	            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+	            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+	            '\nValid keys: ' + JSON.stringify(Object.keys(shapeTypes), null, '  ')
+	          );
+	        }
+	        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+	        if (error) {
+	          return error;
+	        }
+	      }
+	      return null;
+	    }
+
+	    return createChainableTypeChecker(validate);
+	  }
+
+	  function isNode(propValue) {
+	    switch (typeof propValue) {
+	      case 'number':
+	      case 'string':
+	      case 'undefined':
+	        return true;
+	      case 'boolean':
+	        return !propValue;
+	      case 'object':
+	        if (Array.isArray(propValue)) {
+	          return propValue.every(isNode);
+	        }
+	        if (propValue === null || isValidElement(propValue)) {
+	          return true;
+	        }
+
+	        var iteratorFn = getIteratorFn(propValue);
+	        if (iteratorFn) {
+	          var iterator = iteratorFn.call(propValue);
+	          var step;
+	          if (iteratorFn !== propValue.entries) {
+	            while (!(step = iterator.next()).done) {
+	              if (!isNode(step.value)) {
+	                return false;
+	              }
+	            }
+	          } else {
+	            // Iterator will provide entry [k,v] tuples rather than values.
+	            while (!(step = iterator.next()).done) {
+	              var entry = step.value;
+	              if (entry) {
+	                if (!isNode(entry[1])) {
+	                  return false;
+	                }
+	              }
+	            }
+	          }
+	        } else {
+	          return false;
+	        }
+
+	        return true;
+	      default:
+	        return false;
+	    }
+	  }
+
+	  function isSymbol(propType, propValue) {
+	    // Native Symbol.
+	    if (propType === 'symbol') {
+	      return true;
+	    }
+
+	    // falsy value can't be a Symbol
+	    if (!propValue) {
+	      return false;
+	    }
+
+	    // 19.4.3.5 Symbol.prototype[@@toStringTag] === 'Symbol'
+	    if (propValue['@@toStringTag'] === 'Symbol') {
+	      return true;
+	    }
+
+	    // Fallback for non-spec compliant Symbols which are polyfilled.
+	    if (typeof Symbol === 'function' && propValue instanceof Symbol) {
+	      return true;
+	    }
+
+	    return false;
+	  }
+
+	  // Equivalent of `typeof` but with special handling for array and regexp.
+	  function getPropType(propValue) {
+	    var propType = typeof propValue;
+	    if (Array.isArray(propValue)) {
+	      return 'array';
+	    }
+	    if (propValue instanceof RegExp) {
+	      // Old webkits (at least until Android 4.0) return 'function' rather than
+	      // 'object' for typeof a RegExp. We'll normalize this here so that /bla/
+	      // passes PropTypes.object.
+	      return 'object';
+	    }
+	    if (isSymbol(propType, propValue)) {
+	      return 'symbol';
+	    }
+	    return propType;
+	  }
+
+	  // This handles more types than `getPropType`. Only used for error messages.
+	  // See `createPrimitiveTypeChecker`.
+	  function getPreciseType(propValue) {
+	    if (typeof propValue === 'undefined' || propValue === null) {
+	      return '' + propValue;
+	    }
+	    var propType = getPropType(propValue);
+	    if (propType === 'object') {
+	      if (propValue instanceof Date) {
+	        return 'date';
+	      } else if (propValue instanceof RegExp) {
+	        return 'regexp';
+	      }
+	    }
+	    return propType;
+	  }
+
+	  // Returns a string that is postfixed to a warning about an invalid type.
+	  // For example, "undefined" or "of type array"
+	  function getPostfixForTypeWarning(value) {
+	    var type = getPreciseType(value);
+	    switch (type) {
+	      case 'array':
+	      case 'object':
+	        return 'an ' + type;
+	      case 'boolean':
+	      case 'date':
+	      case 'regexp':
+	        return 'a ' + type;
+	      default:
+	        return type;
+	    }
+	  }
+
+	  // Returns class name of the object, if any.
+	  function getClassName(propValue) {
+	    if (!propValue.constructor || !propValue.constructor.name) {
+	      return ANONYMOUS;
+	    }
+	    return propValue.constructor.name;
+	  }
+
+	  ReactPropTypes.checkPropTypes = checkPropTypes;
+	  ReactPropTypes.resetWarningCache = checkPropTypes.resetWarningCache;
+	  ReactPropTypes.PropTypes = ReactPropTypes;
+
+	  return ReactPropTypes;
+	};
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+
+	{
+	  var ReactIs = reactIsExports;
+
+	  // By explicitly using `prop-types` you are opting into new development behavior.
+	  // http://fb.me/prop-types-in-prod
+	  var throwOnDirectAccess = true;
+	  propTypes$b.exports = factoryWithTypeCheckers(ReactIs.isElement, throwOnDirectAccess);
+	}
+
+	var propTypesExports = propTypes$b.exports;
+	var PropTypes$2 = /*@__PURE__*/getDefaultExportFromCjs(propTypesExports);
+
+	var classnames = {exports: {}};
+
+	/*!
+		Copyright (c) 2018 Jed Watson.
+		Licensed under the MIT License (MIT), see
+		http://jedwatson.github.io/classnames
+	*/
+
+	(function (module) {
+		/* global define */
+
+		(function () {
+
+			var hasOwn = {}.hasOwnProperty;
+
+			function classNames() {
+				var classes = [];
+
+				for (var i = 0; i < arguments.length; i++) {
+					var arg = arguments[i];
+					if (!arg) continue;
+
+					var argType = typeof arg;
+
+					if (argType === 'string' || argType === 'number') {
+						classes.push(arg);
+					} else if (Array.isArray(arg)) {
+						if (arg.length) {
+							var inner = classNames.apply(null, arg);
+							if (inner) {
+								classes.push(inner);
+							}
+						}
+					} else if (argType === 'object') {
+						if (arg.toString !== Object.prototype.toString && !arg.toString.toString().includes('[native code]')) {
+							classes.push(arg.toString());
+							continue;
+						}
+
+						for (var key in arg) {
+							if (hasOwn.call(arg, key) && arg[key]) {
+								classes.push(key);
+							}
+						}
+					}
+				}
+
+				return classes.join(' ');
+			}
+
+			if (module.exports) {
+				classNames.default = classNames;
+				module.exports = classNames;
+			} else {
+				window.classNames = classNames;
+			}
+		}()); 
+	} (classnames));
+
+	var classnamesExports = classnames.exports;
+	var classNames = /*@__PURE__*/getDefaultExportFromCjs(classnamesExports);
+
+	function getScrollbarWidth() {
+	  var scrollDiv = document.createElement('div'); // .modal-scrollbar-measure styles // https://github.com/twbs/bootstrap/blob/v4.0.0-alpha.4/scss/_modal.scss#L106-L113
+
+	  scrollDiv.style.position = 'absolute';
+	  scrollDiv.style.top = '-9999px';
+	  scrollDiv.style.width = '50px';
+	  scrollDiv.style.height = '50px';
+	  scrollDiv.style.overflow = 'scroll';
+	  document.body.appendChild(scrollDiv);
+	  var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+	  document.body.removeChild(scrollDiv);
+	  return scrollbarWidth;
+	}
+	function setScrollbarWidth(padding) {
+	  document.body.style.paddingRight = padding > 0 ? padding + "px" : null;
+	}
+	function isBodyOverflowing() {
+	  return document.body.clientWidth < window.innerWidth;
+	}
+	function getOriginalBodyPadding() {
+	  var style = window.getComputedStyle(document.body, null);
+	  return parseInt(style && style.getPropertyValue('padding-right') || 0, 10);
+	}
+	function conditionallyUpdateScrollbar() {
+	  var scrollbarWidth = getScrollbarWidth(); // https://github.com/twbs/bootstrap/blob/v4.0.0-alpha.6/js/src/modal.js#L433
+
+	  var fixedContent = document.querySelectorAll('.fixed-top, .fixed-bottom, .is-fixed, .sticky-top')[0];
+	  var bodyPadding = fixedContent ? parseInt(fixedContent.style.paddingRight || 0, 10) : 0;
+
+	  if (isBodyOverflowing()) {
+	    setScrollbarWidth(bodyPadding + scrollbarWidth);
+	  }
+	}
+	var globalCssModule;
+	function mapToCssModules(className, cssModule) {
+	  if (className === void 0) {
+	    className = '';
+	  }
+
+	  if (cssModule === void 0) {
+	    cssModule = globalCssModule;
+	  }
+
+	  if (!cssModule) return className;
+	  return className.split(' ').map(function (c) {
+	    return cssModule[c] || c;
+	  }).join(' ');
+	}
+	/**
+	 * Returns a new object with the key/value pairs from `obj` that are not in the array `omitKeys`.
+	 */
+
+	function omit(obj, omitKeys) {
+	  var result = {};
+	  Object.keys(obj).forEach(function (key) {
+	    if (omitKeys.indexOf(key) === -1) {
+	      result[key] = obj[key];
+	    }
+	  });
+	  return result;
+	}
+	/**
+	 * Returns a filtered copy of an object with only the specified keys.
+	 */
+
+	function pick(obj, keys) {
+	  var pickKeys = Array.isArray(keys) ? keys : [keys];
+	  var length = pickKeys.length;
+	  var key;
+	  var result = {};
+
+	  while (length > 0) {
+	    length -= 1;
+	    key = pickKeys[length];
+	    result[key] = obj[key];
+	  }
+
+	  return result;
+	}
+	var warned = {};
+	function warnOnce(message) {
+	  if (!warned[message]) {
+	    /* istanbul ignore else */
+	    if (typeof console !== 'undefined') {
+	      console.error(message); // eslint-disable-line no-console
+	    }
+
+	    warned[message] = true;
+	  }
+	}
+
+	var Element = typeof window === 'object' && window.Element || function () {};
+
+	function DOMElement(props, propName, componentName) {
+	  if (!(props[propName] instanceof Element)) {
+	    return new Error('Invalid prop `' + propName + '` supplied to `' + componentName + '`. Expected prop to be an instance of Element. Validation failed.');
+	  }
+	}
+	var targetPropType = PropTypes$2.oneOfType([PropTypes$2.string, PropTypes$2.func, DOMElement, PropTypes$2.shape({
+	  current: PropTypes$2.any
+	})]);
+	var tagPropType = PropTypes$2.oneOfType([PropTypes$2.func, PropTypes$2.string, PropTypes$2.shape({
+	  $$typeof: PropTypes$2.symbol,
+	  render: PropTypes$2.func
+	}), PropTypes$2.arrayOf(PropTypes$2.oneOfType([PropTypes$2.func, PropTypes$2.string, PropTypes$2.shape({
+	  $$typeof: PropTypes$2.symbol,
+	  render: PropTypes$2.func
+	})]))]);
+	/* eslint key-spacing: ["error", { afterColon: true, align: "value" }] */
+	// These are all setup to match what is in the bootstrap _variables.scss
+	// https://github.com/twbs/bootstrap/blob/v4-dev/scss/_variables.scss
+
+	var TransitionTimeouts = {
+	  Fade: 150,
+	  // $transition-fade
+	  Collapse: 350,
+	  // $transition-collapse
+	  Modal: 300,
+	  // $modal-transition
+	  Carousel: 600 // $carousel-transition
+
+	}; // Duplicated Transition.propType keys to ensure that Reactstrap builds
+	// for distribution properly exclude these keys for nested child HTML attributes
+	// since `react-transition-group` removes propTypes in production builds.
+
+	var TransitionPropTypeKeys = ['in', 'mountOnEnter', 'unmountOnExit', 'appear', 'enter', 'exit', 'timeout', 'onEnter', 'onEntering', 'onEntered', 'onExit', 'onExiting', 'onExited'];
+	var keyCodes = {
+	  esc: 27,
+	  space: 32,
+	  enter: 13,
+	  tab: 9,
+	  up: 38,
+	  down: 40,
+	  home: 36,
+	  end: 35,
+	  n: 78,
+	  p: 80
+	};
+	var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
+	function isReactRefObj(target) {
+	  if (target && typeof target === 'object') {
+	    return 'current' in target;
+	  }
+
+	  return false;
+	}
+
+	function getTag(value) {
+	  if (value == null) {
+	    return value === undefined ? '[object Undefined]' : '[object Null]';
+	  }
+
+	  return Object.prototype.toString.call(value);
+	}
+	function isObject(value) {
+	  var type = typeof value;
+	  return value != null && (type === 'object' || type === 'function');
+	}
+	function isFunction(value) {
+	  if (!isObject(value)) {
+	    return false;
+	  }
+
+	  var tag = getTag(value);
+	  return tag === '[object Function]' || tag === '[object AsyncFunction]' || tag === '[object GeneratorFunction]' || tag === '[object Proxy]';
+	}
+	function findDOMElements(target) {
+	  if (isReactRefObj(target)) {
+	    return target.current;
+	  }
+
+	  if (isFunction(target)) {
+	    return target();
+	  }
+
+	  if (typeof target === 'string' && canUseDOM) {
+	    var selection = document.querySelectorAll(target);
+
+	    if (!selection.length) {
+	      selection = document.querySelectorAll("#" + target);
+	    }
+
+	    if (!selection.length) {
+	      throw new Error("The target '" + target + "' could not be identified in the dom, tip: check spelling");
+	    }
+
+	    return selection;
+	  }
+
+	  return target;
+	}
+	function isArrayOrNodeList(els) {
+	  if (els === null) {
+	    return false;
+	  }
+
+	  return Array.isArray(els) || canUseDOM && typeof els.length === 'number';
+	}
+	function getTarget(target, allElements) {
+	  var els = findDOMElements(target);
+
+	  if (allElements) {
+	    if (isArrayOrNodeList(els)) {
+	      return els;
+	    }
+
+	    if (els === null) {
+	      return [];
+	    }
+
+	    return [els];
+	  } else {
+	    if (isArrayOrNodeList(els)) {
+	      return els[0];
+	    }
+
+	    return els;
+	  }
+	}
+	var focusableElements = ['a[href]', 'area[href]', 'input:not([disabled]):not([type=hidden])', 'select:not([disabled])', 'textarea:not([disabled])', 'button:not([disabled])', 'object', 'embed', '[tabindex]:not(.modal)', 'audio[controls]', 'video[controls]', '[contenteditable]:not([contenteditable="false"])'];
+
+	function _assertThisInitialized(self) {
+	  if (self === void 0) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+	  return self;
+	}
+
+	function _setPrototypeOf(o, p) {
+	  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+	    o.__proto__ = p;
+	    return o;
+	  };
+	  return _setPrototypeOf(o, p);
+	}
+
+	function _inheritsLoose$1(subClass, superClass) {
+	  subClass.prototype = Object.create(superClass.prototype);
+	  subClass.prototype.constructor = subClass;
+	  _setPrototypeOf(subClass, superClass);
+	}
+
+	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
+	  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+	    return typeof obj;
+	  } : function (obj) {
+	    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	  }, _typeof(obj);
+	}
+
+	function _toPrimitive(input, hint) {
+	  if (_typeof(input) !== "object" || input === null) return input;
+	  var prim = input[Symbol.toPrimitive];
+	  if (prim !== undefined) {
+	    var res = prim.call(input, hint || "default");
+	    if (_typeof(res) !== "object") return res;
+	    throw new TypeError("@@toPrimitive must return a primitive value.");
+	  }
+	  return (hint === "string" ? String : Number)(input);
+	}
+
+	function _toPropertyKey(arg) {
+	  var key = _toPrimitive(arg, "string");
+	  return _typeof(key) === "symbol" ? key : String(key);
+	}
+
+	function _defineProperty(obj, key, value) {
+	  key = _toPropertyKey(key);
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+	  return obj;
+	}
+
+	function _objectSpread(target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i] != null ? Object(arguments[i]) : {};
+	    var ownKeys = Object.keys(source);
+	    if (typeof Object.getOwnPropertySymbols === 'function') {
+	      ownKeys.push.apply(ownKeys, Object.getOwnPropertySymbols(source).filter(function (sym) {
+	        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+	      }));
+	    }
+	    ownKeys.forEach(function (key) {
+	      _defineProperty(target, key, source[key]);
+	    });
+	  }
+	  return target;
+	}
+
+	var CSSTransition = {exports: {}};
+
+	var addClass = {exports: {}};
+
+	var interopRequireDefault = {exports: {}};
+
+	(function (module) {
+		function _interopRequireDefault(obj) {
+		  return obj && obj.__esModule ? obj : {
+		    "default": obj
+		  };
+		}
+		module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports; 
+	} (interopRequireDefault));
+
+	var interopRequireDefaultExports = interopRequireDefault.exports;
+
+	var hasClass = {exports: {}};
+
+	var hasRequiredHasClass;
+
+	function requireHasClass () {
+		if (hasRequiredHasClass) return hasClass.exports;
+		hasRequiredHasClass = 1;
+		(function (module, exports) {
+
+			exports.__esModule = true;
+			exports.default = hasClass;
+
+			function hasClass(element, className) {
+			  if (element.classList) return !!className && element.classList.contains(className);else return (" " + (element.className.baseVal || element.className) + " ").indexOf(" " + className + " ") !== -1;
+			}
+
+			module.exports = exports["default"]; 
+		} (hasClass, hasClass.exports));
+		return hasClass.exports;
+	}
+
+	(function (module, exports) {
+
+		var _interopRequireDefault = interopRequireDefaultExports;
+
+		exports.__esModule = true;
+		exports.default = addClass;
+
+		var _hasClass = _interopRequireDefault(requireHasClass());
+
+		function addClass(element, className) {
+		  if (element.classList) element.classList.add(className);else if (!(0, _hasClass.default)(element, className)) if (typeof element.className === 'string') element.className = element.className + ' ' + className;else element.setAttribute('class', (element.className && element.className.baseVal || '') + ' ' + className);
+		}
+
+		module.exports = exports["default"]; 
+	} (addClass, addClass.exports));
+
+	var addClassExports = addClass.exports;
+
+	function replaceClassName(origClass, classToRemove) {
+	  return origClass.replace(new RegExp('(^|\\s)' + classToRemove + '(?:\\s|$)', 'g'), '$1').replace(/\s+/g, ' ').replace(/^\s*|\s*$/g, '');
+	}
+
+	var removeClass = function removeClass(element, className) {
+	  if (element.classList) element.classList.remove(className);else if (typeof element.className === 'string') element.className = replaceClassName(element.className, className);else element.setAttribute('class', replaceClassName(element.className && element.className.baseVal || '', className));
+	};
+
+	var Transition$1 = {};
+
+	/**
+	 * Copyright (c) 2013-present, Facebook, Inc.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
+
+	function componentWillMount() {
+	  // Call this.constructor.gDSFP to support sub-classes.
+	  var state = this.constructor.getDerivedStateFromProps(this.props, this.state);
+	  if (state !== null && state !== undefined) {
+	    this.setState(state);
+	  }
+	}
+
+	function componentWillReceiveProps(nextProps) {
+	  // Call this.constructor.gDSFP to support sub-classes.
+	  // Use the setState() updater to ensure state isn't stale in certain edge cases.
+	  function updater(prevState) {
+	    var state = this.constructor.getDerivedStateFromProps(nextProps, prevState);
+	    return state !== null && state !== undefined ? state : null;
+	  }
+	  // Binding "this" is important for shallow renderer support.
+	  this.setState(updater.bind(this));
+	}
+
+	function componentWillUpdate(nextProps, nextState) {
+	  try {
+	    var prevProps = this.props;
+	    var prevState = this.state;
+	    this.props = nextProps;
+	    this.state = nextState;
+	    this.__reactInternalSnapshotFlag = true;
+	    this.__reactInternalSnapshot = this.getSnapshotBeforeUpdate(
+	      prevProps,
+	      prevState
+	    );
+	  } finally {
+	    this.props = prevProps;
+	    this.state = prevState;
+	  }
+	}
+
+	// React may warn about cWM/cWRP/cWU methods being deprecated.
+	// Add a flag to suppress these warnings for this special case.
+	componentWillMount.__suppressDeprecationWarning = true;
+	componentWillReceiveProps.__suppressDeprecationWarning = true;
+	componentWillUpdate.__suppressDeprecationWarning = true;
+
+	function polyfill(Component) {
+	  var prototype = Component.prototype;
+
+	  if (!prototype || !prototype.isReactComponent) {
+	    throw new Error('Can only polyfill class components');
+	  }
+
+	  if (
+	    typeof Component.getDerivedStateFromProps !== 'function' &&
+	    typeof prototype.getSnapshotBeforeUpdate !== 'function'
+	  ) {
+	    return Component;
+	  }
+
+	  // If new component APIs are defined, "unsafe" lifecycles won't be called.
+	  // Error if any of these lifecycles are present,
+	  // Because they would work differently between older and newer (16.3+) versions of React.
+	  var foundWillMountName = null;
+	  var foundWillReceivePropsName = null;
+	  var foundWillUpdateName = null;
+	  if (typeof prototype.componentWillMount === 'function') {
+	    foundWillMountName = 'componentWillMount';
+	  } else if (typeof prototype.UNSAFE_componentWillMount === 'function') {
+	    foundWillMountName = 'UNSAFE_componentWillMount';
+	  }
+	  if (typeof prototype.componentWillReceiveProps === 'function') {
+	    foundWillReceivePropsName = 'componentWillReceiveProps';
+	  } else if (typeof prototype.UNSAFE_componentWillReceiveProps === 'function') {
+	    foundWillReceivePropsName = 'UNSAFE_componentWillReceiveProps';
+	  }
+	  if (typeof prototype.componentWillUpdate === 'function') {
+	    foundWillUpdateName = 'componentWillUpdate';
+	  } else if (typeof prototype.UNSAFE_componentWillUpdate === 'function') {
+	    foundWillUpdateName = 'UNSAFE_componentWillUpdate';
+	  }
+	  if (
+	    foundWillMountName !== null ||
+	    foundWillReceivePropsName !== null ||
+	    foundWillUpdateName !== null
+	  ) {
+	    var componentName = Component.displayName || Component.name;
+	    var newApiName =
+	      typeof Component.getDerivedStateFromProps === 'function'
+	        ? 'getDerivedStateFromProps()'
+	        : 'getSnapshotBeforeUpdate()';
+
+	    throw Error(
+	      'Unsafe legacy lifecycles will not be called for components using new component APIs.\n\n' +
+	        componentName +
+	        ' uses ' +
+	        newApiName +
+	        ' but also contains the following legacy lifecycles:' +
+	        (foundWillMountName !== null ? '\n  ' + foundWillMountName : '') +
+	        (foundWillReceivePropsName !== null
+	          ? '\n  ' + foundWillReceivePropsName
+	          : '') +
+	        (foundWillUpdateName !== null ? '\n  ' + foundWillUpdateName : '') +
+	        '\n\nThe above lifecycles should be removed. Learn more about this warning here:\n' +
+	        'https://fb.me/react-async-component-lifecycle-hooks'
+	    );
+	  }
+
+	  // React <= 16.2 does not support static getDerivedStateFromProps.
+	  // As a workaround, use cWM and cWRP to invoke the new static lifecycle.
+	  // Newer versions of React will ignore these lifecycles if gDSFP exists.
+	  if (typeof Component.getDerivedStateFromProps === 'function') {
+	    prototype.componentWillMount = componentWillMount;
+	    prototype.componentWillReceiveProps = componentWillReceiveProps;
+	  }
+
+	  // React <= 16.2 does not support getSnapshotBeforeUpdate.
+	  // As a workaround, use cWU to invoke the new lifecycle.
+	  // Newer versions of React will ignore that lifecycle if gSBU exists.
+	  if (typeof prototype.getSnapshotBeforeUpdate === 'function') {
+	    if (typeof prototype.componentDidUpdate !== 'function') {
+	      throw new Error(
+	        'Cannot polyfill getSnapshotBeforeUpdate() for components that do not define componentDidUpdate() on the prototype'
+	      );
+	    }
+
+	    prototype.componentWillUpdate = componentWillUpdate;
+
+	    var componentDidUpdate = prototype.componentDidUpdate;
+
+	    prototype.componentDidUpdate = function componentDidUpdatePolyfill(
+	      prevProps,
+	      prevState,
+	      maybeSnapshot
+	    ) {
+	      // 16.3+ will not execute our will-update method;
+	      // It will pass a snapshot value to did-update though.
+	      // Older versions will require our polyfilled will-update value.
+	      // We need to handle both cases, but can't just check for the presence of "maybeSnapshot",
+	      // Because for <= 15.x versions this might be a "prevContext" object.
+	      // We also can't just check "__reactInternalSnapshot",
+	      // Because get-snapshot might return a falsy value.
+	      // So check for the explicit __reactInternalSnapshotFlag flag to determine behavior.
+	      var snapshot = this.__reactInternalSnapshotFlag
+	        ? this.__reactInternalSnapshot
+	        : maybeSnapshot;
+
+	      componentDidUpdate.call(this, prevProps, prevState, snapshot);
+	    };
+	  }
+
+	  return Component;
+	}
+
+	var reactLifecyclesCompat_es = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		polyfill: polyfill
+	});
+
+	var require$$2 = /*@__PURE__*/getAugmentedNamespace(reactLifecyclesCompat_es);
+
+	var PropTypes$1 = {};
+
+	PropTypes$1.__esModule = true;
+	PropTypes$1.classNamesShape = PropTypes$1.timeoutsShape = void 0;
+
+	var _propTypes = _interopRequireDefault$2(propTypesExports);
+
+	function _interopRequireDefault$2(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var timeoutsShape = _propTypes.default.oneOfType([_propTypes.default.number, _propTypes.default.shape({
+	  enter: _propTypes.default.number,
+	  exit: _propTypes.default.number,
+	  appear: _propTypes.default.number
+	}).isRequired]) ;
+	PropTypes$1.timeoutsShape = timeoutsShape;
+	var classNamesShape = _propTypes.default.oneOfType([_propTypes.default.string, _propTypes.default.shape({
+	  enter: _propTypes.default.string,
+	  exit: _propTypes.default.string,
+	  active: _propTypes.default.string
+	}), _propTypes.default.shape({
+	  enter: _propTypes.default.string,
+	  enterDone: _propTypes.default.string,
+	  enterActive: _propTypes.default.string,
+	  exit: _propTypes.default.string,
+	  exitDone: _propTypes.default.string,
+	  exitActive: _propTypes.default.string
+	})]) ;
+	PropTypes$1.classNamesShape = classNamesShape;
+
+	Transition$1.__esModule = true;
+	Transition$1.default = Transition$1.EXITING = Transition$1.ENTERED = Transition$1.ENTERING = Transition$1.EXITED = Transition$1.UNMOUNTED = void 0;
+
+	var PropTypes = _interopRequireWildcard(propTypesExports);
+
+	var _react$1 = _interopRequireDefault$1(reactExports);
+
+	var _reactDom = _interopRequireDefault$1(reactDomExports);
+
+	var _reactLifecyclesCompat = require$$2;
+
+	var _PropTypes = PropTypes$1;
+
+	function _interopRequireDefault$1(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+	function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+	function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+
+	var UNMOUNTED = 'unmounted';
+	Transition$1.UNMOUNTED = UNMOUNTED;
+	var EXITED = 'exited';
+	Transition$1.EXITED = EXITED;
+	var ENTERING = 'entering';
+	Transition$1.ENTERING = ENTERING;
+	var ENTERED = 'entered';
+	Transition$1.ENTERED = ENTERED;
+	var EXITING = 'exiting';
+	/**
+	 * The Transition component lets you describe a transition from one component
+	 * state to another _over time_ with a simple declarative API. Most commonly
+	 * it's used to animate the mounting and unmounting of a component, but can also
+	 * be used to describe in-place transition states as well.
+	 *
+	 * ---
+	 *
+	 * **Note**: `Transition` is a platform-agnostic base component. If you're using
+	 * transitions in CSS, you'll probably want to use
+	 * [`CSSTransition`](https://reactcommunity.org/react-transition-group/css-transition)
+	 * instead. It inherits all the features of `Transition`, but contains
+	 * additional features necessary to play nice with CSS transitions (hence the
+	 * name of the component).
+	 *
+	 * ---
+	 *
+	 * By default the `Transition` component does not alter the behavior of the
+	 * component it renders, it only tracks "enter" and "exit" states for the
+	 * components. It's up to you to give meaning and effect to those states. For
+	 * example we can add styles to a component when it enters or exits:
+	 *
+	 * ```jsx
+	 * import { Transition } from 'react-transition-group';
+	 *
+	 * const duration = 300;
+	 *
+	 * const defaultStyle = {
+	 *   transition: `opacity ${duration}ms ease-in-out`,
+	 *   opacity: 0,
+	 * }
+	 *
+	 * const transitionStyles = {
+	 *   entering: { opacity: 0 },
+	 *   entered:  { opacity: 1 },
+	 * };
+	 *
+	 * const Fade = ({ in: inProp }) => (
+	 *   <Transition in={inProp} timeout={duration}>
+	 *     {state => (
+	 *       <div style={{
+	 *         ...defaultStyle,
+	 *         ...transitionStyles[state]
+	 *       }}>
+	 *         I'm a fade Transition!
+	 *       </div>
+	 *     )}
+	 *   </Transition>
+	 * );
+	 * ```
+	 *
+	 * There are 4 main states a Transition can be in:
+	 *  - `'entering'`
+	 *  - `'entered'`
+	 *  - `'exiting'`
+	 *  - `'exited'`
+	 *
+	 * Transition state is toggled via the `in` prop. When `true` the component
+	 * begins the "Enter" stage. During this stage, the component will shift from
+	 * its current transition state, to `'entering'` for the duration of the
+	 * transition and then to the `'entered'` stage once it's complete. Let's take
+	 * the following example (we'll use the
+	 * [useState](https://reactjs.org/docs/hooks-reference.html#usestate) hook):
+	 *
+	 * ```jsx
+	 * function App() {
+	 *   const [inProp, setInProp] = useState(false);
+	 *   return (
+	 *     <div>
+	 *       <Transition in={inProp} timeout={500}>
+	 *         {state => (
+	 *           // ...
+	 *         )}
+	 *       </Transition>
+	 *       <button onClick={() => setInProp(true)}>
+	 *         Click to Enter
+	 *       </button>
+	 *     </div>
+	 *   );
+	 * }
+	 * ```
+	 *
+	 * When the button is clicked the component will shift to the `'entering'` state
+	 * and stay there for 500ms (the value of `timeout`) before it finally switches
+	 * to `'entered'`.
+	 *
+	 * When `in` is `false` the same thing happens except the state moves from
+	 * `'exiting'` to `'exited'`.
+	 */
+
+	Transition$1.EXITING = EXITING;
+
+	var Transition =
+	/*#__PURE__*/
+	function (_React$Component) {
+	  _inheritsLoose(Transition, _React$Component);
+
+	  function Transition(props, context) {
+	    var _this;
+
+	    _this = _React$Component.call(this, props, context) || this;
+	    var parentGroup = context.transitionGroup; // In the context of a TransitionGroup all enters are really appears
+
+	    var appear = parentGroup && !parentGroup.isMounting ? props.enter : props.appear;
+	    var initialStatus;
+	    _this.appearStatus = null;
+
+	    if (props.in) {
+	      if (appear) {
+	        initialStatus = EXITED;
+	        _this.appearStatus = ENTERING;
+	      } else {
+	        initialStatus = ENTERED;
+	      }
+	    } else {
+	      if (props.unmountOnExit || props.mountOnEnter) {
+	        initialStatus = UNMOUNTED;
+	      } else {
+	        initialStatus = EXITED;
+	      }
+	    }
+
+	    _this.state = {
+	      status: initialStatus
+	    };
+	    _this.nextCallback = null;
+	    return _this;
+	  }
+
+	  var _proto = Transition.prototype;
+
+	  _proto.getChildContext = function getChildContext() {
+	    return {
+	      transitionGroup: null // allows for nested Transitions
+
+	    };
+	  };
+
+	  Transition.getDerivedStateFromProps = function getDerivedStateFromProps(_ref, prevState) {
+	    var nextIn = _ref.in;
+
+	    if (nextIn && prevState.status === UNMOUNTED) {
+	      return {
+	        status: EXITED
+	      };
+	    }
+
+	    return null;
+	  }; // getSnapshotBeforeUpdate(prevProps) {
+	  //   let nextStatus = null
+	  //   if (prevProps !== this.props) {
+	  //     const { status } = this.state
+	  //     if (this.props.in) {
+	  //       if (status !== ENTERING && status !== ENTERED) {
+	  //         nextStatus = ENTERING
+	  //       }
+	  //     } else {
+	  //       if (status === ENTERING || status === ENTERED) {
+	  //         nextStatus = EXITING
+	  //       }
+	  //     }
+	  //   }
+	  //   return { nextStatus }
+	  // }
+
+
+	  _proto.componentDidMount = function componentDidMount() {
+	    this.updateStatus(true, this.appearStatus);
+	  };
+
+	  _proto.componentDidUpdate = function componentDidUpdate(prevProps) {
+	    var nextStatus = null;
+
+	    if (prevProps !== this.props) {
+	      var status = this.state.status;
+
+	      if (this.props.in) {
+	        if (status !== ENTERING && status !== ENTERED) {
+	          nextStatus = ENTERING;
+	        }
+	      } else {
+	        if (status === ENTERING || status === ENTERED) {
+	          nextStatus = EXITING;
+	        }
+	      }
+	    }
+
+	    this.updateStatus(false, nextStatus);
+	  };
+
+	  _proto.componentWillUnmount = function componentWillUnmount() {
+	    this.cancelNextCallback();
+	  };
+
+	  _proto.getTimeouts = function getTimeouts() {
+	    var timeout = this.props.timeout;
+	    var exit, enter, appear;
+	    exit = enter = appear = timeout;
+
+	    if (timeout != null && typeof timeout !== 'number') {
+	      exit = timeout.exit;
+	      enter = timeout.enter; // TODO: remove fallback for next major
+
+	      appear = timeout.appear !== undefined ? timeout.appear : enter;
+	    }
+
+	    return {
+	      exit: exit,
+	      enter: enter,
+	      appear: appear
+	    };
+	  };
+
+	  _proto.updateStatus = function updateStatus(mounting, nextStatus) {
+	    if (mounting === void 0) {
+	      mounting = false;
+	    }
+
+	    if (nextStatus !== null) {
+	      // nextStatus will always be ENTERING or EXITING.
+	      this.cancelNextCallback();
+
+	      var node = _reactDom.default.findDOMNode(this);
+
+	      if (nextStatus === ENTERING) {
+	        this.performEnter(node, mounting);
+	      } else {
+	        this.performExit(node);
+	      }
+	    } else if (this.props.unmountOnExit && this.state.status === EXITED) {
+	      this.setState({
+	        status: UNMOUNTED
+	      });
+	    }
+	  };
+
+	  _proto.performEnter = function performEnter(node, mounting) {
+	    var _this2 = this;
+
+	    var enter = this.props.enter;
+	    var appearing = this.context.transitionGroup ? this.context.transitionGroup.isMounting : mounting;
+	    var timeouts = this.getTimeouts();
+	    var enterTimeout = appearing ? timeouts.appear : timeouts.enter; // no enter animation skip right to ENTERED
+	    // if we are mounting and running this it means appear _must_ be set
+
+	    if (!mounting && !enter) {
+	      this.safeSetState({
+	        status: ENTERED
+	      }, function () {
+	        _this2.props.onEntered(node);
+	      });
+	      return;
+	    }
+
+	    this.props.onEnter(node, appearing);
+	    this.safeSetState({
+	      status: ENTERING
+	    }, function () {
+	      _this2.props.onEntering(node, appearing);
+
+	      _this2.onTransitionEnd(node, enterTimeout, function () {
+	        _this2.safeSetState({
+	          status: ENTERED
+	        }, function () {
+	          _this2.props.onEntered(node, appearing);
+	        });
+	      });
+	    });
+	  };
+
+	  _proto.performExit = function performExit(node) {
+	    var _this3 = this;
+
+	    var exit = this.props.exit;
+	    var timeouts = this.getTimeouts(); // no exit animation skip right to EXITED
+
+	    if (!exit) {
+	      this.safeSetState({
+	        status: EXITED
+	      }, function () {
+	        _this3.props.onExited(node);
+	      });
+	      return;
+	    }
+
+	    this.props.onExit(node);
+	    this.safeSetState({
+	      status: EXITING
+	    }, function () {
+	      _this3.props.onExiting(node);
+
+	      _this3.onTransitionEnd(node, timeouts.exit, function () {
+	        _this3.safeSetState({
+	          status: EXITED
+	        }, function () {
+	          _this3.props.onExited(node);
+	        });
+	      });
+	    });
+	  };
+
+	  _proto.cancelNextCallback = function cancelNextCallback() {
+	    if (this.nextCallback !== null) {
+	      this.nextCallback.cancel();
+	      this.nextCallback = null;
+	    }
+	  };
+
+	  _proto.safeSetState = function safeSetState(nextState, callback) {
+	    // This shouldn't be necessary, but there are weird race conditions with
+	    // setState callbacks and unmounting in testing, so always make sure that
+	    // we can cancel any pending setState callbacks after we unmount.
+	    callback = this.setNextCallback(callback);
+	    this.setState(nextState, callback);
+	  };
+
+	  _proto.setNextCallback = function setNextCallback(callback) {
+	    var _this4 = this;
+
+	    var active = true;
+
+	    this.nextCallback = function (event) {
+	      if (active) {
+	        active = false;
+	        _this4.nextCallback = null;
+	        callback(event);
+	      }
+	    };
+
+	    this.nextCallback.cancel = function () {
+	      active = false;
+	    };
+
+	    return this.nextCallback;
+	  };
+
+	  _proto.onTransitionEnd = function onTransitionEnd(node, timeout, handler) {
+	    this.setNextCallback(handler);
+	    var doesNotHaveTimeoutOrListener = timeout == null && !this.props.addEndListener;
+
+	    if (!node || doesNotHaveTimeoutOrListener) {
+	      setTimeout(this.nextCallback, 0);
+	      return;
+	    }
+
+	    if (this.props.addEndListener) {
+	      this.props.addEndListener(node, this.nextCallback);
+	    }
+
+	    if (timeout != null) {
+	      setTimeout(this.nextCallback, timeout);
+	    }
+	  };
+
+	  _proto.render = function render() {
+	    var status = this.state.status;
+
+	    if (status === UNMOUNTED) {
+	      return null;
+	    }
+
+	    var _this$props = this.props,
+	        children = _this$props.children,
+	        childProps = _objectWithoutPropertiesLoose(_this$props, ["children"]); // filter props for Transtition
+
+
+	    delete childProps.in;
+	    delete childProps.mountOnEnter;
+	    delete childProps.unmountOnExit;
+	    delete childProps.appear;
+	    delete childProps.enter;
+	    delete childProps.exit;
+	    delete childProps.timeout;
+	    delete childProps.addEndListener;
+	    delete childProps.onEnter;
+	    delete childProps.onEntering;
+	    delete childProps.onEntered;
+	    delete childProps.onExit;
+	    delete childProps.onExiting;
+	    delete childProps.onExited;
+
+	    if (typeof children === 'function') {
+	      return children(status, childProps);
+	    }
+
+	    var child = _react$1.default.Children.only(children);
+
+	    return _react$1.default.cloneElement(child, childProps);
+	  };
+
+	  return Transition;
+	}(_react$1.default.Component);
+
+	Transition.contextTypes = {
+	  transitionGroup: PropTypes.object
+	};
+	Transition.childContextTypes = {
+	  transitionGroup: function transitionGroup() {}
+	};
+	Transition.propTypes = {
+	  /**
+	   * A `function` child can be used instead of a React element. This function is
+	   * called with the current transition status (`'entering'`, `'entered'`,
+	   * `'exiting'`, `'exited'`, `'unmounted'`), which can be used to apply context
+	   * specific props to a component.
+	   *
+	   * ```jsx
+	   * <Transition in={this.state.in} timeout={150}>
+	   *   {state => (
+	   *     <MyComponent className={`fade fade-${state}`} />
+	   *   )}
+	   * </Transition>
+	   * ```
+	   */
+	  children: PropTypes.oneOfType([PropTypes.func.isRequired, PropTypes.element.isRequired]).isRequired,
+
+	  /**
+	   * Show the component; triggers the enter or exit states
+	   */
+	  in: PropTypes.bool,
+
+	  /**
+	   * By default the child component is mounted immediately along with
+	   * the parent `Transition` component. If you want to "lazy mount" the component on the
+	   * first `in={true}` you can set `mountOnEnter`. After the first enter transition the component will stay
+	   * mounted, even on "exited", unless you also specify `unmountOnExit`.
+	   */
+	  mountOnEnter: PropTypes.bool,
+
+	  /**
+	   * By default the child component stays mounted after it reaches the `'exited'` state.
+	   * Set `unmountOnExit` if you'd prefer to unmount the component after it finishes exiting.
+	   */
+	  unmountOnExit: PropTypes.bool,
+
+	  /**
+	   * Normally a component is not transitioned if it is shown when the `<Transition>` component mounts.
+	   * If you want to transition on the first mount set `appear` to `true`, and the
+	   * component will transition in as soon as the `<Transition>` mounts.
+	   *
+	   * > Note: there are no specific "appear" states. `appear` only adds an additional `enter` transition.
+	   */
+	  appear: PropTypes.bool,
+
+	  /**
+	   * Enable or disable enter transitions.
+	   */
+	  enter: PropTypes.bool,
+
+	  /**
+	   * Enable or disable exit transitions.
+	   */
+	  exit: PropTypes.bool,
+
+	  /**
+	   * The duration of the transition, in milliseconds.
+	   * Required unless `addEndListener` is provided.
+	   *
+	   * You may specify a single timeout for all transitions:
+	   *
+	   * ```jsx
+	   * timeout={500}
+	   * ```
+	   *
+	   * or individually:
+	   *
+	   * ```jsx
+	   * timeout={{
+	   *  appear: 500,
+	   *  enter: 300,
+	   *  exit: 500,
+	   * }}
+	   * ```
+	   *
+	   * - `appear` defaults to the value of `enter`
+	   * - `enter` defaults to `0`
+	   * - `exit` defaults to `0`
+	   *
+	   * @type {number | { enter?: number, exit?: number, appear?: number }}
+	   */
+	  timeout: function timeout(props) {
+	    var pt = _PropTypes.timeoutsShape;
+	    if (!props.addEndListener) pt = pt.isRequired;
+
+	    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	      args[_key - 1] = arguments[_key];
+	    }
+
+	    return pt.apply(void 0, [props].concat(args));
+	  },
+
+	  /**
+	   * Add a custom transition end trigger. Called with the transitioning
+	   * DOM node and a `done` callback. Allows for more fine grained transition end
+	   * logic. **Note:** Timeouts are still used as a fallback if provided.
+	   *
+	   * ```jsx
+	   * addEndListener={(node, done) => {
+	   *   // use the css transitionend event to mark the finish of a transition
+	   *   node.addEventListener('transitionend', done, false);
+	   * }}
+	   * ```
+	   */
+	  addEndListener: PropTypes.func,
+
+	  /**
+	   * Callback fired before the "entering" status is applied. An extra parameter
+	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+	   *
+	   * @type Function(node: HtmlElement, isAppearing: bool) -> void
+	   */
+	  onEnter: PropTypes.func,
+
+	  /**
+	   * Callback fired after the "entering" status is applied. An extra parameter
+	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+	   *
+	   * @type Function(node: HtmlElement, isAppearing: bool)
+	   */
+	  onEntering: PropTypes.func,
+
+	  /**
+	   * Callback fired after the "entered" status is applied. An extra parameter
+	   * `isAppearing` is supplied to indicate if the enter stage is occurring on the initial mount
+	   *
+	   * @type Function(node: HtmlElement, isAppearing: bool) -> void
+	   */
+	  onEntered: PropTypes.func,
+
+	  /**
+	   * Callback fired before the "exiting" status is applied.
+	   *
+	   * @type Function(node: HtmlElement) -> void
+	   */
+	  onExit: PropTypes.func,
+
+	  /**
+	   * Callback fired after the "exiting" status is applied.
+	   *
+	   * @type Function(node: HtmlElement) -> void
+	   */
+	  onExiting: PropTypes.func,
+
+	  /**
+	   * Callback fired after the "exited" status is applied.
+	   *
+	   * @type Function(node: HtmlElement) -> void
+	   */
+	  onExited: PropTypes.func // Name the function so it is clearer in the documentation
+
+	} ;
+
+	function noop$1() {}
+
+	Transition.defaultProps = {
+	  in: false,
+	  mountOnEnter: false,
+	  unmountOnExit: false,
+	  appear: false,
+	  enter: true,
+	  exit: true,
+	  onEnter: noop$1,
+	  onEntering: noop$1,
+	  onEntered: noop$1,
+	  onExit: noop$1,
+	  onExiting: noop$1,
+	  onExited: noop$1
+	};
+	Transition.UNMOUNTED = 0;
+	Transition.EXITED = 1;
+	Transition.ENTERING = 2;
+	Transition.ENTERED = 3;
+	Transition.EXITING = 4;
+
+	var _default = (0, _reactLifecyclesCompat.polyfill)(Transition);
+
+	Transition$1.default = _default;
+
+	(function (module, exports) {
+
+		exports.__esModule = true;
+		exports.default = void 0;
+
+		var PropTypes = _interopRequireWildcard(propTypesExports);
+
+		var _addClass = _interopRequireDefault(addClassExports);
+
+		var _removeClass = _interopRequireDefault(removeClass);
+
+		var _react = _interopRequireDefault(reactExports);
+
+		var _Transition = _interopRequireDefault(Transition$1);
+
+		var _PropTypes = PropTypes$1;
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+		function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+
+		var addClass = function addClass(node, classes) {
+		  return node && classes && classes.split(' ').forEach(function (c) {
+		    return (0, _addClass.default)(node, c);
+		  });
+		};
+
+		var removeClass$1 = function removeClass(node, classes) {
+		  return node && classes && classes.split(' ').forEach(function (c) {
+		    return (0, _removeClass.default)(node, c);
+		  });
+		};
+		/**
+		 * A transition component inspired by the excellent
+		 * [ng-animate](http://www.nganimate.org/) library, you should use it if you're
+		 * using CSS transitions or animations. It's built upon the
+		 * [`Transition`](https://reactcommunity.org/react-transition-group/transition)
+		 * component, so it inherits all of its props.
+		 *
+		 * `CSSTransition` applies a pair of class names during the `appear`, `enter`,
+		 * and `exit` states of the transition. The first class is applied and then a
+		 * second `*-active` class in order to activate the CSSS transition. After the
+		 * transition, matching `*-done` class names are applied to persist the
+		 * transition state.
+		 *
+		 * ```jsx
+		 * function App() {
+		 *   const [inProp, setInProp] = useState(false);
+		 *   return (
+		 *     <div>
+		 *       <CSSTransition in={inProp} timeout={200} classNames="my-node">
+		 *         <div>
+		 *           {"I'll receive my-node-* classes"}
+		 *         </div>
+		 *       </CSSTransition>
+		 *       <button type="button" onClick={() => setInProp(true)}>
+		 *         Click to Enter
+		 *       </button>
+		 *     </div>
+		 *   );
+		 * }
+		 * ```
+		 *
+		 * When the `in` prop is set to `true`, the child component will first receive
+		 * the class `example-enter`, then the `example-enter-active` will be added in
+		 * the next tick. `CSSTransition` [forces a
+		 * reflow](https://github.com/reactjs/react-transition-group/blob/5007303e729a74be66a21c3e2205e4916821524b/src/CSSTransition.js#L208-L215)
+		 * between before adding the `example-enter-active`. This is an important trick
+		 * because it allows us to transition between `example-enter` and
+		 * `example-enter-active` even though they were added immediately one after
+		 * another. Most notably, this is what makes it possible for us to animate
+		 * _appearance_.
+		 *
+		 * ```css
+		 * .my-node-enter {
+		 *   opacity: 0;
+		 * }
+		 * .my-node-enter-active {
+		 *   opacity: 1;
+		 *   transition: opacity 200ms;
+		 * }
+		 * .my-node-exit {
+		 *   opacity: 1;
+		 * }
+		 * .my-node-exit-active {
+		 *   opacity: 0;
+		 *   transition: opacity: 200ms;
+		 * }
+		 * ```
+		 *
+		 * `*-active` classes represent which styles you want to animate **to**.
+		 */
+
+
+		var CSSTransition =
+		/*#__PURE__*/
+		function (_React$Component) {
+		  _inheritsLoose(CSSTransition, _React$Component);
+
+		  function CSSTransition() {
+		    var _this;
+
+		    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+		      args[_key] = arguments[_key];
+		    }
+
+		    _this = _React$Component.call.apply(_React$Component, [this].concat(args)) || this;
+
+		    _this.onEnter = function (node, appearing) {
+		      var _this$getClassNames = _this.getClassNames(appearing ? 'appear' : 'enter'),
+		          className = _this$getClassNames.className;
+
+		      _this.removeClasses(node, 'exit');
+
+		      addClass(node, className);
+
+		      if (_this.props.onEnter) {
+		        _this.props.onEnter(node, appearing);
+		      }
+		    };
+
+		    _this.onEntering = function (node, appearing) {
+		      var _this$getClassNames2 = _this.getClassNames(appearing ? 'appear' : 'enter'),
+		          activeClassName = _this$getClassNames2.activeClassName;
+
+		      _this.reflowAndAddClass(node, activeClassName);
+
+		      if (_this.props.onEntering) {
+		        _this.props.onEntering(node, appearing);
+		      }
+		    };
+
+		    _this.onEntered = function (node, appearing) {
+		      var appearClassName = _this.getClassNames('appear').doneClassName;
+
+		      var enterClassName = _this.getClassNames('enter').doneClassName;
+
+		      var doneClassName = appearing ? appearClassName + " " + enterClassName : enterClassName;
+
+		      _this.removeClasses(node, appearing ? 'appear' : 'enter');
+
+		      addClass(node, doneClassName);
+
+		      if (_this.props.onEntered) {
+		        _this.props.onEntered(node, appearing);
+		      }
+		    };
+
+		    _this.onExit = function (node) {
+		      var _this$getClassNames3 = _this.getClassNames('exit'),
+		          className = _this$getClassNames3.className;
+
+		      _this.removeClasses(node, 'appear');
+
+		      _this.removeClasses(node, 'enter');
+
+		      addClass(node, className);
+
+		      if (_this.props.onExit) {
+		        _this.props.onExit(node);
+		      }
+		    };
+
+		    _this.onExiting = function (node) {
+		      var _this$getClassNames4 = _this.getClassNames('exit'),
+		          activeClassName = _this$getClassNames4.activeClassName;
+
+		      _this.reflowAndAddClass(node, activeClassName);
+
+		      if (_this.props.onExiting) {
+		        _this.props.onExiting(node);
+		      }
+		    };
+
+		    _this.onExited = function (node) {
+		      var _this$getClassNames5 = _this.getClassNames('exit'),
+		          doneClassName = _this$getClassNames5.doneClassName;
+
+		      _this.removeClasses(node, 'exit');
+
+		      addClass(node, doneClassName);
+
+		      if (_this.props.onExited) {
+		        _this.props.onExited(node);
+		      }
+		    };
+
+		    _this.getClassNames = function (type) {
+		      var classNames = _this.props.classNames;
+		      var isStringClassNames = typeof classNames === 'string';
+		      var prefix = isStringClassNames && classNames ? classNames + '-' : '';
+		      var className = isStringClassNames ? prefix + type : classNames[type];
+		      var activeClassName = isStringClassNames ? className + '-active' : classNames[type + 'Active'];
+		      var doneClassName = isStringClassNames ? className + '-done' : classNames[type + 'Done'];
+		      return {
+		        className: className,
+		        activeClassName: activeClassName,
+		        doneClassName: doneClassName
+		      };
+		    };
+
+		    return _this;
+		  }
+
+		  var _proto = CSSTransition.prototype;
+
+		  _proto.removeClasses = function removeClasses(node, type) {
+		    var _this$getClassNames6 = this.getClassNames(type),
+		        className = _this$getClassNames6.className,
+		        activeClassName = _this$getClassNames6.activeClassName,
+		        doneClassName = _this$getClassNames6.doneClassName;
+
+		    className && removeClass$1(node, className);
+		    activeClassName && removeClass$1(node, activeClassName);
+		    doneClassName && removeClass$1(node, doneClassName);
+		  };
+
+		  _proto.reflowAndAddClass = function reflowAndAddClass(node, className) {
+		    // This is for to force a repaint,
+		    // which is necessary in order to transition styles when adding a class name.
+		    if (className) {
+		      /* eslint-disable no-unused-expressions */
+		      node && node.scrollTop;
+		      /* eslint-enable no-unused-expressions */
+
+		      addClass(node, className);
+		    }
+		  };
+
+		  _proto.render = function render() {
+		    var props = _extends({}, this.props);
+
+		    delete props.classNames;
+		    return _react.default.createElement(_Transition.default, _extends({}, props, {
+		      onEnter: this.onEnter,
+		      onEntered: this.onEntered,
+		      onEntering: this.onEntering,
+		      onExit: this.onExit,
+		      onExiting: this.onExiting,
+		      onExited: this.onExited
+		    }));
+		  };
+
+		  return CSSTransition;
+		}(_react.default.Component);
+
+		CSSTransition.defaultProps = {
+		  classNames: ''
+		};
+		CSSTransition.propTypes = _extends({}, _Transition.default.propTypes, {
+		  /**
+		   * The animation classNames applied to the component as it enters, exits or
+		   * has finished the transition. A single name can be provided and it will be
+		   * suffixed for each stage: e.g.
+		   *
+		   * `classNames="fade"` applies `fade-enter`, `fade-enter-active`,
+		   * `fade-enter-done`, `fade-exit`, `fade-exit-active`, `fade-exit-done`,
+		   * `fade-appear`, `fade-appear-active`, and `fade-appear-done`.
+		   *
+		   * **Note**: `fade-appear-done` and `fade-enter-done` will _both_ be applied.
+		   * This allows you to define different behavior for when appearing is done and
+		   * when regular entering is done, using selectors like
+		   * `.fade-enter-done:not(.fade-appear-done)`. For example, you could apply an
+		   * epic entrance animation when element first appears in the DOM using
+		   * [Animate.css](https://daneden.github.io/animate.css/). Otherwise you can
+		   * simply use `fade-enter-done` for defining both cases.
+		   *
+		   * Each individual classNames can also be specified independently like:
+		   *
+		   * ```js
+		   * classNames={{
+		   *  appear: 'my-appear',
+		   *  appearActive: 'my-active-appear',
+		   *  appearDone: 'my-done-appear',
+		   *  enter: 'my-enter',
+		   *  enterActive: 'my-active-enter',
+		   *  enterDone: 'my-done-enter',
+		   *  exit: 'my-exit',
+		   *  exitActive: 'my-active-exit',
+		   *  exitDone: 'my-done-exit',
+		   * }}
+		   * ```
+		   *
+		   * If you want to set these classes using CSS Modules:
+		   *
+		   * ```js
+		   * import styles from './styles.css';
+		   * ```
+		   *
+		   * you might want to use camelCase in your CSS file, that way could simply
+		   * spread them instead of listing them one by one:
+		   *
+		   * ```js
+		   * classNames={{ ...styles }}
+		   * ```
+		   *
+		   * @type {string | {
+		   *  appear?: string,
+		   *  appearActive?: string,
+		   *  appearDone?: string,
+		   *  enter?: string,
+		   *  enterActive?: string,
+		   *  enterDone?: string,
+		   *  exit?: string,
+		   *  exitActive?: string,
+		   *  exitDone?: string,
+		   * }}
+		   */
+		  classNames: _PropTypes.classNamesShape,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'enter' or 'appear' class is
+		   * applied.
+		   *
+		   * @type Function(node: HtmlElement, isAppearing: bool)
+		   */
+		  onEnter: PropTypes.func,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'enter-active' or
+		   * 'appear-active' class is applied.
+		   *
+		   * @type Function(node: HtmlElement, isAppearing: bool)
+		   */
+		  onEntering: PropTypes.func,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'enter' or
+		   * 'appear' classes are **removed** and the `done` class is added to the DOM node.
+		   *
+		   * @type Function(node: HtmlElement, isAppearing: bool)
+		   */
+		  onEntered: PropTypes.func,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'exit' class is
+		   * applied.
+		   *
+		   * @type Function(node: HtmlElement)
+		   */
+		  onExit: PropTypes.func,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'exit-active' is applied.
+		   *
+		   * @type Function(node: HtmlElement)
+		   */
+		  onExiting: PropTypes.func,
+
+		  /**
+		   * A `<Transition>` callback fired immediately after the 'exit' classes
+		   * are **removed** and the `exit-done` class is added to the DOM node.
+		   *
+		   * @type Function(node: HtmlElement)
+		   */
+		  onExited: PropTypes.func
+		}) ;
+		var _default = CSSTransition;
+		exports.default = _default;
+		module.exports = exports["default"]; 
+	} (CSSTransition, CSSTransition.exports));
+
+	var CSSTransitionExports = CSSTransition.exports;
+
+	var ReplaceTransition = {exports: {}};
+
+	var TransitionGroup = {exports: {}};
+
+	var ChildMapping = {};
+
+	ChildMapping.__esModule = true;
+	ChildMapping.getChildMapping = getChildMapping;
+	ChildMapping.mergeChildMappings = mergeChildMappings;
+	ChildMapping.getInitialChildMapping = getInitialChildMapping;
+	ChildMapping.getNextChildMapping = getNextChildMapping;
+
+	var _react = reactExports;
+
+	/**
+	 * Given `this.props.children`, return an object mapping key to child.
+	 *
+	 * @param {*} children `this.props.children`
+	 * @return {object} Mapping of key to child
+	 */
+	function getChildMapping(children, mapFn) {
+	  var mapper = function mapper(child) {
+	    return mapFn && (0, _react.isValidElement)(child) ? mapFn(child) : child;
+	  };
+
+	  var result = Object.create(null);
+	  if (children) _react.Children.map(children, function (c) {
+	    return c;
+	  }).forEach(function (child) {
+	    // run the map function here instead so that the key is the computed one
+	    result[child.key] = mapper(child);
+	  });
+	  return result;
+	}
+	/**
+	 * When you're adding or removing children some may be added or removed in the
+	 * same render pass. We want to show *both* since we want to simultaneously
+	 * animate elements in and out. This function takes a previous set of keys
+	 * and a new set of keys and merges them with its best guess of the correct
+	 * ordering. In the future we may expose some of the utilities in
+	 * ReactMultiChild to make this easy, but for now React itself does not
+	 * directly have this concept of the union of prevChildren and nextChildren
+	 * so we implement it here.
+	 *
+	 * @param {object} prev prev children as returned from
+	 * `ReactTransitionChildMapping.getChildMapping()`.
+	 * @param {object} next next children as returned from
+	 * `ReactTransitionChildMapping.getChildMapping()`.
+	 * @return {object} a key set that contains all keys in `prev` and all keys
+	 * in `next` in a reasonable order.
+	 */
+
+
+	function mergeChildMappings(prev, next) {
+	  prev = prev || {};
+	  next = next || {};
+
+	  function getValueForKey(key) {
+	    return key in next ? next[key] : prev[key];
+	  } // For each key of `next`, the list of keys to insert before that key in
+	  // the combined list
+
+
+	  var nextKeysPending = Object.create(null);
+	  var pendingKeys = [];
+
+	  for (var prevKey in prev) {
+	    if (prevKey in next) {
+	      if (pendingKeys.length) {
+	        nextKeysPending[prevKey] = pendingKeys;
+	        pendingKeys = [];
+	      }
+	    } else {
+	      pendingKeys.push(prevKey);
+	    }
+	  }
+
+	  var i;
+	  var childMapping = {};
+
+	  for (var nextKey in next) {
+	    if (nextKeysPending[nextKey]) {
+	      for (i = 0; i < nextKeysPending[nextKey].length; i++) {
+	        var pendingNextKey = nextKeysPending[nextKey][i];
+	        childMapping[nextKeysPending[nextKey][i]] = getValueForKey(pendingNextKey);
+	      }
+	    }
+
+	    childMapping[nextKey] = getValueForKey(nextKey);
+	  } // Finally, add the keys which didn't appear before any key in `next`
+
+
+	  for (i = 0; i < pendingKeys.length; i++) {
+	    childMapping[pendingKeys[i]] = getValueForKey(pendingKeys[i]);
+	  }
+
+	  return childMapping;
+	}
+
+	function getProp(child, prop, props) {
+	  return props[prop] != null ? props[prop] : child.props[prop];
+	}
+
+	function getInitialChildMapping(props, onExited) {
+	  return getChildMapping(props.children, function (child) {
+	    return (0, _react.cloneElement)(child, {
+	      onExited: onExited.bind(null, child),
+	      in: true,
+	      appear: getProp(child, 'appear', props),
+	      enter: getProp(child, 'enter', props),
+	      exit: getProp(child, 'exit', props)
+	    });
+	  });
+	}
+
+	function getNextChildMapping(nextProps, prevChildMapping, onExited) {
+	  var nextChildMapping = getChildMapping(nextProps.children);
+	  var children = mergeChildMappings(prevChildMapping, nextChildMapping);
+	  Object.keys(children).forEach(function (key) {
+	    var child = children[key];
+	    if (!(0, _react.isValidElement)(child)) return;
+	    var hasPrev = key in prevChildMapping;
+	    var hasNext = key in nextChildMapping;
+	    var prevChild = prevChildMapping[key];
+	    var isLeaving = (0, _react.isValidElement)(prevChild) && !prevChild.props.in; // item is new (entering)
+
+	    if (hasNext && (!hasPrev || isLeaving)) {
+	      // console.log('entering', key)
+	      children[key] = (0, _react.cloneElement)(child, {
+	        onExited: onExited.bind(null, child),
+	        in: true,
+	        exit: getProp(child, 'exit', nextProps),
+	        enter: getProp(child, 'enter', nextProps)
+	      });
+	    } else if (!hasNext && hasPrev && !isLeaving) {
+	      // item is old (exiting)
+	      // console.log('leaving', key)
+	      children[key] = (0, _react.cloneElement)(child, {
+	        in: false
+	      });
+	    } else if (hasNext && hasPrev && (0, _react.isValidElement)(prevChild)) {
+	      // item hasn't changed transition states
+	      // copy over the last transition props;
+	      // console.log('unchanged', key)
+	      children[key] = (0, _react.cloneElement)(child, {
+	        onExited: onExited.bind(null, child),
+	        in: prevChild.props.in,
+	        exit: getProp(child, 'exit', nextProps),
+	        enter: getProp(child, 'enter', nextProps)
+	      });
+	    }
+	  });
+	  return children;
+	}
+
+	(function (module, exports) {
+
+		exports.__esModule = true;
+		exports.default = void 0;
+
+		var _propTypes = _interopRequireDefault(propTypesExports);
+
+		var _react = _interopRequireDefault(reactExports);
+
+		var _reactLifecyclesCompat = require$$2;
+
+		var _ChildMapping = ChildMapping;
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+		function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+
+		function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+		var values = Object.values || function (obj) {
+		  return Object.keys(obj).map(function (k) {
+		    return obj[k];
+		  });
+		};
+
+		var defaultProps = {
+		  component: 'div',
+		  childFactory: function childFactory(child) {
+		    return child;
+		  }
+		  /**
+		   * The `<TransitionGroup>` component manages a set of transition components
+		   * (`<Transition>` and `<CSSTransition>`) in a list. Like with the transition
+		   * components, `<TransitionGroup>` is a state machine for managing the mounting
+		   * and unmounting of components over time.
+		   *
+		   * Consider the example below. As items are removed or added to the TodoList the
+		   * `in` prop is toggled automatically by the `<TransitionGroup>`.
+		   *
+		   * Note that `<TransitionGroup>`  does not define any animation behavior!
+		   * Exactly _how_ a list item animates is up to the individual transition
+		   * component. This means you can mix and match animations across different list
+		   * items.
+		   */
+
+		};
+
+		var TransitionGroup =
+		/*#__PURE__*/
+		function (_React$Component) {
+		  _inheritsLoose(TransitionGroup, _React$Component);
+
+		  function TransitionGroup(props, context) {
+		    var _this;
+
+		    _this = _React$Component.call(this, props, context) || this;
+
+		    var handleExited = _this.handleExited.bind(_assertThisInitialized(_assertThisInitialized(_this))); // Initial children should all be entering, dependent on appear
+
+
+		    _this.state = {
+		      handleExited: handleExited,
+		      firstRender: true
+		    };
+		    return _this;
+		  }
+
+		  var _proto = TransitionGroup.prototype;
+
+		  _proto.getChildContext = function getChildContext() {
+		    return {
+		      transitionGroup: {
+		        isMounting: !this.appeared
+		      }
+		    };
+		  };
+
+		  _proto.componentDidMount = function componentDidMount() {
+		    this.appeared = true;
+		    this.mounted = true;
+		  };
+
+		  _proto.componentWillUnmount = function componentWillUnmount() {
+		    this.mounted = false;
+		  };
+
+		  TransitionGroup.getDerivedStateFromProps = function getDerivedStateFromProps(nextProps, _ref) {
+		    var prevChildMapping = _ref.children,
+		        handleExited = _ref.handleExited,
+		        firstRender = _ref.firstRender;
+		    return {
+		      children: firstRender ? (0, _ChildMapping.getInitialChildMapping)(nextProps, handleExited) : (0, _ChildMapping.getNextChildMapping)(nextProps, prevChildMapping, handleExited),
+		      firstRender: false
+		    };
+		  };
+
+		  _proto.handleExited = function handleExited(child, node) {
+		    var currentChildMapping = (0, _ChildMapping.getChildMapping)(this.props.children);
+		    if (child.key in currentChildMapping) return;
+
+		    if (child.props.onExited) {
+		      child.props.onExited(node);
+		    }
+
+		    if (this.mounted) {
+		      this.setState(function (state) {
+		        var children = _extends({}, state.children);
+
+		        delete children[child.key];
+		        return {
+		          children: children
+		        };
+		      });
+		    }
+		  };
+
+		  _proto.render = function render() {
+		    var _this$props = this.props,
+		        Component = _this$props.component,
+		        childFactory = _this$props.childFactory,
+		        props = _objectWithoutPropertiesLoose(_this$props, ["component", "childFactory"]);
+
+		    var children = values(this.state.children).map(childFactory);
+		    delete props.appear;
+		    delete props.enter;
+		    delete props.exit;
+
+		    if (Component === null) {
+		      return children;
+		    }
+
+		    return _react.default.createElement(Component, props, children);
+		  };
+
+		  return TransitionGroup;
+		}(_react.default.Component);
+
+		TransitionGroup.childContextTypes = {
+		  transitionGroup: _propTypes.default.object.isRequired
+		};
+		TransitionGroup.propTypes = {
+		  /**
+		   * `<TransitionGroup>` renders a `<div>` by default. You can change this
+		   * behavior by providing a `component` prop.
+		   * If you use React v16+ and would like to avoid a wrapping `<div>` element
+		   * you can pass in `component={null}`. This is useful if the wrapping div
+		   * borks your css styles.
+		   */
+		  component: _propTypes.default.any,
+
+		  /**
+		   * A set of `<Transition>` components, that are toggled `in` and out as they
+		   * leave. the `<TransitionGroup>` will inject specific transition props, so
+		   * remember to spread them through if you are wrapping the `<Transition>` as
+		   * with our `<Fade>` example.
+		   *
+		   * While this component is meant for multiple `Transition` or `CSSTransition`
+		   * children, sometimes you may want to have a single transition child with
+		   * content that you want to be transitioned out and in when you change it
+		   * (e.g. routes, images etc.) In that case you can change the `key` prop of
+		   * the transition child as you change its content, this will cause
+		   * `TransitionGroup` to transition the child out and back in.
+		   */
+		  children: _propTypes.default.node,
+
+		  /**
+		   * A convenience prop that enables or disables appear animations
+		   * for all children. Note that specifying this will override any defaults set
+		   * on individual children Transitions.
+		   */
+		  appear: _propTypes.default.bool,
+
+		  /**
+		   * A convenience prop that enables or disables enter animations
+		   * for all children. Note that specifying this will override any defaults set
+		   * on individual children Transitions.
+		   */
+		  enter: _propTypes.default.bool,
+
+		  /**
+		   * A convenience prop that enables or disables exit animations
+		   * for all children. Note that specifying this will override any defaults set
+		   * on individual children Transitions.
+		   */
+		  exit: _propTypes.default.bool,
+
+		  /**
+		   * You may need to apply reactive updates to a child as it is exiting.
+		   * This is generally done by using `cloneElement` however in the case of an exiting
+		   * child the element has already been removed and not accessible to the consumer.
+		   *
+		   * If you do need to update a child as it leaves you can provide a `childFactory`
+		   * to wrap every child, even the ones that are leaving.
+		   *
+		   * @type Function(child: ReactElement) -> ReactElement
+		   */
+		  childFactory: _propTypes.default.func
+		} ;
+		TransitionGroup.defaultProps = defaultProps;
+
+		var _default = (0, _reactLifecyclesCompat.polyfill)(TransitionGroup);
+
+		exports.default = _default;
+		module.exports = exports["default"]; 
+	} (TransitionGroup, TransitionGroup.exports));
+
+	var TransitionGroupExports = TransitionGroup.exports;
+
+	(function (module, exports) {
+
+		exports.__esModule = true;
+		exports.default = void 0;
+
+		var _propTypes = _interopRequireDefault(propTypesExports);
+
+		var _react = _interopRequireDefault(reactExports);
+
+		var _reactDom = reactDomExports;
+
+		var _TransitionGroup = _interopRequireDefault(TransitionGroupExports);
+
+		function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+		function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+		function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
+
+		/**
+		 * The `<ReplaceTransition>` component is a specialized `Transition` component
+		 * that animates between two children.
+		 *
+		 * ```jsx
+		 * <ReplaceTransition in>
+		 *   <Fade><div>I appear first</div></Fade>
+		 *   <Fade><div>I replace the above</div></Fade>
+		 * </ReplaceTransition>
+		 * ```
+		 */
+		var ReplaceTransition =
+		/*#__PURE__*/
+		function (_React$Component) {
+		  _inheritsLoose(ReplaceTransition, _React$Component);
+
+		  function ReplaceTransition() {
+		    var _this;
+
+		    for (var _len = arguments.length, _args = new Array(_len), _key = 0; _key < _len; _key++) {
+		      _args[_key] = arguments[_key];
+		    }
+
+		    _this = _React$Component.call.apply(_React$Component, [this].concat(_args)) || this;
+
+		    _this.handleEnter = function () {
+		      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+		        args[_key2] = arguments[_key2];
+		      }
+
+		      return _this.handleLifecycle('onEnter', 0, args);
+		    };
+
+		    _this.handleEntering = function () {
+		      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+		        args[_key3] = arguments[_key3];
+		      }
+
+		      return _this.handleLifecycle('onEntering', 0, args);
+		    };
+
+		    _this.handleEntered = function () {
+		      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+		        args[_key4] = arguments[_key4];
+		      }
+
+		      return _this.handleLifecycle('onEntered', 0, args);
+		    };
+
+		    _this.handleExit = function () {
+		      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+		        args[_key5] = arguments[_key5];
+		      }
+
+		      return _this.handleLifecycle('onExit', 1, args);
+		    };
+
+		    _this.handleExiting = function () {
+		      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+		        args[_key6] = arguments[_key6];
+		      }
+
+		      return _this.handleLifecycle('onExiting', 1, args);
+		    };
+
+		    _this.handleExited = function () {
+		      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+		        args[_key7] = arguments[_key7];
+		      }
+
+		      return _this.handleLifecycle('onExited', 1, args);
+		    };
+
+		    return _this;
+		  }
+
+		  var _proto = ReplaceTransition.prototype;
+
+		  _proto.handleLifecycle = function handleLifecycle(handler, idx, originalArgs) {
+		    var _child$props;
+
+		    var children = this.props.children;
+
+		    var child = _react.default.Children.toArray(children)[idx];
+
+		    if (child.props[handler]) (_child$props = child.props)[handler].apply(_child$props, originalArgs);
+		    if (this.props[handler]) this.props[handler]((0, _reactDom.findDOMNode)(this));
+		  };
+
+		  _proto.render = function render() {
+		    var _this$props = this.props,
+		        children = _this$props.children,
+		        inProp = _this$props.in,
+		        props = _objectWithoutPropertiesLoose(_this$props, ["children", "in"]);
+
+		    var _React$Children$toArr = _react.default.Children.toArray(children),
+		        first = _React$Children$toArr[0],
+		        second = _React$Children$toArr[1];
+
+		    delete props.onEnter;
+		    delete props.onEntering;
+		    delete props.onEntered;
+		    delete props.onExit;
+		    delete props.onExiting;
+		    delete props.onExited;
+		    return _react.default.createElement(_TransitionGroup.default, props, inProp ? _react.default.cloneElement(first, {
+		      key: 'first',
+		      onEnter: this.handleEnter,
+		      onEntering: this.handleEntering,
+		      onEntered: this.handleEntered
+		    }) : _react.default.cloneElement(second, {
+		      key: 'second',
+		      onEnter: this.handleExit,
+		      onEntering: this.handleExiting,
+		      onEntered: this.handleExited
+		    }));
+		  };
+
+		  return ReplaceTransition;
+		}(_react.default.Component);
+
+		ReplaceTransition.propTypes = {
+		  in: _propTypes.default.bool.isRequired,
+		  children: function children(props, propName) {
+		    if (_react.default.Children.count(props[propName]) !== 2) return new Error("\"" + propName + "\" must be exactly two transition components.");
+		    return null;
+		  }
+		} ;
+		var _default = ReplaceTransition;
+		exports.default = _default;
+		module.exports = exports["default"]; 
+	} (ReplaceTransition, ReplaceTransition.exports));
+
+	var ReplaceTransitionExports = ReplaceTransition.exports;
+
+	var _CSSTransition = _interopRequireDefault(CSSTransitionExports);
+
+	var _ReplaceTransition = _interopRequireDefault(ReplaceTransitionExports);
+
+	var _TransitionGroup = _interopRequireDefault(TransitionGroupExports);
+
+	var _Transition = _interopRequireDefault(Transition$1);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var reactTransitionGroup = {
+	  Transition: _Transition.default,
+	  TransitionGroup: _TransitionGroup.default,
+	  ReplaceTransition: _ReplaceTransition.default,
+	  CSSTransition: _CSSTransition.default
+	};
+
+	var propTypes$a = _objectSpread({}, reactTransitionGroup.Transition.propTypes, {
+	  children: PropTypes$2.oneOfType([PropTypes$2.arrayOf(PropTypes$2.node), PropTypes$2.node]),
+	  tag: tagPropType,
+	  baseClass: PropTypes$2.string,
+	  baseClassActive: PropTypes$2.string,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object,
+	  innerRef: PropTypes$2.oneOfType([PropTypes$2.object, PropTypes$2.string, PropTypes$2.func])
+	});
+
+	var defaultProps$9 = _objectSpread({}, reactTransitionGroup.Transition.defaultProps, {
+	  tag: 'div',
+	  baseClass: 'fade',
+	  baseClassActive: 'show',
+	  timeout: TransitionTimeouts.Fade,
+	  appear: true,
+	  enter: true,
+	  exit: true,
+	  in: true
+	});
+
+	function Fade(props) {
+	  var Tag = props.tag,
+	      baseClass = props.baseClass,
+	      baseClassActive = props.baseClassActive,
+	      className = props.className,
+	      cssModule = props.cssModule,
+	      children = props.children,
+	      innerRef = props.innerRef,
+	      otherProps = _objectWithoutPropertiesLoose$1(props, ["tag", "baseClass", "baseClassActive", "className", "cssModule", "children", "innerRef"]);
+
+	  var transitionProps = pick(otherProps, TransitionPropTypeKeys);
+	  var childProps = omit(otherProps, TransitionPropTypeKeys);
+	  return React.createElement(reactTransitionGroup.Transition, transitionProps, function (status) {
+	    var isActive = status === 'entered';
+	    var classes = mapToCssModules(classNames(className, baseClass, isActive && baseClassActive), cssModule);
+	    return React.createElement(Tag, _extends({
+	      className: classes
+	    }, childProps, {
+	      ref: innerRef
+	    }), children);
+	  });
+	}
+
+	Fade.propTypes = propTypes$a;
+	Fade.defaultProps = defaultProps$9;
+
+	var propTypes$9 = {
+	  children: PropTypes$2.node.isRequired,
+	  node: PropTypes$2.any
+	};
+
+	var Portal =
+	/*#__PURE__*/
+	function (_React$Component) {
+	  _inheritsLoose$1(Portal, _React$Component);
+
+	  function Portal() {
+	    return _React$Component.apply(this, arguments) || this;
+	  }
+
+	  var _proto = Portal.prototype;
+
+	  _proto.componentWillUnmount = function componentWillUnmount() {
+	    if (this.defaultNode) {
+	      document.body.removeChild(this.defaultNode);
+	    }
+
+	    this.defaultNode = null;
+	  };
+
+	  _proto.render = function render() {
+	    if (!canUseDOM) {
+	      return null;
+	    }
+
+	    if (!this.props.node && !this.defaultNode) {
+	      this.defaultNode = document.createElement('div');
+	      document.body.appendChild(this.defaultNode);
+	    }
+
+	    return ReactDOM.createPortal(this.props.children, this.props.node || this.defaultNode);
+	  };
+
+	  return Portal;
+	}(React.Component);
+
+	Portal.propTypes = propTypes$9;
+	var Portal$1 = Portal;
+
+	function noop() {}
+
+	var FadePropTypes = PropTypes$2.shape(Fade.propTypes);
+	var propTypes$8 = {
+	  isOpen: PropTypes$2.bool,
+	  autoFocus: PropTypes$2.bool,
+	  centered: PropTypes$2.bool,
+	  scrollable: PropTypes$2.bool,
+	  size: PropTypes$2.string,
+	  toggle: PropTypes$2.func,
+	  keyboard: PropTypes$2.bool,
+	  role: PropTypes$2.string,
+	  labelledBy: PropTypes$2.string,
+	  backdrop: PropTypes$2.oneOfType([PropTypes$2.bool, PropTypes$2.oneOf(['static'])]),
+	  onEnter: PropTypes$2.func,
+	  onExit: PropTypes$2.func,
+	  onOpened: PropTypes$2.func,
+	  onClosed: PropTypes$2.func,
+	  children: PropTypes$2.node,
+	  className: PropTypes$2.string,
+	  wrapClassName: PropTypes$2.string,
+	  modalClassName: PropTypes$2.string,
+	  backdropClassName: PropTypes$2.string,
+	  contentClassName: PropTypes$2.string,
+	  external: PropTypes$2.node,
+	  fade: PropTypes$2.bool,
+	  cssModule: PropTypes$2.object,
+	  zIndex: PropTypes$2.oneOfType([PropTypes$2.number, PropTypes$2.string]),
+	  backdropTransition: FadePropTypes,
+	  modalTransition: FadePropTypes,
+	  innerRef: PropTypes$2.oneOfType([PropTypes$2.object, PropTypes$2.string, PropTypes$2.func]),
+	  unmountOnClose: PropTypes$2.bool,
+	  returnFocusAfterClose: PropTypes$2.bool,
+	  container: targetPropType
+	};
+	var propsToOmit = Object.keys(propTypes$8);
+	var defaultProps$8 = {
+	  isOpen: false,
+	  autoFocus: true,
+	  centered: false,
+	  scrollable: false,
+	  role: 'dialog',
+	  backdrop: true,
+	  keyboard: true,
+	  zIndex: 1050,
+	  fade: true,
+	  onOpened: noop,
+	  onClosed: noop,
+	  modalTransition: {
+	    timeout: TransitionTimeouts.Modal
+	  },
+	  backdropTransition: {
+	    mountOnEnter: true,
+	    timeout: TransitionTimeouts.Fade // uses standard fade transition
+
+	  },
+	  unmountOnClose: true,
+	  returnFocusAfterClose: true,
+	  container: 'body'
+	};
+
+	var Modal =
+	/*#__PURE__*/
+	function (_React$Component) {
+	  _inheritsLoose$1(Modal, _React$Component);
+
+	  function Modal(props) {
+	    var _this;
+
+	    _this = _React$Component.call(this, props) || this;
+	    _this._element = null;
+	    _this._originalBodyPadding = null;
+	    _this.getFocusableChildren = _this.getFocusableChildren.bind(_assertThisInitialized(_this));
+	    _this.handleBackdropClick = _this.handleBackdropClick.bind(_assertThisInitialized(_this));
+	    _this.handleBackdropMouseDown = _this.handleBackdropMouseDown.bind(_assertThisInitialized(_this));
+	    _this.handleEscape = _this.handleEscape.bind(_assertThisInitialized(_this));
+	    _this.handleStaticBackdropAnimation = _this.handleStaticBackdropAnimation.bind(_assertThisInitialized(_this));
+	    _this.handleTab = _this.handleTab.bind(_assertThisInitialized(_this));
+	    _this.onOpened = _this.onOpened.bind(_assertThisInitialized(_this));
+	    _this.onClosed = _this.onClosed.bind(_assertThisInitialized(_this));
+	    _this.manageFocusAfterClose = _this.manageFocusAfterClose.bind(_assertThisInitialized(_this));
+	    _this.clearBackdropAnimationTimeout = _this.clearBackdropAnimationTimeout.bind(_assertThisInitialized(_this));
+	    _this.state = {
+	      isOpen: false,
+	      showStaticBackdropAnimation: false
+	    };
+	    return _this;
+	  }
+
+	  var _proto = Modal.prototype;
+
+	  _proto.componentDidMount = function componentDidMount() {
+	    var _this$props = this.props,
+	        isOpen = _this$props.isOpen,
+	        autoFocus = _this$props.autoFocus,
+	        onEnter = _this$props.onEnter;
+
+	    if (isOpen) {
+	      this.init();
+	      this.setState({
+	        isOpen: true
+	      });
+
+	      if (autoFocus) {
+	        this.setFocus();
+	      }
+	    }
+
+	    if (onEnter) {
+	      onEnter();
+	    }
+
+	    this._isMounted = true;
+	  };
+
+	  _proto.componentDidUpdate = function componentDidUpdate(prevProps, prevState) {
+	    if (this.props.isOpen && !prevProps.isOpen) {
+	      this.init();
+	      this.setState({
+	        isOpen: true
+	      }); // let render() renders Modal Dialog first
+
+	      return;
+	    } // now Modal Dialog is rendered and we can refer this._element and this._dialog
+
+
+	    if (this.props.autoFocus && this.state.isOpen && !prevState.isOpen) {
+	      this.setFocus();
+	    }
+
+	    if (this._element && prevProps.zIndex !== this.props.zIndex) {
+	      this._element.style.zIndex = this.props.zIndex;
+	    }
+	  };
+
+	  _proto.componentWillUnmount = function componentWillUnmount() {
+	    this.clearBackdropAnimationTimeout();
+
+	    if (this.props.onExit) {
+	      this.props.onExit();
+	    }
+
+	    if (this._element) {
+	      this.destroy();
+
+	      if (this.props.isOpen || this.state.isOpen) {
+	        this.close();
+	      }
+	    }
+
+	    this._isMounted = false;
+	  };
+
+	  _proto.onOpened = function onOpened(node, isAppearing) {
+	    this.props.onOpened();
+	    (this.props.modalTransition.onEntered || noop)(node, isAppearing);
+	  };
+
+	  _proto.onClosed = function onClosed(node) {
+	    var unmountOnClose = this.props.unmountOnClose; // so all methods get called before it is unmounted
+
+	    this.props.onClosed();
+	    (this.props.modalTransition.onExited || noop)(node);
+
+	    if (unmountOnClose) {
+	      this.destroy();
+	    }
+
+	    this.close();
+
+	    if (this._isMounted) {
+	      this.setState({
+	        isOpen: false
+	      });
+	    }
+	  };
+
+	  _proto.setFocus = function setFocus() {
+	    if (this._dialog && this._dialog.parentNode && typeof this._dialog.parentNode.focus === 'function') {
+	      this._dialog.parentNode.focus();
+	    }
+	  };
+
+	  _proto.getFocusableChildren = function getFocusableChildren() {
+	    return this._element.querySelectorAll(focusableElements.join(', '));
+	  };
+
+	  _proto.getFocusedChild = function getFocusedChild() {
+	    var currentFocus;
+	    var focusableChildren = this.getFocusableChildren();
+
+	    try {
+	      currentFocus = document.activeElement;
+	    } catch (err) {
+	      currentFocus = focusableChildren[0];
+	    }
+
+	    return currentFocus;
+	  } // not mouseUp because scrollbar fires it, shouldn't close when user scrolls
+	  ;
+
+	  _proto.handleBackdropClick = function handleBackdropClick(e) {
+	    if (e.target === this._mouseDownElement) {
+	      e.stopPropagation();
+	      var backdrop = this._dialog ? this._dialog.parentNode : null;
+
+	      if (backdrop && e.target === backdrop && this.props.backdrop === 'static') {
+	        this.handleStaticBackdropAnimation();
+	      }
+
+	      if (!this.props.isOpen || this.props.backdrop !== true) return;
+
+	      if (backdrop && e.target === backdrop && this.props.toggle) {
+	        this.props.toggle(e);
+	      }
+	    }
+	  };
+
+	  _proto.handleTab = function handleTab(e) {
+	    if (e.which !== 9) return;
+	    var focusableChildren = this.getFocusableChildren();
+	    var totalFocusable = focusableChildren.length;
+	    if (totalFocusable === 0) return;
+	    var currentFocus = this.getFocusedChild();
+	    var focusedIndex = 0;
+
+	    for (var i = 0; i < totalFocusable; i += 1) {
+	      if (focusableChildren[i] === currentFocus) {
+	        focusedIndex = i;
+	        break;
+	      }
+	    }
+
+	    if (e.shiftKey && focusedIndex === 0) {
+	      e.preventDefault();
+	      focusableChildren[totalFocusable - 1].focus();
+	    } else if (!e.shiftKey && focusedIndex === totalFocusable - 1) {
+	      e.preventDefault();
+	      focusableChildren[0].focus();
+	    }
+	  };
+
+	  _proto.handleBackdropMouseDown = function handleBackdropMouseDown(e) {
+	    this._mouseDownElement = e.target;
+	  };
+
+	  _proto.handleEscape = function handleEscape(e) {
+	    if (this.props.isOpen && e.keyCode === keyCodes.esc && this.props.toggle) {
+	      if (this.props.keyboard) {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        this.props.toggle(e);
+	      } else if (this.props.backdrop === 'static') {
+	        e.preventDefault();
+	        e.stopPropagation();
+	        this.handleStaticBackdropAnimation();
+	      }
+	    }
+	  };
+
+	  _proto.handleStaticBackdropAnimation = function handleStaticBackdropAnimation() {
+	    var _this2 = this;
+
+	    this.clearBackdropAnimationTimeout();
+	    this.setState({
+	      showStaticBackdropAnimation: true
+	    });
+	    this._backdropAnimationTimeout = setTimeout(function () {
+	      _this2.setState({
+	        showStaticBackdropAnimation: false
+	      });
+	    }, 100);
+	  };
+
+	  _proto.init = function init() {
+	    try {
+	      this._triggeringElement = document.activeElement;
+	    } catch (err) {
+	      this._triggeringElement = null;
+	    }
+
+	    if (!this._element) {
+	      this._element = document.createElement('div');
+
+	      this._element.setAttribute('tabindex', '-1');
+
+	      this._element.style.position = 'relative';
+	      this._element.style.zIndex = this.props.zIndex;
+	      this._mountContainer = getTarget(this.props.container);
+
+	      this._mountContainer.appendChild(this._element);
+	    }
+
+	    this._originalBodyPadding = getOriginalBodyPadding();
+	    conditionallyUpdateScrollbar();
+
+	    if (Modal.openCount === 0) {
+	      document.body.className = classNames(document.body.className, mapToCssModules('modal-open', this.props.cssModule));
+	    }
+
+	    Modal.openCount += 1;
+	  };
+
+	  _proto.destroy = function destroy() {
+	    if (this._element) {
+	      this._mountContainer.removeChild(this._element);
+
+	      this._element = null;
+	    }
+
+	    this.manageFocusAfterClose();
+	  };
+
+	  _proto.manageFocusAfterClose = function manageFocusAfterClose() {
+	    if (this._triggeringElement) {
+	      var returnFocusAfterClose = this.props.returnFocusAfterClose;
+	      if (this._triggeringElement.focus && returnFocusAfterClose) this._triggeringElement.focus();
+	      this._triggeringElement = null;
+	    }
+	  };
+
+	  _proto.close = function close() {
+	    if (Modal.openCount <= 1) {
+	      var modalOpenClassName = mapToCssModules('modal-open', this.props.cssModule); // Use regex to prevent matching `modal-open` as part of a different class, e.g. `my-modal-opened`
+
+	      var modalOpenClassNameRegex = new RegExp("(^| )" + modalOpenClassName + "( |$)");
+	      document.body.className = document.body.className.replace(modalOpenClassNameRegex, ' ').trim();
+	    }
+
+	    this.manageFocusAfterClose();
+	    Modal.openCount = Math.max(0, Modal.openCount - 1);
+	    setScrollbarWidth(this._originalBodyPadding);
+	  };
+
+	  _proto.renderModalDialog = function renderModalDialog() {
+	    var _classNames,
+	        _this3 = this;
+
+	    var attributes = omit(this.props, propsToOmit);
+	    var dialogBaseClass = 'modal-dialog';
+	    return React.createElement("div", _extends({}, attributes, {
+	      className: mapToCssModules(classNames(dialogBaseClass, this.props.className, (_classNames = {}, _classNames["modal-" + this.props.size] = this.props.size, _classNames[dialogBaseClass + "-centered"] = this.props.centered, _classNames[dialogBaseClass + "-scrollable"] = this.props.scrollable, _classNames)), this.props.cssModule),
+	      role: "document",
+	      ref: function ref(c) {
+	        _this3._dialog = c;
+	      }
+	    }), React.createElement("div", {
+	      className: mapToCssModules(classNames('modal-content', this.props.contentClassName), this.props.cssModule)
+	    }, this.props.children));
+	  };
+
+	  _proto.render = function render() {
+	    var unmountOnClose = this.props.unmountOnClose;
+
+	    if (!!this._element && (this.state.isOpen || !unmountOnClose)) {
+	      var isModalHidden = !!this._element && !this.state.isOpen && !unmountOnClose;
+	      this._element.style.display = isModalHidden ? 'none' : 'block';
+	      var _this$props2 = this.props,
+	          wrapClassName = _this$props2.wrapClassName,
+	          modalClassName = _this$props2.modalClassName,
+	          backdropClassName = _this$props2.backdropClassName,
+	          cssModule = _this$props2.cssModule,
+	          isOpen = _this$props2.isOpen,
+	          backdrop = _this$props2.backdrop,
+	          role = _this$props2.role,
+	          labelledBy = _this$props2.labelledBy,
+	          external = _this$props2.external,
+	          innerRef = _this$props2.innerRef;
+	      var modalAttributes = {
+	        onClick: this.handleBackdropClick,
+	        onMouseDown: this.handleBackdropMouseDown,
+	        onKeyUp: this.handleEscape,
+	        onKeyDown: this.handleTab,
+	        style: {
+	          display: 'block'
+	        },
+	        'aria-labelledby': labelledBy,
+	        role: role,
+	        tabIndex: '-1'
+	      };
+	      var hasTransition = this.props.fade;
+
+	      var modalTransition = _objectSpread({}, Fade.defaultProps, {}, this.props.modalTransition, {
+	        baseClass: hasTransition ? this.props.modalTransition.baseClass : '',
+	        timeout: hasTransition ? this.props.modalTransition.timeout : 0
+	      });
+
+	      var backdropTransition = _objectSpread({}, Fade.defaultProps, {}, this.props.backdropTransition, {
+	        baseClass: hasTransition ? this.props.backdropTransition.baseClass : '',
+	        timeout: hasTransition ? this.props.backdropTransition.timeout : 0
+	      });
+
+	      var Backdrop = backdrop && (hasTransition ? React.createElement(Fade, _extends({}, backdropTransition, {
+	        in: isOpen && !!backdrop,
+	        cssModule: cssModule,
+	        className: mapToCssModules(classNames('modal-backdrop', backdropClassName), cssModule)
+	      })) : React.createElement("div", {
+	        className: mapToCssModules(classNames('modal-backdrop', 'show', backdropClassName), cssModule)
+	      }));
+	      return React.createElement(Portal$1, {
+	        node: this._element
+	      }, React.createElement("div", {
+	        className: mapToCssModules(wrapClassName)
+	      }, React.createElement(Fade, _extends({}, modalAttributes, modalTransition, {
+	        in: isOpen,
+	        onEntered: this.onOpened,
+	        onExited: this.onClosed,
+	        cssModule: cssModule,
+	        className: mapToCssModules(classNames('modal', modalClassName, this.state.showStaticBackdropAnimation && 'modal-static'), cssModule),
+	        innerRef: innerRef
+	      }), external, this.renderModalDialog()), Backdrop));
+	    }
+
+	    return null;
+	  };
+
+	  _proto.clearBackdropAnimationTimeout = function clearBackdropAnimationTimeout() {
+	    if (this._backdropAnimationTimeout) {
+	      clearTimeout(this._backdropAnimationTimeout);
+	      this._backdropAnimationTimeout = undefined;
+	    }
+	  };
+
+	  return Modal;
+	}(React.Component);
+
+	Modal.propTypes = propTypes$8;
+	Modal.defaultProps = defaultProps$8;
+	Modal.openCount = 0;
+	var Modal$1 = Modal;
+
+	var propTypes$7 = {
+	  tag: tagPropType,
+	  wrapTag: tagPropType,
+	  toggle: PropTypes$2.func,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object,
+	  children: PropTypes$2.node,
+	  closeAriaLabel: PropTypes$2.string,
+	  charCode: PropTypes$2.oneOfType([PropTypes$2.string, PropTypes$2.number]),
+	  close: PropTypes$2.object
+	};
+	var defaultProps$7 = {
+	  tag: 'h5',
+	  wrapTag: 'div',
+	  closeAriaLabel: 'Close',
+	  charCode: 215
+	};
+
+	var ModalHeader = function ModalHeader(props) {
+	  var closeButton;
+
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      children = props.children,
+	      toggle = props.toggle,
+	      Tag = props.tag,
+	      WrapTag = props.wrapTag,
+	      closeAriaLabel = props.closeAriaLabel,
+	      charCode = props.charCode,
+	      close = props.close,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "children", "toggle", "tag", "wrapTag", "closeAriaLabel", "charCode", "close"]);
+
+	  var classes = mapToCssModules(classNames(className, 'modal-header'), cssModule);
+
+	  if (!close && toggle) {
+	    var closeIcon = typeof charCode === 'number' ? String.fromCharCode(charCode) : charCode;
+	    closeButton = React.createElement("button", {
+	      type: "button",
+	      onClick: toggle,
+	      className: mapToCssModules('close', cssModule),
+	      "aria-label": closeAriaLabel
+	    }, React.createElement("span", {
+	      "aria-hidden": "true"
+	    }, closeIcon));
+	  }
+
+	  return React.createElement(WrapTag, _extends({}, attributes, {
+	    className: classes
+	  }), React.createElement(Tag, {
+	    className: mapToCssModules('modal-title', cssModule)
+	  }, children), close || closeButton);
+	};
+
+	ModalHeader.propTypes = propTypes$7;
+	ModalHeader.defaultProps = defaultProps$7;
+	var ModalHeader$1 = ModalHeader;
+
+	var propTypes$6 = {
+	  tag: tagPropType,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$6 = {
+	  tag: 'div'
+	};
+
+	var ModalBody = function ModalBody(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      Tag = props.tag,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
+
+	  var classes = mapToCssModules(classNames(className, 'modal-body'), cssModule);
+	  return React.createElement(Tag, _extends({}, attributes, {
+	    className: classes
+	  }));
+	};
+
+	ModalBody.propTypes = propTypes$6;
+	ModalBody.defaultProps = defaultProps$6;
+	var ModalBody$1 = ModalBody;
+
+	var propTypes$5 = {
+	  tag: tagPropType,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$5 = {
+	  tag: 'div'
+	};
+
+	var ModalFooter = function ModalFooter(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      Tag = props.tag,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
+
+	  var classes = mapToCssModules(classNames(className, 'modal-footer'), cssModule);
+	  return React.createElement(Tag, _extends({}, attributes, {
+	    className: classes
+	  }));
+	};
+
+	ModalFooter.propTypes = propTypes$5;
+	ModalFooter.defaultProps = defaultProps$5;
+	var ModalFooter$1 = ModalFooter;
+
+	var propTypes$4 = {
+	  children: PropTypes$2.node,
+	  row: PropTypes$2.bool,
+	  check: PropTypes$2.bool,
+	  inline: PropTypes$2.bool,
+	  disabled: PropTypes$2.bool,
+	  tag: tagPropType,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$4 = {
+	  tag: 'div'
+	};
+
+	var FormGroup = function FormGroup(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      row = props.row,
+	      disabled = props.disabled,
+	      check = props.check,
+	      inline = props.inline,
+	      Tag = props.tag,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "row", "disabled", "check", "inline", "tag"]);
+
+	  var classes = mapToCssModules(classNames(className, row ? 'row' : false, check ? 'form-check' : 'form-group', check && inline ? 'form-check-inline' : false, check && disabled ? 'disabled' : false), cssModule);
+
+	  if (Tag === 'fieldset') {
+	    attributes.disabled = disabled;
+	  }
+
+	  return React.createElement(Tag, _extends({}, attributes, {
+	    className: classes
+	  }));
+	};
+
+	FormGroup.propTypes = propTypes$4;
+	FormGroup.defaultProps = defaultProps$4;
+	var FormGroup$1 = FormGroup;
+
+	var propTypes$3 = {
+	  children: PropTypes$2.node,
+	  type: PropTypes$2.string,
+	  size: PropTypes$2.string,
+	  bsSize: PropTypes$2.string,
+	  valid: PropTypes$2.bool,
+	  invalid: PropTypes$2.bool,
+	  tag: tagPropType,
+	  innerRef: PropTypes$2.oneOfType([PropTypes$2.object, PropTypes$2.func, PropTypes$2.string]),
+	  plaintext: PropTypes$2.bool,
+	  addon: PropTypes$2.bool,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$3 = {
+	  type: 'text'
+	};
+
+	var Input =
+	/*#__PURE__*/
+	function (_React$Component) {
+	  _inheritsLoose$1(Input, _React$Component);
+
+	  function Input(props) {
+	    var _this;
+
+	    _this = _React$Component.call(this, props) || this;
+	    _this.getRef = _this.getRef.bind(_assertThisInitialized(_this));
+	    _this.focus = _this.focus.bind(_assertThisInitialized(_this));
+	    return _this;
+	  }
+
+	  var _proto = Input.prototype;
+
+	  _proto.getRef = function getRef(ref) {
+	    if (this.props.innerRef) {
+	      this.props.innerRef(ref);
+	    }
+
+	    this.ref = ref;
+	  };
+
+	  _proto.focus = function focus() {
+	    if (this.ref) {
+	      this.ref.focus();
+	    }
+	  };
+
+	  _proto.render = function render() {
+	    var _this$props = this.props,
+	        className = _this$props.className,
+	        cssModule = _this$props.cssModule,
+	        type = _this$props.type,
+	        bsSize = _this$props.bsSize,
+	        valid = _this$props.valid,
+	        invalid = _this$props.invalid,
+	        tag = _this$props.tag,
+	        addon = _this$props.addon,
+	        plaintext = _this$props.plaintext,
+	        innerRef = _this$props.innerRef,
+	        attributes = _objectWithoutPropertiesLoose$1(_this$props, ["className", "cssModule", "type", "bsSize", "valid", "invalid", "tag", "addon", "plaintext", "innerRef"]);
+
+	    var checkInput = ['radio', 'checkbox'].indexOf(type) > -1;
+	    var isNotaNumber = new RegExp('\\D', 'g');
+	    var fileInput = type === 'file';
+	    var textareaInput = type === 'textarea';
+	    var selectInput = type === 'select';
+	    var rangeInput = type === 'range';
+	    var Tag = tag || (selectInput || textareaInput ? type : 'input');
+	    var formControlClass = 'form-control';
+
+	    if (plaintext) {
+	      formControlClass = formControlClass + "-plaintext";
+	      Tag = tag || 'input';
+	    } else if (fileInput) {
+	      formControlClass = formControlClass + "-file";
+	    } else if (rangeInput) {
+	      formControlClass = formControlClass + "-range";
+	    } else if (checkInput) {
+	      if (addon) {
+	        formControlClass = null;
+	      } else {
+	        formControlClass = 'form-check-input';
+	      }
+	    }
+
+	    if (attributes.size && isNotaNumber.test(attributes.size)) {
+	      warnOnce('Please use the prop "bsSize" instead of the "size" to bootstrap\'s input sizing.');
+	      bsSize = attributes.size;
+	      delete attributes.size;
+	    }
+
+	    var classes = mapToCssModules(classNames(className, invalid && 'is-invalid', valid && 'is-valid', bsSize ? "form-control-" + bsSize : false, formControlClass), cssModule);
+
+	    if (Tag === 'input' || tag && typeof tag === 'function') {
+	      attributes.type = type;
+	    }
+
+	    if (attributes.children && !(plaintext || type === 'select' || typeof Tag !== 'string' || Tag === 'select')) {
+	      warnOnce("Input with a type of \"" + type + "\" cannot have children. Please use \"value\"/\"defaultValue\" instead.");
+	      delete attributes.children;
+	    }
+
+	    return React.createElement(Tag, _extends({}, attributes, {
+	      ref: innerRef,
+	      className: classes,
+	      "aria-invalid": invalid
+	    }));
+	  };
+
+	  return Input;
+	}(React.Component);
+
+	Input.propTypes = propTypes$3;
+	Input.defaultProps = defaultProps$3;
+	var Input$1 = Input;
+
+	var propTypes$2 = {
+	  tag: tagPropType,
+	  size: PropTypes$2.string,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$2 = {
+	  tag: 'div'
+	};
+
+	var InputGroup = function InputGroup(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      Tag = props.tag,
+	      size = props.size,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag", "size"]);
+
+	  var classes = mapToCssModules(classNames(className, 'input-group', size ? "input-group-" + size : null), cssModule);
+	  return React.createElement(Tag, _extends({}, attributes, {
+	    className: classes
+	  }));
+	};
+
+	InputGroup.propTypes = propTypes$2;
+	InputGroup.defaultProps = defaultProps$2;
+	var InputGroup$1 = InputGroup;
+
+	var propTypes$1 = {
+	  tag: tagPropType,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object
+	};
+	var defaultProps$1 = {
+	  tag: 'span'
+	};
+
+	var InputGroupText = function InputGroupText(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      Tag = props.tag,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "tag"]);
+
+	  var classes = mapToCssModules(classNames(className, 'input-group-text'), cssModule);
+	  return React.createElement(Tag, _extends({}, attributes, {
+	    className: classes
+	  }));
+	};
+
+	InputGroupText.propTypes = propTypes$1;
+	InputGroupText.defaultProps = defaultProps$1;
+	var InputGroupText$1 = InputGroupText;
+
+	var colWidths = ['xs', 'sm', 'md', 'lg', 'xl'];
+	var stringOrNumberProp = PropTypes$2.oneOfType([PropTypes$2.number, PropTypes$2.string]);
+	var columnProps = PropTypes$2.oneOfType([PropTypes$2.bool, PropTypes$2.string, PropTypes$2.number, PropTypes$2.shape({
+	  size: stringOrNumberProp,
+	  order: stringOrNumberProp,
+	  offset: stringOrNumberProp
+	})]);
+	var propTypes = {
+	  children: PropTypes$2.node,
+	  hidden: PropTypes$2.bool,
+	  check: PropTypes$2.bool,
+	  size: PropTypes$2.string,
+	  for: PropTypes$2.string,
+	  tag: tagPropType,
+	  className: PropTypes$2.string,
+	  cssModule: PropTypes$2.object,
+	  xs: columnProps,
+	  sm: columnProps,
+	  md: columnProps,
+	  lg: columnProps,
+	  xl: columnProps,
+	  widths: PropTypes$2.array
+	};
+	var defaultProps = {
+	  tag: 'label',
+	  widths: colWidths
+	};
+
+	var getColumnSizeClass = function getColumnSizeClass(isXs, colWidth, colSize) {
+	  if (colSize === true || colSize === '') {
+	    return isXs ? 'col' : "col-" + colWidth;
+	  } else if (colSize === 'auto') {
+	    return isXs ? 'col-auto' : "col-" + colWidth + "-auto";
+	  }
+
+	  return isXs ? "col-" + colSize : "col-" + colWidth + "-" + colSize;
+	};
+
+	var Label = function Label(props) {
+	  var className = props.className,
+	      cssModule = props.cssModule,
+	      hidden = props.hidden,
+	      widths = props.widths,
+	      Tag = props.tag,
+	      check = props.check,
+	      size = props.size,
+	      htmlFor = props.for,
+	      attributes = _objectWithoutPropertiesLoose$1(props, ["className", "cssModule", "hidden", "widths", "tag", "check", "size", "for"]);
+
+	  var colClasses = [];
+	  widths.forEach(function (colWidth, i) {
+	    var columnProp = props[colWidth];
+	    delete attributes[colWidth];
+
+	    if (!columnProp && columnProp !== '') {
+	      return;
+	    }
+
+	    var isXs = !i;
+	    var colClass;
+
+	    if (isObject(columnProp)) {
+	      var _classNames;
+
+	      var colSizeInterfix = isXs ? '-' : "-" + colWidth + "-";
+	      colClass = getColumnSizeClass(isXs, colWidth, columnProp.size);
+	      colClasses.push(mapToCssModules(classNames((_classNames = {}, _classNames[colClass] = columnProp.size || columnProp.size === '', _classNames["order" + colSizeInterfix + columnProp.order] = columnProp.order || columnProp.order === 0, _classNames["offset" + colSizeInterfix + columnProp.offset] = columnProp.offset || columnProp.offset === 0, _classNames))), cssModule);
+	    } else {
+	      colClass = getColumnSizeClass(isXs, colWidth, columnProp);
+	      colClasses.push(colClass);
+	    }
+	  });
+	  var classes = mapToCssModules(classNames(className, hidden ? 'sr-only' : false, check ? 'form-check-label' : false, size ? "col-form-label-" + size : false, colClasses, colClasses.length ? 'col-form-label' : false), cssModule);
+	  return React.createElement(Tag, _extends({
+	    htmlFor: htmlFor
+	  }, attributes, {
+	    className: classes
+	  }));
+	};
+
+	Label.propTypes = propTypes;
+	Label.defaultProps = defaultProps;
+	var Label$1 = Label;
+
+	var AxustableFilterModal = _ref => {
+	  var {
+	    title,
+	    show,
+	    filterData,
+	    onClose,
+	    onSubmit
+	  } = _ref;
+	  var [values, setValues] = reactExports.useState(filterData);
+	  var [searchText, setSearchText] = reactExports.useState('');
+	  reactExports.useEffect(() => {
+	    setSearchText('');
+	  }, [show]);
+	  reactExports.useEffect(() => {
+	    setValues(filterData);
+	  }, [filterData]);
+	  var toggleValue = idx => {
+	    var nValues = [...values];
+	    nValues[idx][1] = !nValues[idx][1];
+	    setValues(nValues);
+	  };
+	  var toggleAll = to => {
+	    var nValues = [...values];
+	    nValues.map(v => v[1] = to);
+	    setValues(nValues);
+	  };
+	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Modal$1, {
+	    isOpen: show,
+	    toggle: e => onClose(e),
+	    backdrop: true,
+	    modalTransition: {
+	      timeout: 20
+	    },
+	    backdropTransition: {
+	      timeout: 10
+	    },
+	    className: "axustable-filter-modal"
+	  }, /*#__PURE__*/React.createElement(ModalHeader$1, {
+	    toggle: e => onClose(e)
+	  }, /*#__PURE__*/React.createElement("div", null, title), /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-filter-search"
+	  }, /*#__PURE__*/React.createElement(InputGroup$1, null, /*#__PURE__*/React.createElement(Input$1, {
+	    type: "text",
+	    value: searchText,
+	    onChange: ev => setSearchText(ev.target.value)
+	  }), /*#__PURE__*/React.createElement(InputGroupText$1, null, "☌")))), /*#__PURE__*/React.createElement(ModalBody$1, null, /*#__PURE__*/React.createElement("div", {
+	    className: "axustable-filter-list"
+	  }, values.map((v, i) => {
+	    if (searchText && v[0] ? v[0].toLowerCase().indexOf(searchText.toLowerCase()) >= 0 : true) {
+	      return /*#__PURE__*/React.createElement("div", {
+	        key: "axustable-filter-val-".concat(i),
+	        className: "axustable-filter-val ".concat(v[1] ? 'active' : 'inactive')
+	        /*onClick  = {() => toggleValue(i)}*/
+	      }, /*#__PURE__*/React.createElement(FormGroup$1, {
+	        size: "sm",
+	        check: true
+	      }, /*#__PURE__*/React.createElement(Input$1, {
+	        type: "checkbox",
+	        id: "axustable-filter-val-".concat(i, "-check"),
+	        checked: v[1],
+	        onChange: () => {},
+	        onClick: () => toggleValue(i)
+	      }), /*#__PURE__*/React.createElement(Label$1, null, v[0] != undefined ? v[0].toString() : '')));
+	    }
+	  }))), /*#__PURE__*/React.createElement(ModalFooter$1, null, /*#__PURE__*/React.createElement(FormGroup$1, {
+	    check: true
+	  }, /*#__PURE__*/React.createElement(Input$1, {
+	    type: "checkbox",
+	    id: "axustable-filter-sall-check",
+	    defaultChecked: true,
+	    onClick: ev => toggleAll(ev.target.checked)
+	  }), /*#__PURE__*/React.createElement(Label$1, null, /*#__PURE__*/React.createElement("i", null, "Seleccionar todos"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
+	    onClick: () => onClose()
+	  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+	    onClick: () => onSubmit(values)
+	  }, "Filtrar")))));
+	};
+
 	var AXUSTABLE_DEFAULTS = {
 	  pageRows: 15
 	};
@@ -48745,19 +48782,19 @@
 	    exportFields,
 	    exportName = 'document'
 	  } = _ref;
-	  var [parsedData, setParsedData] = react.exports.useState(data != undefined ? data : []);
-	  var [sort, setSort] = react.exports.useState(initialSort);
-	  var [filteringField, setFilteringField] = react.exports.useState(undefined);
-	  var [filterData, setFilterData] = react.exports.useState([]);
-	  var [filteredIndexes, setFilteredIndexes] = react.exports.useState([]);
-	  var [search, setSearch] = react.exports.useState('');
+	  var [parsedData, setParsedData] = reactExports.useState(data != undefined ? data : []);
+	  var [sort, setSort] = reactExports.useState(initialSort);
+	  var [filteringField, setFilteringField] = reactExports.useState(undefined);
+	  var [filterData, setFilterData] = reactExports.useState([]);
+	  var [filteredIndexes, setFilteredIndexes] = reactExports.useState([]);
+	  var [search, setSearch] = reactExports.useState('');
 	  var [pageRows, setPageRows] = useStoragedState(AXUSTABLE_DEFAULTS.pageRows, getAxustableKey(fields));
-	  var [pageCurrent, setPageCurrent] = react.exports.useState(1);
-	  var [pageSubset, setPageSubset] = react.exports.useState(undefined);
-	  var [pageCount, setPageCount] = react.exports.useState(1);
+	  var [pageCurrent, setPageCurrent] = reactExports.useState(1);
+	  var [pageSubset, setPageSubset] = reactExports.useState(undefined);
+	  var [pageCount, setPageCount] = reactExports.useState(1);
 
 	  // On filter or sort change, reorder data
-	  react.exports.useEffect(() => {
+	  reactExports.useEffect(() => {
 	    if (data == undefined || data.length == 0 || typeof data != 'object') {
 	      setParsedData([]);
 	    } else {
@@ -48804,7 +48841,7 @@
 	  }, [data, fields, sort, filterData, search]);
 
 	  // When data changes, recalc page count
-	  react.exports.useEffect(() => {
+	  reactExports.useEffect(() => {
 	    var nPageCount = 1;
 	    if (parsedData != undefined) {
 	      if (parsedData.length > 0) {
@@ -48817,14 +48854,14 @@
 	  }, [parsedData, pageRows]);
 
 	  // When data or current page changes, move data subset
-	  react.exports.useEffect(() => {
+	  reactExports.useEffect(() => {
 	    if (pageCurrent > pageCount) {
 	      setPageCurrent(pageCount);
 	    }
 	  }, [pageCurrent, pageCount]);
 
 	  // When data or current page changes, move data subset
-	  react.exports.useEffect(() => {
+	  reactExports.useEffect(() => {
 	    if (paginable !== false) {
 	      var nFrom = (pageCurrent - 1) * pageRows;
 	      var nTo = Math.min(pageCurrent * pageRows, parsedData.length);
@@ -48833,7 +48870,7 @@
 	      setPageSubset([0, parsedData.length]);
 	    }
 	  }, [paginable, parsedData, pageCurrent, pageRows]);
-	  react.exports.useEffect(() => {
+	  reactExports.useEffect(() => {
 	    var fIndexes = [];
 	    filterData.map((col, idx) => {
 	      if (col != undefined) {
@@ -48848,16 +48885,16 @@
 	    });
 	    setFilteredIndexes(fIndexes);
 	  }, [filterData]);
-	  var handleClearFilter = react.exports.useCallback(() => {
+	  var handleClearFilter = reactExports.useCallback(() => {
 	    var zeroFilter = fields.map(_ => undefined);
 	    setFilterData(zeroFilter);
 	  }, [fields]);
-	  var handlePageChange = react.exports.useCallback(page => {
+	  var handlePageChange = reactExports.useCallback(page => {
 	    if (page >= 1 && page <= pageCount) {
 	      setPageCurrent(page);
 	    }
 	  }, [pageCount]);
-	  var handleSortChange = react.exports.useCallback(fieldIdx => {
+	  var handleSortChange = reactExports.useCallback(fieldIdx => {
 	    if (fields[fieldIdx].value != undefined) {
 	      var way = 'asc';
 	      if (sort[0] == fieldIdx) {
@@ -48868,7 +48905,7 @@
 	      setSort([fieldIdx, way]);
 	    }
 	  }, [fields, sort]);
-	  var handleFilterOpen = react.exports.useCallback(fieldIdx => {
+	  var handleFilterOpen = reactExports.useCallback(fieldIdx => {
 	    if (fields[fieldIdx].value != undefined) {
 	      if (filterData[fieldIdx] == undefined) {
 	        var nFilterData = [...filterData];
@@ -48880,16 +48917,16 @@
 	      setFilteringField(fieldIdx);
 	    }
 	  }, [fields, filterData, parsedData]);
-	  var handleFilterClose = react.exports.useCallback(() => {
+	  var handleFilterClose = reactExports.useCallback(() => {
 	    setFilteringField(undefined);
 	  }, []);
-	  var handleFilterSet = react.exports.useCallback((filteringField, values) => {
+	  var handleFilterSet = reactExports.useCallback((filteringField, values) => {
 	    var nFilterData = [...filterData];
 	    nFilterData[filteringField] = values;
 	    setFilterData(nFilterData);
 	    setFilteringField(undefined);
 	  }, [filterData]);
-	  var handleExportFile = react.exports.useCallback(() => {
+	  var handleExportFile = reactExports.useCallback(() => {
 	    if (exportFields == undefined) return;
 	    if (exportFields.length == 0) return;
 	    var fieldLabelsList = exportFields.map(f => f.label);
@@ -58958,35 +58995,7 @@
 	  "avatar": "https://robohash.org/magnamharumut.png?size=50x50&set=set1"
 	}];
 
-	function styleInject(css, ref) {
-	  if ( ref === void 0 ) ref = {};
-	  var insertAt = ref.insertAt;
-
-	  if (!css || typeof document === 'undefined') { return; }
-
-	  var head = document.head || document.getElementsByTagName('head')[0];
-	  var style = document.createElement('style');
-	  style.type = 'text/css';
-
-	  if (insertAt === 'top') {
-	    if (head.firstChild) {
-	      head.insertBefore(style, head.firstChild);
-	    } else {
-	      head.appendChild(style);
-	    }
-	  } else {
-	    head.appendChild(style);
-	  }
-
-	  if (style.styleSheet) {
-	    style.styleSheet.cssText = css;
-	  } else {
-	    style.appendChild(document.createTextNode(css));
-	  }
-	}
-
-	var css_248z$1 = "/*!\n * Bootstrap v4.6.2 (https://getbootstrap.com/)\n * Copyright 2011-2022 The Bootstrap Authors\n * Copyright 2011-2022 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)\n */\n:root {\n  --blue: #007bff;\n  --indigo: #6610f2;\n  --purple: #6f42c1;\n  --pink: #e83e8c;\n  --red: #dc3545;\n  --orange: #fd7e14;\n  --yellow: #ffc107;\n  --green: #28a745;\n  --teal: #20c997;\n  --cyan: #17a2b8;\n  --white: #fff;\n  --gray: #6c757d;\n  --gray-dark: #343a40;\n  --primary: #007bff;\n  --secondary: #6c757d;\n  --success: #28a745;\n  --info: #17a2b8;\n  --warning: #ffc107;\n  --danger: #dc3545;\n  --light: #f8f9fa;\n  --dark: #343a40;\n  --breakpoint-xs: 0;\n  --breakpoint-sm: 576px;\n  --breakpoint-md: 768px;\n  --breakpoint-lg: 992px;\n  --breakpoint-xl: 1200px;\n  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace; }\n\n*,\n*::before,\n*::after {\n  box-sizing: border-box; }\n\nhtml {\n  font-family: sans-serif;\n  line-height: 1.15;\n  -webkit-text-size-adjust: 100%;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }\n\narticle, aside, figcaption, figure, footer, header, hgroup, main, nav, section {\n  display: block; }\n\nbody {\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #212529;\n  text-align: left;\n  background-color: #fff; }\n\n[tabindex=\"-1\"]:focus:not(:focus-visible) {\n  outline: 0 !important; }\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible; }\n\nh1, h2, h3, h4, h5, h6 {\n  margin-top: 0;\n  margin-bottom: 0.5rem; }\n\np {\n  margin-top: 0;\n  margin-bottom: 1rem; }\n\nabbr[title],\nabbr[data-original-title] {\n  text-decoration: underline;\n  text-decoration: underline dotted;\n  cursor: help;\n  border-bottom: 0;\n  text-decoration-skip-ink: none; }\n\naddress {\n  margin-bottom: 1rem;\n  font-style: normal;\n  line-height: inherit; }\n\nol,\nul,\ndl {\n  margin-top: 0;\n  margin-bottom: 1rem; }\n\nol ol,\nul ul,\nol ul,\nul ol {\n  margin-bottom: 0; }\n\ndt {\n  font-weight: 700; }\n\ndd {\n  margin-bottom: .5rem;\n  margin-left: 0; }\n\nblockquote {\n  margin: 0 0 1rem; }\n\nb,\nstrong {\n  font-weight: bolder; }\n\nsmall {\n  font-size: 80%; }\n\nsub,\nsup {\n  position: relative;\n  font-size: 75%;\n  line-height: 0;\n  vertical-align: baseline; }\n\nsub {\n  bottom: -.25em; }\n\nsup {\n  top: -.5em; }\n\na {\n  color: #007bff;\n  text-decoration: none;\n  background-color: transparent; }\n  a:hover {\n    color: #0056b3;\n    text-decoration: underline; }\n\na:not([href]):not([class]) {\n  color: inherit;\n  text-decoration: none; }\n  a:not([href]):not([class]):hover {\n    color: inherit;\n    text-decoration: none; }\n\npre,\ncode,\nkbd,\nsamp {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  font-size: 1em; }\n\npre {\n  margin-top: 0;\n  margin-bottom: 1rem;\n  overflow: auto;\n  -ms-overflow-style: scrollbar; }\n\nfigure {\n  margin: 0 0 1rem; }\n\nimg {\n  vertical-align: middle;\n  border-style: none; }\n\nsvg {\n  overflow: hidden;\n  vertical-align: middle; }\n\ntable {\n  border-collapse: collapse; }\n\ncaption {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n  color: #6c757d;\n  text-align: left;\n  caption-side: bottom; }\n\nth {\n  text-align: inherit;\n  text-align: -webkit-match-parent; }\n\nlabel {\n  display: inline-block;\n  margin-bottom: 0.5rem; }\n\nbutton {\n  border-radius: 0; }\n\nbutton:focus:not(:focus-visible) {\n  outline: 0; }\n\ninput,\nbutton,\nselect,\noptgroup,\ntextarea {\n  margin: 0;\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit; }\n\nbutton,\ninput {\n  overflow: visible; }\n\nbutton,\nselect {\n  text-transform: none; }\n\n[role=\"button\"] {\n  cursor: pointer; }\n\nselect {\n  word-wrap: normal; }\n\nbutton,\n[type=\"button\"],\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button; }\n\nbutton:not(:disabled),\n[type=\"button\"]:not(:disabled),\n[type=\"reset\"]:not(:disabled),\n[type=\"submit\"]:not(:disabled) {\n  cursor: pointer; }\n\nbutton::-moz-focus-inner,\n[type=\"button\"]::-moz-focus-inner,\n[type=\"reset\"]::-moz-focus-inner,\n[type=\"submit\"]::-moz-focus-inner {\n  padding: 0;\n  border-style: none; }\n\ninput[type=\"radio\"],\ninput[type=\"checkbox\"] {\n  box-sizing: border-box;\n  padding: 0; }\n\ntextarea {\n  overflow: auto;\n  resize: vertical; }\n\nfieldset {\n  min-width: 0;\n  padding: 0;\n  margin: 0;\n  border: 0; }\n\nlegend {\n  display: block;\n  width: 100%;\n  max-width: 100%;\n  padding: 0;\n  margin-bottom: .5rem;\n  font-size: 1.5rem;\n  line-height: inherit;\n  color: inherit;\n  white-space: normal; }\n\nprogress {\n  vertical-align: baseline; }\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto; }\n\n[type=\"search\"] {\n  outline-offset: -2px;\n  -webkit-appearance: none; }\n\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none; }\n\n::-webkit-file-upload-button {\n  font: inherit;\n  -webkit-appearance: button; }\n\noutput {\n  display: inline-block; }\n\nsummary {\n  display: list-item;\n  cursor: pointer; }\n\ntemplate {\n  display: none; }\n\n[hidden] {\n  display: none !important; }\n\nh1, h2, h3, h4, h5, h6,\n.h1, .h2, .h3, .h4, .h5, .h6 {\n  margin-bottom: 0.5rem;\n  font-weight: 500;\n  line-height: 1.2; }\n\nh1, .h1 {\n  font-size: 2.5rem; }\n\nh2, .h2 {\n  font-size: 2rem; }\n\nh3, .h3 {\n  font-size: 1.75rem; }\n\nh4, .h4 {\n  font-size: 1.5rem; }\n\nh5, .h5 {\n  font-size: 1.25rem; }\n\nh6, .h6 {\n  font-size: 1rem; }\n\n.lead {\n  font-size: 1.25rem;\n  font-weight: 300; }\n\n.display-1 {\n  font-size: 6rem;\n  font-weight: 300;\n  line-height: 1.2; }\n\n.display-2 {\n  font-size: 5.5rem;\n  font-weight: 300;\n  line-height: 1.2; }\n\n.display-3 {\n  font-size: 4.5rem;\n  font-weight: 300;\n  line-height: 1.2; }\n\n.display-4 {\n  font-size: 3.5rem;\n  font-weight: 300;\n  line-height: 1.2; }\n\nhr {\n  margin-top: 1rem;\n  margin-bottom: 1rem;\n  border: 0;\n  border-top: 1px solid rgba(0, 0, 0, 0.1); }\n\nsmall,\n.small {\n  font-size: 0.875em;\n  font-weight: 400; }\n\nmark,\n.mark {\n  padding: 0.2em;\n  background-color: #fcf8e3; }\n\n.list-unstyled {\n  padding-left: 0;\n  list-style: none; }\n\n.list-inline {\n  padding-left: 0;\n  list-style: none; }\n\n.list-inline-item {\n  display: inline-block; }\n  .list-inline-item:not(:last-child) {\n    margin-right: 0.5rem; }\n\n.initialism {\n  font-size: 90%;\n  text-transform: uppercase; }\n\n.blockquote {\n  margin-bottom: 1rem;\n  font-size: 1.25rem; }\n\n.blockquote-footer {\n  display: block;\n  font-size: 0.875em;\n  color: #6c757d; }\n  .blockquote-footer::before {\n    content: \"\\2014\\00A0\"; }\n\n.img-fluid {\n  max-width: 100%;\n  height: auto; }\n\n.img-thumbnail {\n  padding: 0.25rem;\n  background-color: #fff;\n  border: 1px solid #dee2e6;\n  border-radius: 0.25rem;\n  max-width: 100%;\n  height: auto; }\n\n.figure {\n  display: inline-block; }\n\n.figure-img {\n  margin-bottom: 0.5rem;\n  line-height: 1; }\n\n.figure-caption {\n  font-size: 90%;\n  color: #6c757d; }\n\ncode {\n  font-size: 87.5%;\n  color: #e83e8c;\n  word-wrap: break-word; }\n  a > code {\n    color: inherit; }\n\nkbd {\n  padding: 0.2rem 0.4rem;\n  font-size: 87.5%;\n  color: #fff;\n  background-color: #212529;\n  border-radius: 0.2rem; }\n  kbd kbd {\n    padding: 0;\n    font-size: 100%;\n    font-weight: 700; }\n\npre {\n  display: block;\n  font-size: 87.5%;\n  color: #212529; }\n  pre code {\n    font-size: inherit;\n    color: inherit;\n    word-break: normal; }\n\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll; }\n\n.container,\n.container-fluid,\n.container-sm,\n.container-md,\n.container-lg,\n.container-xl {\n  width: 100%;\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto; }\n\n@media (min-width: 576px) {\n  .container, .container-sm {\n    max-width: 540px; } }\n\n@media (min-width: 768px) {\n  .container, .container-sm, .container-md {\n    max-width: 720px; } }\n\n@media (min-width: 992px) {\n  .container, .container-sm, .container-md, .container-lg {\n    max-width: 960px; } }\n\n@media (min-width: 1200px) {\n  .container, .container-sm, .container-md, .container-lg, .container-xl {\n    max-width: 1140px; } }\n\n.row {\n  display: flex;\n  flex-wrap: wrap;\n  margin-right: -15px;\n  margin-left: -15px; }\n\n.no-gutters {\n  margin-right: 0;\n  margin-left: 0; }\n  .no-gutters > .col,\n  .no-gutters > [class*=\"col-\"] {\n    padding-right: 0;\n    padding-left: 0; }\n\n.col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col,\n.col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm,\n.col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md,\n.col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg,\n.col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,\n.col-xl-auto {\n  position: relative;\n  width: 100%;\n  padding-right: 15px;\n  padding-left: 15px; }\n\n.col {\n  flex-basis: 0;\n  flex-grow: 1;\n  max-width: 100%; }\n\n.row-cols-1 > * {\n  flex: 0 0 100%;\n  max-width: 100%; }\n\n.row-cols-2 > * {\n  flex: 0 0 50%;\n  max-width: 50%; }\n\n.row-cols-3 > * {\n  flex: 0 0 33.33333%;\n  max-width: 33.33333%; }\n\n.row-cols-4 > * {\n  flex: 0 0 25%;\n  max-width: 25%; }\n\n.row-cols-5 > * {\n  flex: 0 0 20%;\n  max-width: 20%; }\n\n.row-cols-6 > * {\n  flex: 0 0 16.66667%;\n  max-width: 16.66667%; }\n\n.col-auto {\n  flex: 0 0 auto;\n  width: auto;\n  max-width: 100%; }\n\n.col-1 {\n  flex: 0 0 8.33333%;\n  max-width: 8.33333%; }\n\n.col-2 {\n  flex: 0 0 16.66667%;\n  max-width: 16.66667%; }\n\n.col-3 {\n  flex: 0 0 25%;\n  max-width: 25%; }\n\n.col-4 {\n  flex: 0 0 33.33333%;\n  max-width: 33.33333%; }\n\n.col-5 {\n  flex: 0 0 41.66667%;\n  max-width: 41.66667%; }\n\n.col-6 {\n  flex: 0 0 50%;\n  max-width: 50%; }\n\n.col-7 {\n  flex: 0 0 58.33333%;\n  max-width: 58.33333%; }\n\n.col-8 {\n  flex: 0 0 66.66667%;\n  max-width: 66.66667%; }\n\n.col-9 {\n  flex: 0 0 75%;\n  max-width: 75%; }\n\n.col-10 {\n  flex: 0 0 83.33333%;\n  max-width: 83.33333%; }\n\n.col-11 {\n  flex: 0 0 91.66667%;\n  max-width: 91.66667%; }\n\n.col-12 {\n  flex: 0 0 100%;\n  max-width: 100%; }\n\n.order-first {\n  order: -1; }\n\n.order-last {\n  order: 13; }\n\n.order-0 {\n  order: 0; }\n\n.order-1 {\n  order: 1; }\n\n.order-2 {\n  order: 2; }\n\n.order-3 {\n  order: 3; }\n\n.order-4 {\n  order: 4; }\n\n.order-5 {\n  order: 5; }\n\n.order-6 {\n  order: 6; }\n\n.order-7 {\n  order: 7; }\n\n.order-8 {\n  order: 8; }\n\n.order-9 {\n  order: 9; }\n\n.order-10 {\n  order: 10; }\n\n.order-11 {\n  order: 11; }\n\n.order-12 {\n  order: 12; }\n\n.offset-1 {\n  margin-left: 8.33333%; }\n\n.offset-2 {\n  margin-left: 16.66667%; }\n\n.offset-3 {\n  margin-left: 25%; }\n\n.offset-4 {\n  margin-left: 33.33333%; }\n\n.offset-5 {\n  margin-left: 41.66667%; }\n\n.offset-6 {\n  margin-left: 50%; }\n\n.offset-7 {\n  margin-left: 58.33333%; }\n\n.offset-8 {\n  margin-left: 66.66667%; }\n\n.offset-9 {\n  margin-left: 75%; }\n\n.offset-10 {\n  margin-left: 83.33333%; }\n\n.offset-11 {\n  margin-left: 91.66667%; }\n\n@media (min-width: 576px) {\n  .col-sm {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%; }\n  .row-cols-sm-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .row-cols-sm-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .row-cols-sm-3 > * {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .row-cols-sm-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .row-cols-sm-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%; }\n  .row-cols-sm-6 > * {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-sm-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%; }\n  .col-sm-1 {\n    flex: 0 0 8.33333%;\n    max-width: 8.33333%; }\n  .col-sm-2 {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-sm-3 {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .col-sm-4 {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .col-sm-5 {\n    flex: 0 0 41.66667%;\n    max-width: 41.66667%; }\n  .col-sm-6 {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .col-sm-7 {\n    flex: 0 0 58.33333%;\n    max-width: 58.33333%; }\n  .col-sm-8 {\n    flex: 0 0 66.66667%;\n    max-width: 66.66667%; }\n  .col-sm-9 {\n    flex: 0 0 75%;\n    max-width: 75%; }\n  .col-sm-10 {\n    flex: 0 0 83.33333%;\n    max-width: 83.33333%; }\n  .col-sm-11 {\n    flex: 0 0 91.66667%;\n    max-width: 91.66667%; }\n  .col-sm-12 {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .order-sm-first {\n    order: -1; }\n  .order-sm-last {\n    order: 13; }\n  .order-sm-0 {\n    order: 0; }\n  .order-sm-1 {\n    order: 1; }\n  .order-sm-2 {\n    order: 2; }\n  .order-sm-3 {\n    order: 3; }\n  .order-sm-4 {\n    order: 4; }\n  .order-sm-5 {\n    order: 5; }\n  .order-sm-6 {\n    order: 6; }\n  .order-sm-7 {\n    order: 7; }\n  .order-sm-8 {\n    order: 8; }\n  .order-sm-9 {\n    order: 9; }\n  .order-sm-10 {\n    order: 10; }\n  .order-sm-11 {\n    order: 11; }\n  .order-sm-12 {\n    order: 12; }\n  .offset-sm-0 {\n    margin-left: 0; }\n  .offset-sm-1 {\n    margin-left: 8.33333%; }\n  .offset-sm-2 {\n    margin-left: 16.66667%; }\n  .offset-sm-3 {\n    margin-left: 25%; }\n  .offset-sm-4 {\n    margin-left: 33.33333%; }\n  .offset-sm-5 {\n    margin-left: 41.66667%; }\n  .offset-sm-6 {\n    margin-left: 50%; }\n  .offset-sm-7 {\n    margin-left: 58.33333%; }\n  .offset-sm-8 {\n    margin-left: 66.66667%; }\n  .offset-sm-9 {\n    margin-left: 75%; }\n  .offset-sm-10 {\n    margin-left: 83.33333%; }\n  .offset-sm-11 {\n    margin-left: 91.66667%; } }\n\n@media (min-width: 768px) {\n  .col-md {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%; }\n  .row-cols-md-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .row-cols-md-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .row-cols-md-3 > * {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .row-cols-md-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .row-cols-md-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%; }\n  .row-cols-md-6 > * {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-md-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%; }\n  .col-md-1 {\n    flex: 0 0 8.33333%;\n    max-width: 8.33333%; }\n  .col-md-2 {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-md-3 {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .col-md-4 {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .col-md-5 {\n    flex: 0 0 41.66667%;\n    max-width: 41.66667%; }\n  .col-md-6 {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .col-md-7 {\n    flex: 0 0 58.33333%;\n    max-width: 58.33333%; }\n  .col-md-8 {\n    flex: 0 0 66.66667%;\n    max-width: 66.66667%; }\n  .col-md-9 {\n    flex: 0 0 75%;\n    max-width: 75%; }\n  .col-md-10 {\n    flex: 0 0 83.33333%;\n    max-width: 83.33333%; }\n  .col-md-11 {\n    flex: 0 0 91.66667%;\n    max-width: 91.66667%; }\n  .col-md-12 {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .order-md-first {\n    order: -1; }\n  .order-md-last {\n    order: 13; }\n  .order-md-0 {\n    order: 0; }\n  .order-md-1 {\n    order: 1; }\n  .order-md-2 {\n    order: 2; }\n  .order-md-3 {\n    order: 3; }\n  .order-md-4 {\n    order: 4; }\n  .order-md-5 {\n    order: 5; }\n  .order-md-6 {\n    order: 6; }\n  .order-md-7 {\n    order: 7; }\n  .order-md-8 {\n    order: 8; }\n  .order-md-9 {\n    order: 9; }\n  .order-md-10 {\n    order: 10; }\n  .order-md-11 {\n    order: 11; }\n  .order-md-12 {\n    order: 12; }\n  .offset-md-0 {\n    margin-left: 0; }\n  .offset-md-1 {\n    margin-left: 8.33333%; }\n  .offset-md-2 {\n    margin-left: 16.66667%; }\n  .offset-md-3 {\n    margin-left: 25%; }\n  .offset-md-4 {\n    margin-left: 33.33333%; }\n  .offset-md-5 {\n    margin-left: 41.66667%; }\n  .offset-md-6 {\n    margin-left: 50%; }\n  .offset-md-7 {\n    margin-left: 58.33333%; }\n  .offset-md-8 {\n    margin-left: 66.66667%; }\n  .offset-md-9 {\n    margin-left: 75%; }\n  .offset-md-10 {\n    margin-left: 83.33333%; }\n  .offset-md-11 {\n    margin-left: 91.66667%; } }\n\n@media (min-width: 992px) {\n  .col-lg {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%; }\n  .row-cols-lg-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .row-cols-lg-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .row-cols-lg-3 > * {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .row-cols-lg-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .row-cols-lg-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%; }\n  .row-cols-lg-6 > * {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-lg-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%; }\n  .col-lg-1 {\n    flex: 0 0 8.33333%;\n    max-width: 8.33333%; }\n  .col-lg-2 {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-lg-3 {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .col-lg-4 {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .col-lg-5 {\n    flex: 0 0 41.66667%;\n    max-width: 41.66667%; }\n  .col-lg-6 {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .col-lg-7 {\n    flex: 0 0 58.33333%;\n    max-width: 58.33333%; }\n  .col-lg-8 {\n    flex: 0 0 66.66667%;\n    max-width: 66.66667%; }\n  .col-lg-9 {\n    flex: 0 0 75%;\n    max-width: 75%; }\n  .col-lg-10 {\n    flex: 0 0 83.33333%;\n    max-width: 83.33333%; }\n  .col-lg-11 {\n    flex: 0 0 91.66667%;\n    max-width: 91.66667%; }\n  .col-lg-12 {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .order-lg-first {\n    order: -1; }\n  .order-lg-last {\n    order: 13; }\n  .order-lg-0 {\n    order: 0; }\n  .order-lg-1 {\n    order: 1; }\n  .order-lg-2 {\n    order: 2; }\n  .order-lg-3 {\n    order: 3; }\n  .order-lg-4 {\n    order: 4; }\n  .order-lg-5 {\n    order: 5; }\n  .order-lg-6 {\n    order: 6; }\n  .order-lg-7 {\n    order: 7; }\n  .order-lg-8 {\n    order: 8; }\n  .order-lg-9 {\n    order: 9; }\n  .order-lg-10 {\n    order: 10; }\n  .order-lg-11 {\n    order: 11; }\n  .order-lg-12 {\n    order: 12; }\n  .offset-lg-0 {\n    margin-left: 0; }\n  .offset-lg-1 {\n    margin-left: 8.33333%; }\n  .offset-lg-2 {\n    margin-left: 16.66667%; }\n  .offset-lg-3 {\n    margin-left: 25%; }\n  .offset-lg-4 {\n    margin-left: 33.33333%; }\n  .offset-lg-5 {\n    margin-left: 41.66667%; }\n  .offset-lg-6 {\n    margin-left: 50%; }\n  .offset-lg-7 {\n    margin-left: 58.33333%; }\n  .offset-lg-8 {\n    margin-left: 66.66667%; }\n  .offset-lg-9 {\n    margin-left: 75%; }\n  .offset-lg-10 {\n    margin-left: 83.33333%; }\n  .offset-lg-11 {\n    margin-left: 91.66667%; } }\n\n@media (min-width: 1200px) {\n  .col-xl {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%; }\n  .row-cols-xl-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .row-cols-xl-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .row-cols-xl-3 > * {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .row-cols-xl-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .row-cols-xl-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%; }\n  .row-cols-xl-6 > * {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-xl-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%; }\n  .col-xl-1 {\n    flex: 0 0 8.33333%;\n    max-width: 8.33333%; }\n  .col-xl-2 {\n    flex: 0 0 16.66667%;\n    max-width: 16.66667%; }\n  .col-xl-3 {\n    flex: 0 0 25%;\n    max-width: 25%; }\n  .col-xl-4 {\n    flex: 0 0 33.33333%;\n    max-width: 33.33333%; }\n  .col-xl-5 {\n    flex: 0 0 41.66667%;\n    max-width: 41.66667%; }\n  .col-xl-6 {\n    flex: 0 0 50%;\n    max-width: 50%; }\n  .col-xl-7 {\n    flex: 0 0 58.33333%;\n    max-width: 58.33333%; }\n  .col-xl-8 {\n    flex: 0 0 66.66667%;\n    max-width: 66.66667%; }\n  .col-xl-9 {\n    flex: 0 0 75%;\n    max-width: 75%; }\n  .col-xl-10 {\n    flex: 0 0 83.33333%;\n    max-width: 83.33333%; }\n  .col-xl-11 {\n    flex: 0 0 91.66667%;\n    max-width: 91.66667%; }\n  .col-xl-12 {\n    flex: 0 0 100%;\n    max-width: 100%; }\n  .order-xl-first {\n    order: -1; }\n  .order-xl-last {\n    order: 13; }\n  .order-xl-0 {\n    order: 0; }\n  .order-xl-1 {\n    order: 1; }\n  .order-xl-2 {\n    order: 2; }\n  .order-xl-3 {\n    order: 3; }\n  .order-xl-4 {\n    order: 4; }\n  .order-xl-5 {\n    order: 5; }\n  .order-xl-6 {\n    order: 6; }\n  .order-xl-7 {\n    order: 7; }\n  .order-xl-8 {\n    order: 8; }\n  .order-xl-9 {\n    order: 9; }\n  .order-xl-10 {\n    order: 10; }\n  .order-xl-11 {\n    order: 11; }\n  .order-xl-12 {\n    order: 12; }\n  .offset-xl-0 {\n    margin-left: 0; }\n  .offset-xl-1 {\n    margin-left: 8.33333%; }\n  .offset-xl-2 {\n    margin-left: 16.66667%; }\n  .offset-xl-3 {\n    margin-left: 25%; }\n  .offset-xl-4 {\n    margin-left: 33.33333%; }\n  .offset-xl-5 {\n    margin-left: 41.66667%; }\n  .offset-xl-6 {\n    margin-left: 50%; }\n  .offset-xl-7 {\n    margin-left: 58.33333%; }\n  .offset-xl-8 {\n    margin-left: 66.66667%; }\n  .offset-xl-9 {\n    margin-left: 75%; }\n  .offset-xl-10 {\n    margin-left: 83.33333%; }\n  .offset-xl-11 {\n    margin-left: 91.66667%; } }\n\n.table {\n  width: 100%;\n  margin-bottom: 1rem;\n  color: #212529; }\n  .table th,\n  .table td {\n    padding: 0.75rem;\n    vertical-align: top;\n    border-top: 1px solid #dee2e6; }\n  .table thead th {\n    vertical-align: bottom;\n    border-bottom: 2px solid #dee2e6; }\n  .table tbody + tbody {\n    border-top: 2px solid #dee2e6; }\n\n.table-sm th,\n.table-sm td {\n  padding: 0.3rem; }\n\n.table-bordered {\n  border: 1px solid #dee2e6; }\n  .table-bordered th,\n  .table-bordered td {\n    border: 1px solid #dee2e6; }\n  .table-bordered thead th,\n  .table-bordered thead td {\n    border-bottom-width: 2px; }\n\n.table-borderless th,\n.table-borderless td,\n.table-borderless thead th,\n.table-borderless tbody + tbody {\n  border: 0; }\n\n.table-striped tbody tr:nth-of-type(odd) {\n  background-color: rgba(0, 0, 0, 0.05); }\n\n.table-hover tbody tr:hover {\n  color: #212529;\n  background-color: rgba(0, 0, 0, 0.075); }\n\n.table-primary,\n.table-primary > th,\n.table-primary > td {\n  background-color: #b8daff; }\n\n.table-primary th,\n.table-primary td,\n.table-primary thead th,\n.table-primary tbody + tbody {\n  border-color: #7abaff; }\n\n.table-hover .table-primary:hover {\n  background-color: #9fcdff; }\n  .table-hover .table-primary:hover > td,\n  .table-hover .table-primary:hover > th {\n    background-color: #9fcdff; }\n\n.table-secondary,\n.table-secondary > th,\n.table-secondary > td {\n  background-color: #d6d8db; }\n\n.table-secondary th,\n.table-secondary td,\n.table-secondary thead th,\n.table-secondary tbody + tbody {\n  border-color: #b3b7bb; }\n\n.table-hover .table-secondary:hover {\n  background-color: #c8cbcf; }\n  .table-hover .table-secondary:hover > td,\n  .table-hover .table-secondary:hover > th {\n    background-color: #c8cbcf; }\n\n.table-success,\n.table-success > th,\n.table-success > td {\n  background-color: #c3e6cb; }\n\n.table-success th,\n.table-success td,\n.table-success thead th,\n.table-success tbody + tbody {\n  border-color: #8fd19e; }\n\n.table-hover .table-success:hover {\n  background-color: #b1dfbb; }\n  .table-hover .table-success:hover > td,\n  .table-hover .table-success:hover > th {\n    background-color: #b1dfbb; }\n\n.table-info,\n.table-info > th,\n.table-info > td {\n  background-color: #bee5eb; }\n\n.table-info th,\n.table-info td,\n.table-info thead th,\n.table-info tbody + tbody {\n  border-color: #86cfda; }\n\n.table-hover .table-info:hover {\n  background-color: #abdde5; }\n  .table-hover .table-info:hover > td,\n  .table-hover .table-info:hover > th {\n    background-color: #abdde5; }\n\n.table-warning,\n.table-warning > th,\n.table-warning > td {\n  background-color: #ffeeba; }\n\n.table-warning th,\n.table-warning td,\n.table-warning thead th,\n.table-warning tbody + tbody {\n  border-color: #ffdf7e; }\n\n.table-hover .table-warning:hover {\n  background-color: #ffe8a1; }\n  .table-hover .table-warning:hover > td,\n  .table-hover .table-warning:hover > th {\n    background-color: #ffe8a1; }\n\n.table-danger,\n.table-danger > th,\n.table-danger > td {\n  background-color: #f5c6cb; }\n\n.table-danger th,\n.table-danger td,\n.table-danger thead th,\n.table-danger tbody + tbody {\n  border-color: #ed969e; }\n\n.table-hover .table-danger:hover {\n  background-color: #f1b0b7; }\n  .table-hover .table-danger:hover > td,\n  .table-hover .table-danger:hover > th {\n    background-color: #f1b0b7; }\n\n.table-light,\n.table-light > th,\n.table-light > td {\n  background-color: #fdfdfe; }\n\n.table-light th,\n.table-light td,\n.table-light thead th,\n.table-light tbody + tbody {\n  border-color: #fbfcfc; }\n\n.table-hover .table-light:hover {\n  background-color: #ececf6; }\n  .table-hover .table-light:hover > td,\n  .table-hover .table-light:hover > th {\n    background-color: #ececf6; }\n\n.table-dark,\n.table-dark > th,\n.table-dark > td {\n  background-color: #c6c8ca; }\n\n.table-dark th,\n.table-dark td,\n.table-dark thead th,\n.table-dark tbody + tbody {\n  border-color: #95999c; }\n\n.table-hover .table-dark:hover {\n  background-color: #b9bbbe; }\n  .table-hover .table-dark:hover > td,\n  .table-hover .table-dark:hover > th {\n    background-color: #b9bbbe; }\n\n.table-active,\n.table-active > th,\n.table-active > td {\n  background-color: rgba(0, 0, 0, 0.075); }\n\n.table-hover .table-active:hover {\n  background-color: rgba(0, 0, 0, 0.075); }\n  .table-hover .table-active:hover > td,\n  .table-hover .table-active:hover > th {\n    background-color: rgba(0, 0, 0, 0.075); }\n\n.table .thead-dark th {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #454d55; }\n\n.table .thead-light th {\n  color: #495057;\n  background-color: #e9ecef;\n  border-color: #dee2e6; }\n\n.table-dark {\n  color: #fff;\n  background-color: #343a40; }\n  .table-dark th,\n  .table-dark td,\n  .table-dark thead th {\n    border-color: #454d55; }\n  .table-dark.table-bordered {\n    border: 0; }\n  .table-dark.table-striped tbody tr:nth-of-type(odd) {\n    background-color: rgba(255, 255, 255, 0.05); }\n  .table-dark.table-hover tbody tr:hover {\n    color: #fff;\n    background-color: rgba(255, 255, 255, 0.075); }\n\n@media (max-width: 575.98px) {\n  .table-responsive-sm {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch; }\n    .table-responsive-sm > .table-bordered {\n      border: 0; } }\n\n@media (max-width: 767.98px) {\n  .table-responsive-md {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch; }\n    .table-responsive-md > .table-bordered {\n      border: 0; } }\n\n@media (max-width: 991.98px) {\n  .table-responsive-lg {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch; }\n    .table-responsive-lg > .table-bordered {\n      border: 0; } }\n\n@media (max-width: 1199.98px) {\n  .table-responsive-xl {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch; }\n    .table-responsive-xl > .table-bordered {\n      border: 0; } }\n\n.table-responsive {\n  display: block;\n  width: 100%;\n  overflow-x: auto;\n  -webkit-overflow-scrolling: touch; }\n  .table-responsive > .table-bordered {\n    border: 0; }\n\n.form-control {\n  display: block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 0.75rem;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }\n  @media (prefers-reduced-motion: reduce) {\n    .form-control {\n      transition: none; } }\n  .form-control::-ms-expand {\n    background-color: transparent;\n    border: 0; }\n  .form-control:focus {\n    color: #495057;\n    background-color: #fff;\n    border-color: #80bdff;\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n  .form-control::placeholder {\n    color: #6c757d;\n    opacity: 1; }\n  .form-control:disabled, .form-control[readonly] {\n    background-color: #e9ecef;\n    opacity: 1; }\n\ninput[type=\"date\"].form-control,\ninput[type=\"time\"].form-control,\ninput[type=\"datetime-local\"].form-control,\ninput[type=\"month\"].form-control {\n  appearance: none; }\n\nselect.form-control:-moz-focusring {\n  color: transparent;\n  text-shadow: 0 0 0 #495057; }\n\nselect.form-control:focus::-ms-value {\n  color: #495057;\n  background-color: #fff; }\n\n.form-control-file,\n.form-control-range {\n  display: block;\n  width: 100%; }\n\n.col-form-label {\n  padding-top: calc(0.375rem + 1px);\n  padding-bottom: calc(0.375rem + 1px);\n  margin-bottom: 0;\n  font-size: inherit;\n  line-height: 1.5; }\n\n.col-form-label-lg {\n  padding-top: calc(0.5rem + 1px);\n  padding-bottom: calc(0.5rem + 1px);\n  font-size: 1.25rem;\n  line-height: 1.5; }\n\n.col-form-label-sm {\n  padding-top: calc(0.25rem + 1px);\n  padding-bottom: calc(0.25rem + 1px);\n  font-size: 0.875rem;\n  line-height: 1.5; }\n\n.form-control-plaintext {\n  display: block;\n  width: 100%;\n  padding: 0.375rem 0;\n  margin-bottom: 0;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #212529;\n  background-color: transparent;\n  border: solid transparent;\n  border-width: 1px 0; }\n  .form-control-plaintext.form-control-sm, .form-control-plaintext.form-control-lg {\n    padding-right: 0;\n    padding-left: 0; }\n\n.form-control-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem; }\n\n.form-control-lg {\n  height: calc(1.5em + 1rem + 2px);\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem; }\n\nselect.form-control[size], select.form-control[multiple] {\n  height: auto; }\n\ntextarea.form-control {\n  height: auto; }\n\n.form-group {\n  margin-bottom: 1rem; }\n\n.form-text {\n  display: block;\n  margin-top: 0.25rem; }\n\n.form-row {\n  display: flex;\n  flex-wrap: wrap;\n  margin-right: -5px;\n  margin-left: -5px; }\n  .form-row > .col,\n  .form-row > [class*=\"col-\"] {\n    padding-right: 5px;\n    padding-left: 5px; }\n\n.form-check {\n  position: relative;\n  display: block;\n  padding-left: 1.25rem; }\n\n.form-check-input {\n  position: absolute;\n  margin-top: 0.3rem;\n  margin-left: -1.25rem; }\n  .form-check-input[disabled] ~ .form-check-label,\n  .form-check-input:disabled ~ .form-check-label {\n    color: #6c757d; }\n\n.form-check-label {\n  margin-bottom: 0; }\n\n.form-check-inline {\n  display: inline-flex;\n  align-items: center;\n  padding-left: 0;\n  margin-right: 0.75rem; }\n  .form-check-inline .form-check-input {\n    position: static;\n    margin-top: 0;\n    margin-right: 0.3125rem;\n    margin-left: 0; }\n\n.valid-feedback {\n  display: none;\n  width: 100%;\n  margin-top: 0.25rem;\n  font-size: 0.875em;\n  color: #28a745; }\n\n.valid-tooltip {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  padding: 0.25rem 0.5rem;\n  margin-top: .1rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n  background-color: rgba(40, 167, 69, 0.9);\n  border-radius: 0.25rem; }\n  .form-row > .col > .valid-tooltip,\n  .form-row > [class*=\"col-\"] > .valid-tooltip {\n    left: 5px; }\n\n.was-validated :valid ~ .valid-feedback,\n.was-validated :valid ~ .valid-tooltip,\n.is-valid ~ .valid-feedback,\n.is-valid ~ .valid-tooltip {\n  display: block; }\n\n.was-validated .form-control:valid, .form-control.is-valid {\n  border-color: #28a745;\n  padding-right: calc(1.5em + 0.75rem) !important;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-position: right calc(0.375em + 0.1875rem) center;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem); }\n  .was-validated .form-control:valid:focus, .form-control.is-valid:focus {\n    border-color: #28a745;\n    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); }\n\n.was-validated select.form-control:valid, select.form-control.is-valid {\n  padding-right: 3rem !important;\n  background-position: right 1.5rem center; }\n\n.was-validated textarea.form-control:valid, textarea.form-control.is-valid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem); }\n\n.was-validated .custom-select:valid, .custom-select.is-valid {\n  border-color: #28a745;\n  padding-right: calc(0.75em + 2.3125rem) !important;\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat, #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\") center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) no-repeat; }\n  .was-validated .custom-select:valid:focus, .custom-select.is-valid:focus {\n    border-color: #28a745;\n    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); }\n\n.was-validated .form-check-input:valid ~ .form-check-label, .form-check-input.is-valid ~ .form-check-label {\n  color: #28a745; }\n\n.was-validated .form-check-input:valid ~ .valid-feedback,\n.was-validated .form-check-input:valid ~ .valid-tooltip, .form-check-input.is-valid ~ .valid-feedback,\n.form-check-input.is-valid ~ .valid-tooltip {\n  display: block; }\n\n.was-validated .custom-control-input:valid ~ .custom-control-label, .custom-control-input.is-valid ~ .custom-control-label {\n  color: #28a745; }\n  .was-validated .custom-control-input:valid ~ .custom-control-label::before, .custom-control-input.is-valid ~ .custom-control-label::before {\n    border-color: #28a745; }\n\n.was-validated .custom-control-input:valid:checked ~ .custom-control-label::before, .custom-control-input.is-valid:checked ~ .custom-control-label::before {\n  border-color: #34ce57;\n  background-color: #34ce57; }\n\n.was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, .custom-control-input.is-valid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); }\n\n.was-validated .custom-control-input:valid:focus:not(:checked) ~ .custom-control-label::before, .custom-control-input.is-valid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #28a745; }\n\n.was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {\n  border-color: #28a745; }\n\n.was-validated .custom-file-input:valid:focus ~ .custom-file-label, .custom-file-input.is-valid:focus ~ .custom-file-label {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25); }\n\n.invalid-feedback {\n  display: none;\n  width: 100%;\n  margin-top: 0.25rem;\n  font-size: 0.875em;\n  color: #dc3545; }\n\n.invalid-tooltip {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  padding: 0.25rem 0.5rem;\n  margin-top: .1rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n  background-color: rgba(220, 53, 69, 0.9);\n  border-radius: 0.25rem; }\n  .form-row > .col > .invalid-tooltip,\n  .form-row > [class*=\"col-\"] > .invalid-tooltip {\n    left: 5px; }\n\n.was-validated :invalid ~ .invalid-feedback,\n.was-validated :invalid ~ .invalid-tooltip,\n.is-invalid ~ .invalid-feedback,\n.is-invalid ~ .invalid-tooltip {\n  display: block; }\n\n.was-validated .form-control:invalid, .form-control.is-invalid {\n  border-color: #dc3545;\n  padding-right: calc(1.5em + 0.75rem) !important;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-position: right calc(0.375em + 0.1875rem) center;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem); }\n  .was-validated .form-control:invalid:focus, .form-control.is-invalid:focus {\n    border-color: #dc3545;\n    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }\n\n.was-validated select.form-control:invalid, select.form-control.is-invalid {\n  padding-right: 3rem !important;\n  background-position: right 1.5rem center; }\n\n.was-validated textarea.form-control:invalid, textarea.form-control.is-invalid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem); }\n\n.was-validated .custom-select:invalid, .custom-select.is-invalid {\n  border-color: #dc3545;\n  padding-right: calc(0.75em + 2.3125rem) !important;\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat, #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\") center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) no-repeat; }\n  .was-validated .custom-select:invalid:focus, .custom-select.is-invalid:focus {\n    border-color: #dc3545;\n    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }\n\n.was-validated .form-check-input:invalid ~ .form-check-label, .form-check-input.is-invalid ~ .form-check-label {\n  color: #dc3545; }\n\n.was-validated .form-check-input:invalid ~ .invalid-feedback,\n.was-validated .form-check-input:invalid ~ .invalid-tooltip, .form-check-input.is-invalid ~ .invalid-feedback,\n.form-check-input.is-invalid ~ .invalid-tooltip {\n  display: block; }\n\n.was-validated .custom-control-input:invalid ~ .custom-control-label, .custom-control-input.is-invalid ~ .custom-control-label {\n  color: #dc3545; }\n  .was-validated .custom-control-input:invalid ~ .custom-control-label::before, .custom-control-input.is-invalid ~ .custom-control-label::before {\n    border-color: #dc3545; }\n\n.was-validated .custom-control-input:invalid:checked ~ .custom-control-label::before, .custom-control-input.is-invalid:checked ~ .custom-control-label::before {\n  border-color: #e4606d;\n  background-color: #e4606d; }\n\n.was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before, .custom-control-input.is-invalid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }\n\n.was-validated .custom-control-input:invalid:focus:not(:checked) ~ .custom-control-label::before, .custom-control-input.is-invalid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #dc3545; }\n\n.was-validated .custom-file-input:invalid ~ .custom-file-label, .custom-file-input.is-invalid ~ .custom-file-label {\n  border-color: #dc3545; }\n\n.was-validated .custom-file-input:invalid:focus ~ .custom-file-label, .custom-file-input.is-invalid:focus ~ .custom-file-label {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25); }\n\n.form-inline {\n  display: flex;\n  flex-flow: row wrap;\n  align-items: center; }\n  .form-inline .form-check {\n    width: 100%; }\n  @media (min-width: 576px) {\n    .form-inline label {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      margin-bottom: 0; }\n    .form-inline .form-group {\n      display: flex;\n      flex: 0 0 auto;\n      flex-flow: row wrap;\n      align-items: center;\n      margin-bottom: 0; }\n    .form-inline .form-control {\n      display: inline-block;\n      width: auto;\n      vertical-align: middle; }\n    .form-inline .form-control-plaintext {\n      display: inline-block; }\n    .form-inline .input-group,\n    .form-inline .custom-select {\n      width: auto; }\n    .form-inline .form-check {\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      width: auto;\n      padding-left: 0; }\n    .form-inline .form-check-input {\n      position: relative;\n      flex-shrink: 0;\n      margin-top: 0;\n      margin-right: 0.25rem;\n      margin-left: 0; }\n    .form-inline .custom-control {\n      align-items: center;\n      justify-content: center; }\n    .form-inline .custom-control-label {\n      margin-bottom: 0; } }\n\n.btn {\n  display: inline-block;\n  font-weight: 400;\n  color: #212529;\n  text-align: center;\n  vertical-align: middle;\n  user-select: none;\n  background-color: transparent;\n  border: 1px solid transparent;\n  padding: 0.375rem 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  border-radius: 0.25rem;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }\n  @media (prefers-reduced-motion: reduce) {\n    .btn {\n      transition: none; } }\n  .btn:hover {\n    color: #212529;\n    text-decoration: none; }\n  .btn:focus, .btn.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n  .btn.disabled, .btn:disabled {\n    opacity: 0.65; }\n  .btn:not(:disabled):not(.disabled) {\n    cursor: pointer; }\n\na.btn.disabled,\nfieldset:disabled a.btn {\n  pointer-events: none; }\n\n.btn-primary {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff; }\n  .btn-primary:hover {\n    color: #fff;\n    background-color: #0069d9;\n    border-color: #0062cc; }\n  .btn-primary:focus, .btn-primary.focus {\n    color: #fff;\n    background-color: #0069d9;\n    border-color: #0062cc;\n    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); }\n  .btn-primary.disabled, .btn-primary:disabled {\n    color: #fff;\n    background-color: #007bff;\n    border-color: #007bff; }\n  .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,\n  .show > .btn-primary.dropdown-toggle {\n    color: #fff;\n    background-color: #0062cc;\n    border-color: #005cbf; }\n    .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-primary.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); }\n\n.btn-secondary {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d; }\n  .btn-secondary:hover {\n    color: #fff;\n    background-color: #5a6268;\n    border-color: #545b62; }\n  .btn-secondary:focus, .btn-secondary.focus {\n    color: #fff;\n    background-color: #5a6268;\n    border-color: #545b62;\n    box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5); }\n  .btn-secondary.disabled, .btn-secondary:disabled {\n    color: #fff;\n    background-color: #6c757d;\n    border-color: #6c757d; }\n  .btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,\n  .show > .btn-secondary.dropdown-toggle {\n    color: #fff;\n    background-color: #545b62;\n    border-color: #4e555b; }\n    .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-secondary.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5); }\n\n.btn-success {\n  color: #fff;\n  background-color: #28a745;\n  border-color: #28a745; }\n  .btn-success:hover {\n    color: #fff;\n    background-color: #218838;\n    border-color: #1e7e34; }\n  .btn-success:focus, .btn-success.focus {\n    color: #fff;\n    background-color: #218838;\n    border-color: #1e7e34;\n    box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5); }\n  .btn-success.disabled, .btn-success:disabled {\n    color: #fff;\n    background-color: #28a745;\n    border-color: #28a745; }\n  .btn-success:not(:disabled):not(.disabled):active, .btn-success:not(:disabled):not(.disabled).active,\n  .show > .btn-success.dropdown-toggle {\n    color: #fff;\n    background-color: #1e7e34;\n    border-color: #1c7430; }\n    .btn-success:not(:disabled):not(.disabled):active:focus, .btn-success:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-success.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5); }\n\n.btn-info {\n  color: #fff;\n  background-color: #17a2b8;\n  border-color: #17a2b8; }\n  .btn-info:hover {\n    color: #fff;\n    background-color: #138496;\n    border-color: #117a8b; }\n  .btn-info:focus, .btn-info.focus {\n    color: #fff;\n    background-color: #138496;\n    border-color: #117a8b;\n    box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5); }\n  .btn-info.disabled, .btn-info:disabled {\n    color: #fff;\n    background-color: #17a2b8;\n    border-color: #17a2b8; }\n  .btn-info:not(:disabled):not(.disabled):active, .btn-info:not(:disabled):not(.disabled).active,\n  .show > .btn-info.dropdown-toggle {\n    color: #fff;\n    background-color: #117a8b;\n    border-color: #10707f; }\n    .btn-info:not(:disabled):not(.disabled):active:focus, .btn-info:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-info.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5); }\n\n.btn-warning {\n  color: #212529;\n  background-color: #ffc107;\n  border-color: #ffc107; }\n  .btn-warning:hover {\n    color: #212529;\n    background-color: #e0a800;\n    border-color: #d39e00; }\n  .btn-warning:focus, .btn-warning.focus {\n    color: #212529;\n    background-color: #e0a800;\n    border-color: #d39e00;\n    box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5); }\n  .btn-warning.disabled, .btn-warning:disabled {\n    color: #212529;\n    background-color: #ffc107;\n    border-color: #ffc107; }\n  .btn-warning:not(:disabled):not(.disabled):active, .btn-warning:not(:disabled):not(.disabled).active,\n  .show > .btn-warning.dropdown-toggle {\n    color: #212529;\n    background-color: #d39e00;\n    border-color: #c69500; }\n    .btn-warning:not(:disabled):not(.disabled):active:focus, .btn-warning:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-warning.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5); }\n\n.btn-danger {\n  color: #fff;\n  background-color: #dc3545;\n  border-color: #dc3545; }\n  .btn-danger:hover {\n    color: #fff;\n    background-color: #c82333;\n    border-color: #bd2130; }\n  .btn-danger:focus, .btn-danger.focus {\n    color: #fff;\n    background-color: #c82333;\n    border-color: #bd2130;\n    box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5); }\n  .btn-danger.disabled, .btn-danger:disabled {\n    color: #fff;\n    background-color: #dc3545;\n    border-color: #dc3545; }\n  .btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active,\n  .show > .btn-danger.dropdown-toggle {\n    color: #fff;\n    background-color: #bd2130;\n    border-color: #b21f2d; }\n    .btn-danger:not(:disabled):not(.disabled):active:focus, .btn-danger:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-danger.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5); }\n\n.btn-light {\n  color: #212529;\n  background-color: #f8f9fa;\n  border-color: #f8f9fa; }\n  .btn-light:hover {\n    color: #212529;\n    background-color: #e2e6ea;\n    border-color: #dae0e5; }\n  .btn-light:focus, .btn-light.focus {\n    color: #212529;\n    background-color: #e2e6ea;\n    border-color: #dae0e5;\n    box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5); }\n  .btn-light.disabled, .btn-light:disabled {\n    color: #212529;\n    background-color: #f8f9fa;\n    border-color: #f8f9fa; }\n  .btn-light:not(:disabled):not(.disabled):active, .btn-light:not(:disabled):not(.disabled).active,\n  .show > .btn-light.dropdown-toggle {\n    color: #212529;\n    background-color: #dae0e5;\n    border-color: #d3d9df; }\n    .btn-light:not(:disabled):not(.disabled):active:focus, .btn-light:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-light.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5); }\n\n.btn-dark {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #343a40; }\n  .btn-dark:hover {\n    color: #fff;\n    background-color: #23272b;\n    border-color: #1d2124; }\n  .btn-dark:focus, .btn-dark.focus {\n    color: #fff;\n    background-color: #23272b;\n    border-color: #1d2124;\n    box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5); }\n  .btn-dark.disabled, .btn-dark:disabled {\n    color: #fff;\n    background-color: #343a40;\n    border-color: #343a40; }\n  .btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active,\n  .show > .btn-dark.dropdown-toggle {\n    color: #fff;\n    background-color: #1d2124;\n    border-color: #171a1d; }\n    .btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-dark.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5); }\n\n.btn-outline-primary {\n  color: #007bff;\n  border-color: #007bff; }\n  .btn-outline-primary:hover {\n    color: #fff;\n    background-color: #007bff;\n    border-color: #007bff; }\n  .btn-outline-primary:focus, .btn-outline-primary.focus {\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5); }\n  .btn-outline-primary.disabled, .btn-outline-primary:disabled {\n    color: #007bff;\n    background-color: transparent; }\n  .btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-primary.dropdown-toggle {\n    color: #fff;\n    background-color: #007bff;\n    border-color: #007bff; }\n    .btn-outline-primary:not(:disabled):not(.disabled):active:focus, .btn-outline-primary:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-primary.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5); }\n\n.btn-outline-secondary {\n  color: #6c757d;\n  border-color: #6c757d; }\n  .btn-outline-secondary:hover {\n    color: #fff;\n    background-color: #6c757d;\n    border-color: #6c757d; }\n  .btn-outline-secondary:focus, .btn-outline-secondary.focus {\n    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); }\n  .btn-outline-secondary.disabled, .btn-outline-secondary:disabled {\n    color: #6c757d;\n    background-color: transparent; }\n  .btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-secondary.dropdown-toggle {\n    color: #fff;\n    background-color: #6c757d;\n    border-color: #6c757d; }\n    .btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-secondary.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); }\n\n.btn-outline-success {\n  color: #28a745;\n  border-color: #28a745; }\n  .btn-outline-success:hover {\n    color: #fff;\n    background-color: #28a745;\n    border-color: #28a745; }\n  .btn-outline-success:focus, .btn-outline-success.focus {\n    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5); }\n  .btn-outline-success.disabled, .btn-outline-success:disabled {\n    color: #28a745;\n    background-color: transparent; }\n  .btn-outline-success:not(:disabled):not(.disabled):active, .btn-outline-success:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-success.dropdown-toggle {\n    color: #fff;\n    background-color: #28a745;\n    border-color: #28a745; }\n    .btn-outline-success:not(:disabled):not(.disabled):active:focus, .btn-outline-success:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-success.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5); }\n\n.btn-outline-info {\n  color: #17a2b8;\n  border-color: #17a2b8; }\n  .btn-outline-info:hover {\n    color: #fff;\n    background-color: #17a2b8;\n    border-color: #17a2b8; }\n  .btn-outline-info:focus, .btn-outline-info.focus {\n    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5); }\n  .btn-outline-info.disabled, .btn-outline-info:disabled {\n    color: #17a2b8;\n    background-color: transparent; }\n  .btn-outline-info:not(:disabled):not(.disabled):active, .btn-outline-info:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-info.dropdown-toggle {\n    color: #fff;\n    background-color: #17a2b8;\n    border-color: #17a2b8; }\n    .btn-outline-info:not(:disabled):not(.disabled):active:focus, .btn-outline-info:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-info.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5); }\n\n.btn-outline-warning {\n  color: #ffc107;\n  border-color: #ffc107; }\n  .btn-outline-warning:hover {\n    color: #212529;\n    background-color: #ffc107;\n    border-color: #ffc107; }\n  .btn-outline-warning:focus, .btn-outline-warning.focus {\n    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5); }\n  .btn-outline-warning.disabled, .btn-outline-warning:disabled {\n    color: #ffc107;\n    background-color: transparent; }\n  .btn-outline-warning:not(:disabled):not(.disabled):active, .btn-outline-warning:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-warning.dropdown-toggle {\n    color: #212529;\n    background-color: #ffc107;\n    border-color: #ffc107; }\n    .btn-outline-warning:not(:disabled):not(.disabled):active:focus, .btn-outline-warning:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-warning.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5); }\n\n.btn-outline-danger {\n  color: #dc3545;\n  border-color: #dc3545; }\n  .btn-outline-danger:hover {\n    color: #fff;\n    background-color: #dc3545;\n    border-color: #dc3545; }\n  .btn-outline-danger:focus, .btn-outline-danger.focus {\n    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5); }\n  .btn-outline-danger.disabled, .btn-outline-danger:disabled {\n    color: #dc3545;\n    background-color: transparent; }\n  .btn-outline-danger:not(:disabled):not(.disabled):active, .btn-outline-danger:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-danger.dropdown-toggle {\n    color: #fff;\n    background-color: #dc3545;\n    border-color: #dc3545; }\n    .btn-outline-danger:not(:disabled):not(.disabled):active:focus, .btn-outline-danger:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-danger.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5); }\n\n.btn-outline-light {\n  color: #f8f9fa;\n  border-color: #f8f9fa; }\n  .btn-outline-light:hover {\n    color: #212529;\n    background-color: #f8f9fa;\n    border-color: #f8f9fa; }\n  .btn-outline-light:focus, .btn-outline-light.focus {\n    box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5); }\n  .btn-outline-light.disabled, .btn-outline-light:disabled {\n    color: #f8f9fa;\n    background-color: transparent; }\n  .btn-outline-light:not(:disabled):not(.disabled):active, .btn-outline-light:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-light.dropdown-toggle {\n    color: #212529;\n    background-color: #f8f9fa;\n    border-color: #f8f9fa; }\n    .btn-outline-light:not(:disabled):not(.disabled):active:focus, .btn-outline-light:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-light.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5); }\n\n.btn-outline-dark {\n  color: #343a40;\n  border-color: #343a40; }\n  .btn-outline-dark:hover {\n    color: #fff;\n    background-color: #343a40;\n    border-color: #343a40; }\n  .btn-outline-dark:focus, .btn-outline-dark.focus {\n    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5); }\n  .btn-outline-dark.disabled, .btn-outline-dark:disabled {\n    color: #343a40;\n    background-color: transparent; }\n  .btn-outline-dark:not(:disabled):not(.disabled):active, .btn-outline-dark:not(:disabled):not(.disabled).active,\n  .show > .btn-outline-dark.dropdown-toggle {\n    color: #fff;\n    background-color: #343a40;\n    border-color: #343a40; }\n    .btn-outline-dark:not(:disabled):not(.disabled):active:focus, .btn-outline-dark:not(:disabled):not(.disabled).active:focus,\n    .show > .btn-outline-dark.dropdown-toggle:focus {\n      box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5); }\n\n.btn-link {\n  font-weight: 400;\n  color: #007bff;\n  text-decoration: none; }\n  .btn-link:hover {\n    color: #0056b3;\n    text-decoration: underline; }\n  .btn-link:focus, .btn-link.focus {\n    text-decoration: underline; }\n  .btn-link:disabled, .btn-link.disabled {\n    color: #6c757d;\n    pointer-events: none; }\n\n.btn-lg, .btn-group-lg > .btn {\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem; }\n\n.btn-sm, .btn-group-sm > .btn {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem; }\n\n.btn-block {\n  display: block;\n  width: 100%; }\n  .btn-block + .btn-block {\n    margin-top: 0.5rem; }\n\ninput[type=\"submit\"].btn-block,\ninput[type=\"reset\"].btn-block,\ninput[type=\"button\"].btn-block {\n  width: 100%; }\n\n.fade {\n  transition: opacity 0.15s linear; }\n  @media (prefers-reduced-motion: reduce) {\n    .fade {\n      transition: none; } }\n  .fade:not(.show) {\n    opacity: 0; }\n\n.collapse:not(.show) {\n  display: none; }\n\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  transition: height 0.35s ease; }\n  @media (prefers-reduced-motion: reduce) {\n    .collapsing {\n      transition: none; } }\n  .collapsing.width {\n    width: 0;\n    height: auto;\n    transition: width 0.35s ease; }\n    @media (prefers-reduced-motion: reduce) {\n      .collapsing.width {\n        transition: none; } }\n\n.dropup,\n.dropright,\n.dropdown,\n.dropleft {\n  position: relative; }\n\n.dropdown-toggle {\n  white-space: nowrap; }\n  .dropdown-toggle::after {\n    display: inline-block;\n    margin-left: 0.255em;\n    vertical-align: 0.255em;\n    content: \"\";\n    border-top: 0.3em solid;\n    border-right: 0.3em solid transparent;\n    border-bottom: 0;\n    border-left: 0.3em solid transparent; }\n  .dropdown-toggle:empty::after {\n    margin-left: 0; }\n\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 10rem;\n  padding: 0.5rem 0;\n  margin: 0.125rem 0 0;\n  font-size: 1rem;\n  color: #212529;\n  text-align: left;\n  list-style: none;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0.25rem; }\n\n.dropdown-menu-left {\n  right: auto;\n  left: 0; }\n\n.dropdown-menu-right {\n  right: 0;\n  left: auto; }\n\n@media (min-width: 576px) {\n  .dropdown-menu-sm-left {\n    right: auto;\n    left: 0; }\n  .dropdown-menu-sm-right {\n    right: 0;\n    left: auto; } }\n\n@media (min-width: 768px) {\n  .dropdown-menu-md-left {\n    right: auto;\n    left: 0; }\n  .dropdown-menu-md-right {\n    right: 0;\n    left: auto; } }\n\n@media (min-width: 992px) {\n  .dropdown-menu-lg-left {\n    right: auto;\n    left: 0; }\n  .dropdown-menu-lg-right {\n    right: 0;\n    left: auto; } }\n\n@media (min-width: 1200px) {\n  .dropdown-menu-xl-left {\n    right: auto;\n    left: 0; }\n  .dropdown-menu-xl-right {\n    right: 0;\n    left: auto; } }\n\n.dropup .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-top: 0;\n  margin-bottom: 0.125rem; }\n\n.dropup .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0;\n  border-right: 0.3em solid transparent;\n  border-bottom: 0.3em solid;\n  border-left: 0.3em solid transparent; }\n\n.dropup .dropdown-toggle:empty::after {\n  margin-left: 0; }\n\n.dropright .dropdown-menu {\n  top: 0;\n  right: auto;\n  left: 100%;\n  margin-top: 0;\n  margin-left: 0.125rem; }\n\n.dropright .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0.3em solid transparent;\n  border-right: 0;\n  border-bottom: 0.3em solid transparent;\n  border-left: 0.3em solid; }\n\n.dropright .dropdown-toggle:empty::after {\n  margin-left: 0; }\n\n.dropright .dropdown-toggle::after {\n  vertical-align: 0; }\n\n.dropleft .dropdown-menu {\n  top: 0;\n  right: 100%;\n  left: auto;\n  margin-top: 0;\n  margin-right: 0.125rem; }\n\n.dropleft .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\"; }\n\n.dropleft .dropdown-toggle::after {\n  display: none; }\n\n.dropleft .dropdown-toggle::before {\n  display: inline-block;\n  margin-right: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0.3em solid transparent;\n  border-right: 0.3em solid;\n  border-bottom: 0.3em solid transparent; }\n\n.dropleft .dropdown-toggle:empty::after {\n  margin-left: 0; }\n\n.dropleft .dropdown-toggle::before {\n  vertical-align: 0; }\n\n.dropdown-menu[x-placement^=\"top\"], .dropdown-menu[x-placement^=\"right\"], .dropdown-menu[x-placement^=\"bottom\"], .dropdown-menu[x-placement^=\"left\"] {\n  right: auto;\n  bottom: auto; }\n\n.dropdown-divider {\n  height: 0;\n  margin: 0.5rem 0;\n  overflow: hidden;\n  border-top: 1px solid #e9ecef; }\n\n.dropdown-item {\n  display: block;\n  width: 100%;\n  padding: 0.25rem 1.5rem;\n  clear: both;\n  font-weight: 400;\n  color: #212529;\n  text-align: inherit;\n  white-space: nowrap;\n  background-color: transparent;\n  border: 0; }\n  .dropdown-item:hover, .dropdown-item:focus {\n    color: #16181b;\n    text-decoration: none;\n    background-color: #e9ecef; }\n  .dropdown-item.active, .dropdown-item:active {\n    color: #fff;\n    text-decoration: none;\n    background-color: #007bff; }\n  .dropdown-item.disabled, .dropdown-item:disabled {\n    color: #adb5bd;\n    pointer-events: none;\n    background-color: transparent; }\n\n.dropdown-menu.show {\n  display: block; }\n\n.dropdown-header {\n  display: block;\n  padding: 0.5rem 1.5rem;\n  margin-bottom: 0;\n  font-size: 0.875rem;\n  color: #6c757d;\n  white-space: nowrap; }\n\n.dropdown-item-text {\n  display: block;\n  padding: 0.25rem 1.5rem;\n  color: #212529; }\n\n.btn-group,\n.btn-group-vertical {\n  position: relative;\n  display: inline-flex;\n  vertical-align: middle; }\n  .btn-group > .btn,\n  .btn-group-vertical > .btn {\n    position: relative;\n    flex: 1 1 auto; }\n    .btn-group > .btn:hover,\n    .btn-group-vertical > .btn:hover {\n      z-index: 1; }\n    .btn-group > .btn:focus, .btn-group > .btn:active, .btn-group > .btn.active,\n    .btn-group-vertical > .btn:focus,\n    .btn-group-vertical > .btn:active,\n    .btn-group-vertical > .btn.active {\n      z-index: 1; }\n\n.btn-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-start; }\n  .btn-toolbar .input-group {\n    width: auto; }\n\n.btn-group > .btn:not(:first-child),\n.btn-group > .btn-group:not(:first-child) {\n  margin-left: -1px; }\n\n.btn-group > .btn:not(:last-child):not(.dropdown-toggle),\n.btn-group > .btn-group:not(:last-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0; }\n\n.btn-group > .btn:not(:first-child),\n.btn-group > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0; }\n\n.dropdown-toggle-split {\n  padding-right: 0.5625rem;\n  padding-left: 0.5625rem; }\n  .dropdown-toggle-split::after,\n  .dropup .dropdown-toggle-split::after,\n  .dropright .dropdown-toggle-split::after {\n    margin-left: 0; }\n  .dropleft .dropdown-toggle-split::before {\n    margin-right: 0; }\n\n.btn-sm + .dropdown-toggle-split, .btn-group-sm > .btn + .dropdown-toggle-split {\n  padding-right: 0.375rem;\n  padding-left: 0.375rem; }\n\n.btn-lg + .dropdown-toggle-split, .btn-group-lg > .btn + .dropdown-toggle-split {\n  padding-right: 0.75rem;\n  padding-left: 0.75rem; }\n\n.btn-group-vertical {\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center; }\n  .btn-group-vertical > .btn,\n  .btn-group-vertical > .btn-group {\n    width: 100%; }\n  .btn-group-vertical > .btn:not(:first-child),\n  .btn-group-vertical > .btn-group:not(:first-child) {\n    margin-top: -1px; }\n  .btn-group-vertical > .btn:not(:last-child):not(.dropdown-toggle),\n  .btn-group-vertical > .btn-group:not(:last-child) > .btn {\n    border-bottom-right-radius: 0;\n    border-bottom-left-radius: 0; }\n  .btn-group-vertical > .btn:not(:first-child),\n  .btn-group-vertical > .btn-group:not(:first-child) > .btn {\n    border-top-left-radius: 0;\n    border-top-right-radius: 0; }\n\n.btn-group-toggle > .btn,\n.btn-group-toggle > .btn-group > .btn {\n  margin-bottom: 0; }\n  .btn-group-toggle > .btn input[type=\"radio\"],\n  .btn-group-toggle > .btn input[type=\"checkbox\"],\n  .btn-group-toggle > .btn-group > .btn input[type=\"radio\"],\n  .btn-group-toggle > .btn-group > .btn input[type=\"checkbox\"] {\n    position: absolute;\n    clip: rect(0, 0, 0, 0);\n    pointer-events: none; }\n\n.input-group {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: stretch;\n  width: 100%; }\n  .input-group > .form-control,\n  .input-group > .form-control-plaintext,\n  .input-group > .custom-select,\n  .input-group > .custom-file {\n    position: relative;\n    flex: 1 1 auto;\n    width: 1%;\n    min-width: 0;\n    margin-bottom: 0; }\n    .input-group > .form-control + .form-control,\n    .input-group > .form-control + .custom-select,\n    .input-group > .form-control + .custom-file,\n    .input-group > .form-control-plaintext + .form-control,\n    .input-group > .form-control-plaintext + .custom-select,\n    .input-group > .form-control-plaintext + .custom-file,\n    .input-group > .custom-select + .form-control,\n    .input-group > .custom-select + .custom-select,\n    .input-group > .custom-select + .custom-file,\n    .input-group > .custom-file + .form-control,\n    .input-group > .custom-file + .custom-select,\n    .input-group > .custom-file + .custom-file {\n      margin-left: -1px; }\n  .input-group > .form-control:focus,\n  .input-group > .custom-select:focus,\n  .input-group > .custom-file .custom-file-input:focus ~ .custom-file-label {\n    z-index: 3; }\n  .input-group > .custom-file .custom-file-input:focus {\n    z-index: 4; }\n  .input-group > .form-control:not(:first-child),\n  .input-group > .custom-select:not(:first-child) {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0; }\n  .input-group > .custom-file {\n    display: flex;\n    align-items: center; }\n    .input-group > .custom-file:not(:last-child) .custom-file-label,\n    .input-group > .custom-file:not(:last-child) .custom-file-label::after {\n      border-top-right-radius: 0;\n      border-bottom-right-radius: 0; }\n    .input-group > .custom-file:not(:first-child) .custom-file-label {\n      border-top-left-radius: 0;\n      border-bottom-left-radius: 0; }\n  .input-group:not(.has-validation) > .form-control:not(:last-child),\n  .input-group:not(.has-validation) > .custom-select:not(:last-child),\n  .input-group:not(.has-validation) > .custom-file:not(:last-child) .custom-file-label,\n  .input-group:not(.has-validation) > .custom-file:not(:last-child) .custom-file-label::after {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0; }\n  .input-group.has-validation > .form-control:nth-last-child(n + 3),\n  .input-group.has-validation > .custom-select:nth-last-child(n + 3),\n  .input-group.has-validation > .custom-file:nth-last-child(n + 3) .custom-file-label,\n  .input-group.has-validation > .custom-file:nth-last-child(n + 3) .custom-file-label::after {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0; }\n\n.input-group-prepend,\n.input-group-append {\n  display: flex; }\n  .input-group-prepend .btn,\n  .input-group-append .btn {\n    position: relative;\n    z-index: 2; }\n    .input-group-prepend .btn:focus,\n    .input-group-append .btn:focus {\n      z-index: 3; }\n  .input-group-prepend .btn + .btn,\n  .input-group-prepend .btn + .input-group-text,\n  .input-group-prepend .input-group-text + .input-group-text,\n  .input-group-prepend .input-group-text + .btn,\n  .input-group-append .btn + .btn,\n  .input-group-append .btn + .input-group-text,\n  .input-group-append .input-group-text + .input-group-text,\n  .input-group-append .input-group-text + .btn {\n    margin-left: -1px; }\n\n.input-group-prepend {\n  margin-right: -1px; }\n\n.input-group-append {\n  margin-left: -1px; }\n\n.input-group-text {\n  display: flex;\n  align-items: center;\n  padding: 0.375rem 0.75rem;\n  margin-bottom: 0;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  text-align: center;\n  white-space: nowrap;\n  background-color: #e9ecef;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem; }\n  .input-group-text input[type=\"radio\"],\n  .input-group-text input[type=\"checkbox\"] {\n    margin-top: 0; }\n\n.input-group-lg > .form-control:not(textarea),\n.input-group-lg > .custom-select {\n  height: calc(1.5em + 1rem + 2px); }\n\n.input-group-lg > .form-control,\n.input-group-lg > .custom-select,\n.input-group-lg > .input-group-prepend > .input-group-text,\n.input-group-lg > .input-group-append > .input-group-text,\n.input-group-lg > .input-group-prepend > .btn,\n.input-group-lg > .input-group-append > .btn {\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem; }\n\n.input-group-sm > .form-control:not(textarea),\n.input-group-sm > .custom-select {\n  height: calc(1.5em + 0.5rem + 2px); }\n\n.input-group-sm > .form-control,\n.input-group-sm > .custom-select,\n.input-group-sm > .input-group-prepend > .input-group-text,\n.input-group-sm > .input-group-append > .input-group-text,\n.input-group-sm > .input-group-prepend > .btn,\n.input-group-sm > .input-group-append > .btn {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem; }\n\n.input-group-lg > .custom-select,\n.input-group-sm > .custom-select {\n  padding-right: 1.75rem; }\n\n.input-group > .input-group-prepend > .btn,\n.input-group > .input-group-prepend > .input-group-text,\n.input-group:not(.has-validation) > .input-group-append:not(:last-child) > .btn,\n.input-group:not(.has-validation) > .input-group-append:not(:last-child) > .input-group-text,\n.input-group.has-validation > .input-group-append:nth-last-child(n + 3) > .btn,\n.input-group.has-validation > .input-group-append:nth-last-child(n + 3) > .input-group-text,\n.input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle),\n.input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0; }\n\n.input-group > .input-group-append > .btn,\n.input-group > .input-group-append > .input-group-text,\n.input-group > .input-group-prepend:not(:first-child) > .btn,\n.input-group > .input-group-prepend:not(:first-child) > .input-group-text,\n.input-group > .input-group-prepend:first-child > .btn:not(:first-child),\n.input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0; }\n\n.custom-control {\n  position: relative;\n  z-index: 1;\n  display: block;\n  min-height: 1.5rem;\n  padding-left: 1.5rem;\n  print-color-adjust: exact; }\n\n.custom-control-inline {\n  display: inline-flex;\n  margin-right: 1rem; }\n\n.custom-control-input {\n  position: absolute;\n  left: 0;\n  z-index: -1;\n  width: 1rem;\n  height: 1.25rem;\n  opacity: 0; }\n  .custom-control-input:checked ~ .custom-control-label::before {\n    color: #fff;\n    border-color: #007bff;\n    background-color: #007bff; }\n  .custom-control-input:focus ~ .custom-control-label::before {\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n  .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {\n    border-color: #80bdff; }\n  .custom-control-input:not(:disabled):active ~ .custom-control-label::before {\n    color: #fff;\n    background-color: #b3d7ff;\n    border-color: #b3d7ff; }\n  .custom-control-input[disabled] ~ .custom-control-label, .custom-control-input:disabled ~ .custom-control-label {\n    color: #6c757d; }\n    .custom-control-input[disabled] ~ .custom-control-label::before, .custom-control-input:disabled ~ .custom-control-label::before {\n      background-color: #e9ecef; }\n\n.custom-control-label {\n  position: relative;\n  margin-bottom: 0;\n  vertical-align: top; }\n  .custom-control-label::before {\n    position: absolute;\n    top: 0.25rem;\n    left: -1.5rem;\n    display: block;\n    width: 1rem;\n    height: 1rem;\n    pointer-events: none;\n    content: \"\";\n    background-color: #fff;\n    border: 1px solid #adb5bd; }\n  .custom-control-label::after {\n    position: absolute;\n    top: 0.25rem;\n    left: -1.5rem;\n    display: block;\n    width: 1rem;\n    height: 1rem;\n    content: \"\";\n    background: 50% / 50% 50% no-repeat; }\n\n.custom-checkbox .custom-control-label::before {\n  border-radius: 0.25rem; }\n\n.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e\"); }\n\n.custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::before {\n  border-color: #007bff;\n  background-color: #007bff; }\n\n.custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3e%3cpath stroke='%23fff' d='M0 2h4'/%3e%3c/svg%3e\"); }\n\n.custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5); }\n\n.custom-checkbox .custom-control-input:disabled:indeterminate ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5); }\n\n.custom-radio .custom-control-label::before {\n  border-radius: 50%; }\n\n.custom-radio .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e\"); }\n\n.custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5); }\n\n.custom-switch {\n  padding-left: 2.25rem; }\n  .custom-switch .custom-control-label::before {\n    left: -2.25rem;\n    width: 1.75rem;\n    pointer-events: all;\n    border-radius: 0.5rem; }\n  .custom-switch .custom-control-label::after {\n    top: calc(0.25rem + 2px);\n    left: calc(-2.25rem + 2px);\n    width: calc(1rem - 4px);\n    height: calc(1rem - 4px);\n    background-color: #adb5bd;\n    border-radius: 0.5rem;\n    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }\n    @media (prefers-reduced-motion: reduce) {\n      .custom-switch .custom-control-label::after {\n        transition: none; } }\n  .custom-switch .custom-control-input:checked ~ .custom-control-label::after {\n    background-color: #fff;\n    transform: translateX(0.75rem); }\n  .custom-switch .custom-control-input:disabled:checked ~ .custom-control-label::before {\n    background-color: rgba(0, 123, 255, 0.5); }\n\n.custom-select {\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 1.75rem 0.375rem 0.75rem;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  vertical-align: middle;\n  background: #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n  appearance: none; }\n  .custom-select:focus {\n    border-color: #80bdff;\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n    .custom-select:focus::-ms-value {\n      color: #495057;\n      background-color: #fff; }\n  .custom-select[multiple], .custom-select[size]:not([size=\"1\"]) {\n    height: auto;\n    padding-right: 0.75rem;\n    background-image: none; }\n  .custom-select:disabled {\n    color: #6c757d;\n    background-color: #e9ecef; }\n  .custom-select::-ms-expand {\n    display: none; }\n  .custom-select:-moz-focusring {\n    color: transparent;\n    text-shadow: 0 0 0 #495057; }\n\n.custom-select-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n  padding-left: 0.5rem;\n  font-size: 0.875rem; }\n\n.custom-select-lg {\n  height: calc(1.5em + 1rem + 2px);\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n  padding-left: 1rem;\n  font-size: 1.25rem; }\n\n.custom-file {\n  position: relative;\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  margin-bottom: 0; }\n\n.custom-file-input {\n  position: relative;\n  z-index: 2;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  margin: 0;\n  overflow: hidden;\n  opacity: 0; }\n  .custom-file-input:focus ~ .custom-file-label {\n    border-color: #80bdff;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n  .custom-file-input[disabled] ~ .custom-file-label,\n  .custom-file-input:disabled ~ .custom-file-label {\n    background-color: #e9ecef; }\n  .custom-file-input:lang(en) ~ .custom-file-label::after {\n    content: \"Browse\"; }\n  .custom-file-input ~ .custom-file-label[data-browse]::after {\n    content: attr(data-browse); }\n\n.custom-file-label {\n  position: absolute;\n  top: 0;\n  right: 0;\n  left: 0;\n  z-index: 1;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 0.75rem;\n  overflow: hidden;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem; }\n  .custom-file-label::after {\n    position: absolute;\n    top: 0;\n    right: 0;\n    bottom: 0;\n    z-index: 3;\n    display: block;\n    height: calc(1.5em + 0.75rem);\n    padding: 0.375rem 0.75rem;\n    line-height: 1.5;\n    color: #495057;\n    content: \"Browse\";\n    background-color: #e9ecef;\n    border-left: inherit;\n    border-radius: 0 0.25rem 0.25rem 0; }\n\n.custom-range {\n  width: 100%;\n  height: 1.4rem;\n  padding: 0;\n  background-color: transparent;\n  appearance: none; }\n  .custom-range:focus {\n    outline: 0; }\n    .custom-range:focus::-webkit-slider-thumb {\n      box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n    .custom-range:focus::-moz-range-thumb {\n      box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n    .custom-range:focus::-ms-thumb {\n      box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n  .custom-range::-moz-focus-outer {\n    border: 0; }\n  .custom-range::-webkit-slider-thumb {\n    width: 1rem;\n    height: 1rem;\n    margin-top: -0.25rem;\n    background-color: #007bff;\n    border: 0;\n    border-radius: 1rem;\n    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n    appearance: none; }\n    @media (prefers-reduced-motion: reduce) {\n      .custom-range::-webkit-slider-thumb {\n        transition: none; } }\n    .custom-range::-webkit-slider-thumb:active {\n      background-color: #b3d7ff; }\n  .custom-range::-webkit-slider-runnable-track {\n    width: 100%;\n    height: 0.5rem;\n    color: transparent;\n    cursor: pointer;\n    background-color: #dee2e6;\n    border-color: transparent;\n    border-radius: 1rem; }\n  .custom-range::-moz-range-thumb {\n    width: 1rem;\n    height: 1rem;\n    background-color: #007bff;\n    border: 0;\n    border-radius: 1rem;\n    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n    appearance: none; }\n    @media (prefers-reduced-motion: reduce) {\n      .custom-range::-moz-range-thumb {\n        transition: none; } }\n    .custom-range::-moz-range-thumb:active {\n      background-color: #b3d7ff; }\n  .custom-range::-moz-range-track {\n    width: 100%;\n    height: 0.5rem;\n    color: transparent;\n    cursor: pointer;\n    background-color: #dee2e6;\n    border-color: transparent;\n    border-radius: 1rem; }\n  .custom-range::-ms-thumb {\n    width: 1rem;\n    height: 1rem;\n    margin-top: 0;\n    margin-right: 0.2rem;\n    margin-left: 0.2rem;\n    background-color: #007bff;\n    border: 0;\n    border-radius: 1rem;\n    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n    appearance: none; }\n    @media (prefers-reduced-motion: reduce) {\n      .custom-range::-ms-thumb {\n        transition: none; } }\n    .custom-range::-ms-thumb:active {\n      background-color: #b3d7ff; }\n  .custom-range::-ms-track {\n    width: 100%;\n    height: 0.5rem;\n    color: transparent;\n    cursor: pointer;\n    background-color: transparent;\n    border-color: transparent;\n    border-width: 0.5rem; }\n  .custom-range::-ms-fill-lower {\n    background-color: #dee2e6;\n    border-radius: 1rem; }\n  .custom-range::-ms-fill-upper {\n    margin-right: 15px;\n    background-color: #dee2e6;\n    border-radius: 1rem; }\n  .custom-range:disabled::-webkit-slider-thumb {\n    background-color: #adb5bd; }\n  .custom-range:disabled::-webkit-slider-runnable-track {\n    cursor: default; }\n  .custom-range:disabled::-moz-range-thumb {\n    background-color: #adb5bd; }\n  .custom-range:disabled::-moz-range-track {\n    cursor: default; }\n  .custom-range:disabled::-ms-thumb {\n    background-color: #adb5bd; }\n\n.custom-control-label::before,\n.custom-file-label,\n.custom-select {\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }\n  @media (prefers-reduced-motion: reduce) {\n    .custom-control-label::before,\n    .custom-file-label,\n    .custom-select {\n      transition: none; } }\n\n.nav {\n  display: flex;\n  flex-wrap: wrap;\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none; }\n\n.nav-link {\n  display: block;\n  padding: 0.5rem 1rem; }\n  .nav-link:hover, .nav-link:focus {\n    text-decoration: none; }\n  .nav-link.disabled {\n    color: #6c757d;\n    pointer-events: none;\n    cursor: default; }\n\n.nav-tabs {\n  border-bottom: 1px solid #dee2e6; }\n  .nav-tabs .nav-link {\n    margin-bottom: -1px;\n    background-color: transparent;\n    border: 1px solid transparent;\n    border-top-left-radius: 0.25rem;\n    border-top-right-radius: 0.25rem; }\n    .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {\n      isolation: isolate;\n      border-color: #e9ecef #e9ecef #dee2e6; }\n    .nav-tabs .nav-link.disabled {\n      color: #6c757d;\n      background-color: transparent;\n      border-color: transparent; }\n  .nav-tabs .nav-link.active,\n  .nav-tabs .nav-item.show .nav-link {\n    color: #495057;\n    background-color: #fff;\n    border-color: #dee2e6 #dee2e6 #fff; }\n  .nav-tabs .dropdown-menu {\n    margin-top: -1px;\n    border-top-left-radius: 0;\n    border-top-right-radius: 0; }\n\n.nav-pills .nav-link {\n  background: none;\n  border: 0;\n  border-radius: 0.25rem; }\n\n.nav-pills .nav-link.active,\n.nav-pills .show > .nav-link {\n  color: #fff;\n  background-color: #007bff; }\n\n.nav-fill > .nav-link,\n.nav-fill .nav-item {\n  flex: 1 1 auto;\n  text-align: center; }\n\n.nav-justified > .nav-link,\n.nav-justified .nav-item {\n  flex-basis: 0;\n  flex-grow: 1;\n  text-align: center; }\n\n.tab-content > .tab-pane {\n  display: none; }\n\n.tab-content > .active {\n  display: block; }\n\n.navbar {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0.5rem 1rem; }\n  .navbar .container,\n  .navbar .container-fluid, .navbar .container-sm, .navbar .container-md, .navbar .container-lg, .navbar .container-xl {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between; }\n\n.navbar-brand {\n  display: inline-block;\n  padding-top: 0.3125rem;\n  padding-bottom: 0.3125rem;\n  margin-right: 1rem;\n  font-size: 1.25rem;\n  line-height: inherit;\n  white-space: nowrap; }\n  .navbar-brand:hover, .navbar-brand:focus {\n    text-decoration: none; }\n\n.navbar-nav {\n  display: flex;\n  flex-direction: column;\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none; }\n  .navbar-nav .nav-link {\n    padding-right: 0;\n    padding-left: 0; }\n  .navbar-nav .dropdown-menu {\n    position: static;\n    float: none; }\n\n.navbar-text {\n  display: inline-block;\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem; }\n\n.navbar-collapse {\n  flex-basis: 100%;\n  flex-grow: 1;\n  align-items: center; }\n\n.navbar-toggler {\n  padding: 0.25rem 0.75rem;\n  font-size: 1.25rem;\n  line-height: 1;\n  background-color: transparent;\n  border: 1px solid transparent;\n  border-radius: 0.25rem; }\n  .navbar-toggler:hover, .navbar-toggler:focus {\n    text-decoration: none; }\n\n.navbar-toggler-icon {\n  display: inline-block;\n  width: 1.5em;\n  height: 1.5em;\n  vertical-align: middle;\n  content: \"\";\n  background: 50% / 100% 100% no-repeat; }\n\n.navbar-nav-scroll {\n  max-height: 75vh;\n  overflow-y: auto; }\n\n@media (max-width: 575.98px) {\n  .navbar-expand-sm > .container,\n  .navbar-expand-sm > .container-fluid, .navbar-expand-sm > .container-sm, .navbar-expand-sm > .container-md, .navbar-expand-sm > .container-lg, .navbar-expand-sm > .container-xl {\n    padding-right: 0;\n    padding-left: 0; } }\n\n@media (min-width: 576px) {\n  .navbar-expand-sm {\n    flex-flow: row nowrap;\n    justify-content: flex-start; }\n    .navbar-expand-sm .navbar-nav {\n      flex-direction: row; }\n      .navbar-expand-sm .navbar-nav .dropdown-menu {\n        position: absolute; }\n      .navbar-expand-sm .navbar-nav .nav-link {\n        padding-right: 0.5rem;\n        padding-left: 0.5rem; }\n    .navbar-expand-sm > .container,\n    .navbar-expand-sm > .container-fluid, .navbar-expand-sm > .container-sm, .navbar-expand-sm > .container-md, .navbar-expand-sm > .container-lg, .navbar-expand-sm > .container-xl {\n      flex-wrap: nowrap; }\n    .navbar-expand-sm .navbar-nav-scroll {\n      overflow: visible; }\n    .navbar-expand-sm .navbar-collapse {\n      display: flex !important;\n      flex-basis: auto; }\n    .navbar-expand-sm .navbar-toggler {\n      display: none; } }\n\n@media (max-width: 767.98px) {\n  .navbar-expand-md > .container,\n  .navbar-expand-md > .container-fluid, .navbar-expand-md > .container-sm, .navbar-expand-md > .container-md, .navbar-expand-md > .container-lg, .navbar-expand-md > .container-xl {\n    padding-right: 0;\n    padding-left: 0; } }\n\n@media (min-width: 768px) {\n  .navbar-expand-md {\n    flex-flow: row nowrap;\n    justify-content: flex-start; }\n    .navbar-expand-md .navbar-nav {\n      flex-direction: row; }\n      .navbar-expand-md .navbar-nav .dropdown-menu {\n        position: absolute; }\n      .navbar-expand-md .navbar-nav .nav-link {\n        padding-right: 0.5rem;\n        padding-left: 0.5rem; }\n    .navbar-expand-md > .container,\n    .navbar-expand-md > .container-fluid, .navbar-expand-md > .container-sm, .navbar-expand-md > .container-md, .navbar-expand-md > .container-lg, .navbar-expand-md > .container-xl {\n      flex-wrap: nowrap; }\n    .navbar-expand-md .navbar-nav-scroll {\n      overflow: visible; }\n    .navbar-expand-md .navbar-collapse {\n      display: flex !important;\n      flex-basis: auto; }\n    .navbar-expand-md .navbar-toggler {\n      display: none; } }\n\n@media (max-width: 991.98px) {\n  .navbar-expand-lg > .container,\n  .navbar-expand-lg > .container-fluid, .navbar-expand-lg > .container-sm, .navbar-expand-lg > .container-md, .navbar-expand-lg > .container-lg, .navbar-expand-lg > .container-xl {\n    padding-right: 0;\n    padding-left: 0; } }\n\n@media (min-width: 992px) {\n  .navbar-expand-lg {\n    flex-flow: row nowrap;\n    justify-content: flex-start; }\n    .navbar-expand-lg .navbar-nav {\n      flex-direction: row; }\n      .navbar-expand-lg .navbar-nav .dropdown-menu {\n        position: absolute; }\n      .navbar-expand-lg .navbar-nav .nav-link {\n        padding-right: 0.5rem;\n        padding-left: 0.5rem; }\n    .navbar-expand-lg > .container,\n    .navbar-expand-lg > .container-fluid, .navbar-expand-lg > .container-sm, .navbar-expand-lg > .container-md, .navbar-expand-lg > .container-lg, .navbar-expand-lg > .container-xl {\n      flex-wrap: nowrap; }\n    .navbar-expand-lg .navbar-nav-scroll {\n      overflow: visible; }\n    .navbar-expand-lg .navbar-collapse {\n      display: flex !important;\n      flex-basis: auto; }\n    .navbar-expand-lg .navbar-toggler {\n      display: none; } }\n\n@media (max-width: 1199.98px) {\n  .navbar-expand-xl > .container,\n  .navbar-expand-xl > .container-fluid, .navbar-expand-xl > .container-sm, .navbar-expand-xl > .container-md, .navbar-expand-xl > .container-lg, .navbar-expand-xl > .container-xl {\n    padding-right: 0;\n    padding-left: 0; } }\n\n@media (min-width: 1200px) {\n  .navbar-expand-xl {\n    flex-flow: row nowrap;\n    justify-content: flex-start; }\n    .navbar-expand-xl .navbar-nav {\n      flex-direction: row; }\n      .navbar-expand-xl .navbar-nav .dropdown-menu {\n        position: absolute; }\n      .navbar-expand-xl .navbar-nav .nav-link {\n        padding-right: 0.5rem;\n        padding-left: 0.5rem; }\n    .navbar-expand-xl > .container,\n    .navbar-expand-xl > .container-fluid, .navbar-expand-xl > .container-sm, .navbar-expand-xl > .container-md, .navbar-expand-xl > .container-lg, .navbar-expand-xl > .container-xl {\n      flex-wrap: nowrap; }\n    .navbar-expand-xl .navbar-nav-scroll {\n      overflow: visible; }\n    .navbar-expand-xl .navbar-collapse {\n      display: flex !important;\n      flex-basis: auto; }\n    .navbar-expand-xl .navbar-toggler {\n      display: none; } }\n\n.navbar-expand {\n  flex-flow: row nowrap;\n  justify-content: flex-start; }\n  .navbar-expand > .container,\n  .navbar-expand > .container-fluid, .navbar-expand > .container-sm, .navbar-expand > .container-md, .navbar-expand > .container-lg, .navbar-expand > .container-xl {\n    padding-right: 0;\n    padding-left: 0; }\n  .navbar-expand .navbar-nav {\n    flex-direction: row; }\n    .navbar-expand .navbar-nav .dropdown-menu {\n      position: absolute; }\n    .navbar-expand .navbar-nav .nav-link {\n      padding-right: 0.5rem;\n      padding-left: 0.5rem; }\n  .navbar-expand > .container,\n  .navbar-expand > .container-fluid, .navbar-expand > .container-sm, .navbar-expand > .container-md, .navbar-expand > .container-lg, .navbar-expand > .container-xl {\n    flex-wrap: nowrap; }\n  .navbar-expand .navbar-nav-scroll {\n    overflow: visible; }\n  .navbar-expand .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto; }\n  .navbar-expand .navbar-toggler {\n    display: none; }\n\n.navbar-light .navbar-brand {\n  color: rgba(0, 0, 0, 0.9); }\n  .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {\n    color: rgba(0, 0, 0, 0.9); }\n\n.navbar-light .navbar-nav .nav-link {\n  color: rgba(0, 0, 0, 0.5); }\n  .navbar-light .navbar-nav .nav-link:hover, .navbar-light .navbar-nav .nav-link:focus {\n    color: rgba(0, 0, 0, 0.7); }\n  .navbar-light .navbar-nav .nav-link.disabled {\n    color: rgba(0, 0, 0, 0.3); }\n\n.navbar-light .navbar-nav .show > .nav-link,\n.navbar-light .navbar-nav .active > .nav-link,\n.navbar-light .navbar-nav .nav-link.show,\n.navbar-light .navbar-nav .nav-link.active {\n  color: rgba(0, 0, 0, 0.9); }\n\n.navbar-light .navbar-toggler {\n  color: rgba(0, 0, 0, 0.5);\n  border-color: rgba(0, 0, 0, 0.1); }\n\n.navbar-light .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\"); }\n\n.navbar-light .navbar-text {\n  color: rgba(0, 0, 0, 0.5); }\n  .navbar-light .navbar-text a {\n    color: rgba(0, 0, 0, 0.9); }\n    .navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {\n      color: rgba(0, 0, 0, 0.9); }\n\n.navbar-dark .navbar-brand {\n  color: #fff; }\n  .navbar-dark .navbar-brand:hover, .navbar-dark .navbar-brand:focus {\n    color: #fff; }\n\n.navbar-dark .navbar-nav .nav-link {\n  color: rgba(255, 255, 255, 0.5); }\n  .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {\n    color: rgba(255, 255, 255, 0.75); }\n  .navbar-dark .navbar-nav .nav-link.disabled {\n    color: rgba(255, 255, 255, 0.25); }\n\n.navbar-dark .navbar-nav .show > .nav-link,\n.navbar-dark .navbar-nav .active > .nav-link,\n.navbar-dark .navbar-nav .nav-link.show,\n.navbar-dark .navbar-nav .nav-link.active {\n  color: #fff; }\n\n.navbar-dark .navbar-toggler {\n  color: rgba(255, 255, 255, 0.5);\n  border-color: rgba(255, 255, 255, 0.1); }\n\n.navbar-dark .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\"); }\n\n.navbar-dark .navbar-text {\n  color: rgba(255, 255, 255, 0.5); }\n  .navbar-dark .navbar-text a {\n    color: #fff; }\n    .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {\n      color: #fff; }\n\n.card {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  word-wrap: break-word;\n  background-color: #fff;\n  background-clip: border-box;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n  border-radius: 0.25rem; }\n  .card > hr {\n    margin-right: 0;\n    margin-left: 0; }\n  .card > .list-group {\n    border-top: inherit;\n    border-bottom: inherit; }\n    .card > .list-group:first-child {\n      border-top-width: 0;\n      border-top-left-radius: calc(0.25rem - 1px);\n      border-top-right-radius: calc(0.25rem - 1px); }\n    .card > .list-group:last-child {\n      border-bottom-width: 0;\n      border-bottom-right-radius: calc(0.25rem - 1px);\n      border-bottom-left-radius: calc(0.25rem - 1px); }\n  .card > .card-header + .list-group,\n  .card > .list-group + .card-footer {\n    border-top: 0; }\n\n.card-body {\n  flex: 1 1 auto;\n  min-height: 1px;\n  padding: 1.25rem; }\n\n.card-title {\n  margin-bottom: 0.75rem; }\n\n.card-subtitle {\n  margin-top: -0.375rem;\n  margin-bottom: 0; }\n\n.card-text:last-child {\n  margin-bottom: 0; }\n\n.card-link:hover {\n  text-decoration: none; }\n\n.card-link + .card-link {\n  margin-left: 1.25rem; }\n\n.card-header {\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 0;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-bottom: 1px solid rgba(0, 0, 0, 0.125); }\n  .card-header:first-child {\n    border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0; }\n\n.card-footer {\n  padding: 0.75rem 1.25rem;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-top: 1px solid rgba(0, 0, 0, 0.125); }\n  .card-footer:last-child {\n    border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px); }\n\n.card-header-tabs {\n  margin-right: -0.625rem;\n  margin-bottom: -0.75rem;\n  margin-left: -0.625rem;\n  border-bottom: 0; }\n\n.card-header-pills {\n  margin-right: -0.625rem;\n  margin-left: -0.625rem; }\n\n.card-img-overlay {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  padding: 1.25rem;\n  border-radius: calc(0.25rem - 1px); }\n\n.card-img,\n.card-img-top,\n.card-img-bottom {\n  flex-shrink: 0;\n  width: 100%; }\n\n.card-img,\n.card-img-top {\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px); }\n\n.card-img,\n.card-img-bottom {\n  border-bottom-right-radius: calc(0.25rem - 1px);\n  border-bottom-left-radius: calc(0.25rem - 1px); }\n\n.card-deck .card {\n  margin-bottom: 15px; }\n\n@media (min-width: 576px) {\n  .card-deck {\n    display: flex;\n    flex-flow: row wrap;\n    margin-right: -15px;\n    margin-left: -15px; }\n    .card-deck .card {\n      flex: 1 0 0%;\n      margin-right: 15px;\n      margin-bottom: 0;\n      margin-left: 15px; } }\n\n.card-group > .card {\n  margin-bottom: 15px; }\n\n@media (min-width: 576px) {\n  .card-group {\n    display: flex;\n    flex-flow: row wrap; }\n    .card-group > .card {\n      flex: 1 0 0%;\n      margin-bottom: 0; }\n      .card-group > .card + .card {\n        margin-left: 0;\n        border-left: 0; }\n      .card-group > .card:not(:last-child) {\n        border-top-right-radius: 0;\n        border-bottom-right-radius: 0; }\n        .card-group > .card:not(:last-child) .card-img-top,\n        .card-group > .card:not(:last-child) .card-header {\n          border-top-right-radius: 0; }\n        .card-group > .card:not(:last-child) .card-img-bottom,\n        .card-group > .card:not(:last-child) .card-footer {\n          border-bottom-right-radius: 0; }\n      .card-group > .card:not(:first-child) {\n        border-top-left-radius: 0;\n        border-bottom-left-radius: 0; }\n        .card-group > .card:not(:first-child) .card-img-top,\n        .card-group > .card:not(:first-child) .card-header {\n          border-top-left-radius: 0; }\n        .card-group > .card:not(:first-child) .card-img-bottom,\n        .card-group > .card:not(:first-child) .card-footer {\n          border-bottom-left-radius: 0; } }\n\n.card-columns .card {\n  margin-bottom: 0.75rem; }\n\n@media (min-width: 576px) {\n  .card-columns {\n    column-count: 3;\n    column-gap: 1.25rem;\n    orphans: 1;\n    widows: 1; }\n    .card-columns .card {\n      display: inline-block;\n      width: 100%; } }\n\n.accordion {\n  overflow-anchor: none; }\n  .accordion > .card {\n    overflow: hidden; }\n    .accordion > .card:not(:last-of-type) {\n      border-bottom: 0;\n      border-bottom-right-radius: 0;\n      border-bottom-left-radius: 0; }\n    .accordion > .card:not(:first-of-type) {\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n    .accordion > .card > .card-header {\n      border-radius: 0;\n      margin-bottom: -1px; }\n\n.breadcrumb {\n  display: flex;\n  flex-wrap: wrap;\n  padding: 0.75rem 1rem;\n  margin-bottom: 1rem;\n  list-style: none;\n  background-color: #e9ecef;\n  border-radius: 0.25rem; }\n\n.breadcrumb-item + .breadcrumb-item {\n  padding-left: 0.5rem; }\n  .breadcrumb-item + .breadcrumb-item::before {\n    float: left;\n    padding-right: 0.5rem;\n    color: #6c757d;\n    content: \"/\"; }\n\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: underline; }\n\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: none; }\n\n.breadcrumb-item.active {\n  color: #6c757d; }\n\n.pagination {\n  display: flex;\n  padding-left: 0;\n  list-style: none;\n  border-radius: 0.25rem; }\n\n.page-link {\n  position: relative;\n  display: block;\n  padding: 0.5rem 0.75rem;\n  margin-left: -1px;\n  line-height: 1.25;\n  color: #007bff;\n  background-color: #fff;\n  border: 1px solid #dee2e6; }\n  .page-link:hover {\n    z-index: 2;\n    color: #0056b3;\n    text-decoration: none;\n    background-color: #e9ecef;\n    border-color: #dee2e6; }\n  .page-link:focus {\n    z-index: 3;\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }\n\n.page-item:first-child .page-link {\n  margin-left: 0;\n  border-top-left-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem; }\n\n.page-item:last-child .page-link {\n  border-top-right-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem; }\n\n.page-item.active .page-link {\n  z-index: 3;\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff; }\n\n.page-item.disabled .page-link {\n  color: #6c757d;\n  pointer-events: none;\n  cursor: auto;\n  background-color: #fff;\n  border-color: #dee2e6; }\n\n.pagination-lg .page-link {\n  padding: 0.75rem 1.5rem;\n  font-size: 1.25rem;\n  line-height: 1.5; }\n\n.pagination-lg .page-item:first-child .page-link {\n  border-top-left-radius: 0.3rem;\n  border-bottom-left-radius: 0.3rem; }\n\n.pagination-lg .page-item:last-child .page-link {\n  border-top-right-radius: 0.3rem;\n  border-bottom-right-radius: 0.3rem; }\n\n.pagination-sm .page-link {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5; }\n\n.pagination-sm .page-item:first-child .page-link {\n  border-top-left-radius: 0.2rem;\n  border-bottom-left-radius: 0.2rem; }\n\n.pagination-sm .page-item:last-child .page-link {\n  border-top-right-radius: 0.2rem;\n  border-bottom-right-radius: 0.2rem; }\n\n.badge {\n  display: inline-block;\n  padding: 0.25em 0.4em;\n  font-size: 75%;\n  font-weight: 700;\n  line-height: 1;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: 0.25rem;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }\n  @media (prefers-reduced-motion: reduce) {\n    .badge {\n      transition: none; } }\n  a.badge:hover, a.badge:focus {\n    text-decoration: none; }\n  .badge:empty {\n    display: none; }\n\n.btn .badge {\n  position: relative;\n  top: -1px; }\n\n.badge-pill {\n  padding-right: 0.6em;\n  padding-left: 0.6em;\n  border-radius: 10rem; }\n\n.badge-primary {\n  color: #fff;\n  background-color: #007bff; }\n  a.badge-primary:hover, a.badge-primary:focus {\n    color: #fff;\n    background-color: #0062cc; }\n  a.badge-primary:focus, a.badge-primary.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5); }\n\n.badge-secondary {\n  color: #fff;\n  background-color: #6c757d; }\n  a.badge-secondary:hover, a.badge-secondary:focus {\n    color: #fff;\n    background-color: #545b62; }\n  a.badge-secondary:focus, a.badge-secondary.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5); }\n\n.badge-success {\n  color: #fff;\n  background-color: #28a745; }\n  a.badge-success:hover, a.badge-success:focus {\n    color: #fff;\n    background-color: #1e7e34; }\n  a.badge-success:focus, a.badge-success.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5); }\n\n.badge-info {\n  color: #fff;\n  background-color: #17a2b8; }\n  a.badge-info:hover, a.badge-info:focus {\n    color: #fff;\n    background-color: #117a8b; }\n  a.badge-info:focus, a.badge-info.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5); }\n\n.badge-warning {\n  color: #212529;\n  background-color: #ffc107; }\n  a.badge-warning:hover, a.badge-warning:focus {\n    color: #212529;\n    background-color: #d39e00; }\n  a.badge-warning:focus, a.badge-warning.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5); }\n\n.badge-danger {\n  color: #fff;\n  background-color: #dc3545; }\n  a.badge-danger:hover, a.badge-danger:focus {\n    color: #fff;\n    background-color: #bd2130; }\n  a.badge-danger:focus, a.badge-danger.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5); }\n\n.badge-light {\n  color: #212529;\n  background-color: #f8f9fa; }\n  a.badge-light:hover, a.badge-light:focus {\n    color: #212529;\n    background-color: #dae0e5; }\n  a.badge-light:focus, a.badge-light.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5); }\n\n.badge-dark {\n  color: #fff;\n  background-color: #343a40; }\n  a.badge-dark:hover, a.badge-dark:focus {\n    color: #fff;\n    background-color: #1d2124; }\n  a.badge-dark:focus, a.badge-dark.focus {\n    outline: 0;\n    box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5); }\n\n.jumbotron {\n  padding: 2rem 1rem;\n  margin-bottom: 2rem;\n  background-color: #e9ecef;\n  border-radius: 0.3rem; }\n  @media (min-width: 576px) {\n    .jumbotron {\n      padding: 4rem 2rem; } }\n\n.jumbotron-fluid {\n  padding-right: 0;\n  padding-left: 0;\n  border-radius: 0; }\n\n.alert {\n  position: relative;\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 1rem;\n  border: 1px solid transparent;\n  border-radius: 0.25rem; }\n\n.alert-heading {\n  color: inherit; }\n\n.alert-link {\n  font-weight: 700; }\n\n.alert-dismissible {\n  padding-right: 4rem; }\n  .alert-dismissible .close {\n    position: absolute;\n    top: 0;\n    right: 0;\n    z-index: 2;\n    padding: 0.75rem 1.25rem;\n    color: inherit; }\n\n.alert-primary {\n  color: #004085;\n  background-color: #cce5ff;\n  border-color: #b8daff; }\n  .alert-primary hr {\n    border-top-color: #9fcdff; }\n  .alert-primary .alert-link {\n    color: #002752; }\n\n.alert-secondary {\n  color: #383d41;\n  background-color: #e2e3e5;\n  border-color: #d6d8db; }\n  .alert-secondary hr {\n    border-top-color: #c8cbcf; }\n  .alert-secondary .alert-link {\n    color: #202326; }\n\n.alert-success {\n  color: #155724;\n  background-color: #d4edda;\n  border-color: #c3e6cb; }\n  .alert-success hr {\n    border-top-color: #b1dfbb; }\n  .alert-success .alert-link {\n    color: #0b2e13; }\n\n.alert-info {\n  color: #0c5460;\n  background-color: #d1ecf1;\n  border-color: #bee5eb; }\n  .alert-info hr {\n    border-top-color: #abdde5; }\n  .alert-info .alert-link {\n    color: #062c33; }\n\n.alert-warning {\n  color: #856404;\n  background-color: #fff3cd;\n  border-color: #ffeeba; }\n  .alert-warning hr {\n    border-top-color: #ffe8a1; }\n  .alert-warning .alert-link {\n    color: #533f03; }\n\n.alert-danger {\n  color: #721c24;\n  background-color: #f8d7da;\n  border-color: #f5c6cb; }\n  .alert-danger hr {\n    border-top-color: #f1b0b7; }\n  .alert-danger .alert-link {\n    color: #491217; }\n\n.alert-light {\n  color: #818182;\n  background-color: #fefefe;\n  border-color: #fdfdfe; }\n  .alert-light hr {\n    border-top-color: #ececf6; }\n  .alert-light .alert-link {\n    color: #686868; }\n\n.alert-dark {\n  color: #1b1e21;\n  background-color: #d6d8d9;\n  border-color: #c6c8ca; }\n  .alert-dark hr {\n    border-top-color: #b9bbbe; }\n  .alert-dark .alert-link {\n    color: #040505; }\n\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 1rem 0; }\n  to {\n    background-position: 0 0; } }\n\n.progress {\n  display: flex;\n  height: 1rem;\n  overflow: hidden;\n  line-height: 0;\n  font-size: 0.75rem;\n  background-color: #e9ecef;\n  border-radius: 0.25rem; }\n\n.progress-bar {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  overflow: hidden;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  background-color: #007bff;\n  transition: width 0.6s ease; }\n  @media (prefers-reduced-motion: reduce) {\n    .progress-bar {\n      transition: none; } }\n\n.progress-bar-striped {\n  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n  background-size: 1rem 1rem; }\n\n.progress-bar-animated {\n  animation: 1s linear infinite progress-bar-stripes; }\n  @media (prefers-reduced-motion: reduce) {\n    .progress-bar-animated {\n      animation: none; } }\n\n.media {\n  display: flex;\n  align-items: flex-start; }\n\n.media-body {\n  flex: 1; }\n\n.list-group {\n  display: flex;\n  flex-direction: column;\n  padding-left: 0;\n  margin-bottom: 0;\n  border-radius: 0.25rem; }\n\n.list-group-item-action {\n  width: 100%;\n  color: #495057;\n  text-align: inherit; }\n  .list-group-item-action:hover, .list-group-item-action:focus {\n    z-index: 1;\n    color: #495057;\n    text-decoration: none;\n    background-color: #f8f9fa; }\n  .list-group-item-action:active {\n    color: #212529;\n    background-color: #e9ecef; }\n\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 0.75rem 1.25rem;\n  background-color: #fff;\n  border: 1px solid rgba(0, 0, 0, 0.125); }\n  .list-group-item:first-child {\n    border-top-left-radius: inherit;\n    border-top-right-radius: inherit; }\n  .list-group-item:last-child {\n    border-bottom-right-radius: inherit;\n    border-bottom-left-radius: inherit; }\n  .list-group-item.disabled, .list-group-item:disabled {\n    color: #6c757d;\n    pointer-events: none;\n    background-color: #fff; }\n  .list-group-item.active {\n    z-index: 2;\n    color: #fff;\n    background-color: #007bff;\n    border-color: #007bff; }\n  .list-group-item + .list-group-item {\n    border-top-width: 0; }\n    .list-group-item + .list-group-item.active {\n      margin-top: -1px;\n      border-top-width: 1px; }\n\n.list-group-horizontal {\n  flex-direction: row; }\n  .list-group-horizontal > .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0; }\n  .list-group-horizontal > .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0; }\n  .list-group-horizontal > .list-group-item.active {\n    margin-top: 0; }\n  .list-group-horizontal > .list-group-item + .list-group-item {\n    border-top-width: 1px;\n    border-left-width: 0; }\n    .list-group-horizontal > .list-group-item + .list-group-item.active {\n      margin-left: -1px;\n      border-left-width: 1px; }\n\n@media (min-width: 576px) {\n  .list-group-horizontal-sm {\n    flex-direction: row; }\n    .list-group-horizontal-sm > .list-group-item:first-child {\n      border-bottom-left-radius: 0.25rem;\n      border-top-right-radius: 0; }\n    .list-group-horizontal-sm > .list-group-item:last-child {\n      border-top-right-radius: 0.25rem;\n      border-bottom-left-radius: 0; }\n    .list-group-horizontal-sm > .list-group-item.active {\n      margin-top: 0; }\n    .list-group-horizontal-sm > .list-group-item + .list-group-item {\n      border-top-width: 1px;\n      border-left-width: 0; }\n      .list-group-horizontal-sm > .list-group-item + .list-group-item.active {\n        margin-left: -1px;\n        border-left-width: 1px; } }\n\n@media (min-width: 768px) {\n  .list-group-horizontal-md {\n    flex-direction: row; }\n    .list-group-horizontal-md > .list-group-item:first-child {\n      border-bottom-left-radius: 0.25rem;\n      border-top-right-radius: 0; }\n    .list-group-horizontal-md > .list-group-item:last-child {\n      border-top-right-radius: 0.25rem;\n      border-bottom-left-radius: 0; }\n    .list-group-horizontal-md > .list-group-item.active {\n      margin-top: 0; }\n    .list-group-horizontal-md > .list-group-item + .list-group-item {\n      border-top-width: 1px;\n      border-left-width: 0; }\n      .list-group-horizontal-md > .list-group-item + .list-group-item.active {\n        margin-left: -1px;\n        border-left-width: 1px; } }\n\n@media (min-width: 992px) {\n  .list-group-horizontal-lg {\n    flex-direction: row; }\n    .list-group-horizontal-lg > .list-group-item:first-child {\n      border-bottom-left-radius: 0.25rem;\n      border-top-right-radius: 0; }\n    .list-group-horizontal-lg > .list-group-item:last-child {\n      border-top-right-radius: 0.25rem;\n      border-bottom-left-radius: 0; }\n    .list-group-horizontal-lg > .list-group-item.active {\n      margin-top: 0; }\n    .list-group-horizontal-lg > .list-group-item + .list-group-item {\n      border-top-width: 1px;\n      border-left-width: 0; }\n      .list-group-horizontal-lg > .list-group-item + .list-group-item.active {\n        margin-left: -1px;\n        border-left-width: 1px; } }\n\n@media (min-width: 1200px) {\n  .list-group-horizontal-xl {\n    flex-direction: row; }\n    .list-group-horizontal-xl > .list-group-item:first-child {\n      border-bottom-left-radius: 0.25rem;\n      border-top-right-radius: 0; }\n    .list-group-horizontal-xl > .list-group-item:last-child {\n      border-top-right-radius: 0.25rem;\n      border-bottom-left-radius: 0; }\n    .list-group-horizontal-xl > .list-group-item.active {\n      margin-top: 0; }\n    .list-group-horizontal-xl > .list-group-item + .list-group-item {\n      border-top-width: 1px;\n      border-left-width: 0; }\n      .list-group-horizontal-xl > .list-group-item + .list-group-item.active {\n        margin-left: -1px;\n        border-left-width: 1px; } }\n\n.list-group-flush {\n  border-radius: 0; }\n  .list-group-flush > .list-group-item {\n    border-width: 0 0 1px; }\n    .list-group-flush > .list-group-item:last-child {\n      border-bottom-width: 0; }\n\n.list-group-item-primary {\n  color: #004085;\n  background-color: #b8daff; }\n  .list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {\n    color: #004085;\n    background-color: #9fcdff; }\n  .list-group-item-primary.list-group-item-action.active {\n    color: #fff;\n    background-color: #004085;\n    border-color: #004085; }\n\n.list-group-item-secondary {\n  color: #383d41;\n  background-color: #d6d8db; }\n  .list-group-item-secondary.list-group-item-action:hover, .list-group-item-secondary.list-group-item-action:focus {\n    color: #383d41;\n    background-color: #c8cbcf; }\n  .list-group-item-secondary.list-group-item-action.active {\n    color: #fff;\n    background-color: #383d41;\n    border-color: #383d41; }\n\n.list-group-item-success {\n  color: #155724;\n  background-color: #c3e6cb; }\n  .list-group-item-success.list-group-item-action:hover, .list-group-item-success.list-group-item-action:focus {\n    color: #155724;\n    background-color: #b1dfbb; }\n  .list-group-item-success.list-group-item-action.active {\n    color: #fff;\n    background-color: #155724;\n    border-color: #155724; }\n\n.list-group-item-info {\n  color: #0c5460;\n  background-color: #bee5eb; }\n  .list-group-item-info.list-group-item-action:hover, .list-group-item-info.list-group-item-action:focus {\n    color: #0c5460;\n    background-color: #abdde5; }\n  .list-group-item-info.list-group-item-action.active {\n    color: #fff;\n    background-color: #0c5460;\n    border-color: #0c5460; }\n\n.list-group-item-warning {\n  color: #856404;\n  background-color: #ffeeba; }\n  .list-group-item-warning.list-group-item-action:hover, .list-group-item-warning.list-group-item-action:focus {\n    color: #856404;\n    background-color: #ffe8a1; }\n  .list-group-item-warning.list-group-item-action.active {\n    color: #fff;\n    background-color: #856404;\n    border-color: #856404; }\n\n.list-group-item-danger {\n  color: #721c24;\n  background-color: #f5c6cb; }\n  .list-group-item-danger.list-group-item-action:hover, .list-group-item-danger.list-group-item-action:focus {\n    color: #721c24;\n    background-color: #f1b0b7; }\n  .list-group-item-danger.list-group-item-action.active {\n    color: #fff;\n    background-color: #721c24;\n    border-color: #721c24; }\n\n.list-group-item-light {\n  color: #818182;\n  background-color: #fdfdfe; }\n  .list-group-item-light.list-group-item-action:hover, .list-group-item-light.list-group-item-action:focus {\n    color: #818182;\n    background-color: #ececf6; }\n  .list-group-item-light.list-group-item-action.active {\n    color: #fff;\n    background-color: #818182;\n    border-color: #818182; }\n\n.list-group-item-dark {\n  color: #1b1e21;\n  background-color: #c6c8ca; }\n  .list-group-item-dark.list-group-item-action:hover, .list-group-item-dark.list-group-item-action:focus {\n    color: #1b1e21;\n    background-color: #b9bbbe; }\n  .list-group-item-dark.list-group-item-action.active {\n    color: #fff;\n    background-color: #1b1e21;\n    border-color: #1b1e21; }\n\n.close {\n  float: right;\n  font-size: 1.5rem;\n  font-weight: 700;\n  line-height: 1;\n  color: #000;\n  text-shadow: 0 1px 0 #fff;\n  opacity: .5; }\n  .close:hover {\n    color: #000;\n    text-decoration: none; }\n  .close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {\n    opacity: .75; }\n\nbutton.close {\n  padding: 0;\n  background-color: transparent;\n  border: 0; }\n\na.close.disabled {\n  pointer-events: none; }\n\n.toast {\n  flex-basis: 350px;\n  max-width: 350px;\n  font-size: 0.875rem;\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);\n  opacity: 0;\n  border-radius: 0.25rem; }\n  .toast:not(:last-child) {\n    margin-bottom: 0.75rem; }\n  .toast.showing {\n    opacity: 1; }\n  .toast.show {\n    display: block;\n    opacity: 1; }\n  .toast.hide {\n    display: none; }\n\n.toast-header {\n  display: flex;\n  align-items: center;\n  padding: 0.25rem 0.75rem;\n  color: #6c757d;\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border-bottom: 1px solid rgba(0, 0, 0, 0.05);\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px); }\n\n.toast-body {\n  padding: 0.75rem; }\n\n.modal-open {\n  overflow: hidden; }\n  .modal-open .modal {\n    overflow-x: hidden;\n    overflow-y: auto; }\n\n.modal {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 1050;\n  display: none;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  outline: 0; }\n\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 0.5rem;\n  pointer-events: none; }\n  .modal.fade .modal-dialog {\n    transition: transform 0.3s ease-out;\n    transform: translate(0, -50px); }\n    @media (prefers-reduced-motion: reduce) {\n      .modal.fade .modal-dialog {\n        transition: none; } }\n  .modal.show .modal-dialog {\n    transform: none; }\n  .modal.modal-static .modal-dialog {\n    transform: scale(1.02); }\n\n.modal-dialog-scrollable {\n  display: flex;\n  max-height: calc(100% - 1rem); }\n  .modal-dialog-scrollable .modal-content {\n    max-height: calc(100vh - 1rem);\n    overflow: hidden; }\n  .modal-dialog-scrollable .modal-header,\n  .modal-dialog-scrollable .modal-footer {\n    flex-shrink: 0; }\n  .modal-dialog-scrollable .modal-body {\n    overflow-y: auto; }\n\n.modal-dialog-centered {\n  display: flex;\n  align-items: center;\n  min-height: calc(100% - 1rem); }\n  .modal-dialog-centered::before {\n    display: block;\n    height: calc(100vh - 1rem);\n    height: min-content;\n    content: \"\"; }\n  .modal-dialog-centered.modal-dialog-scrollable {\n    flex-direction: column;\n    justify-content: center;\n    height: 100%; }\n    .modal-dialog-centered.modal-dialog-scrollable .modal-content {\n      max-height: none; }\n    .modal-dialog-centered.modal-dialog-scrollable::before {\n      content: none; }\n\n.modal-content {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  pointer-events: auto;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem;\n  outline: 0; }\n\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 1040;\n  width: 100vw;\n  height: 100vh;\n  background-color: #000; }\n  .modal-backdrop.fade {\n    opacity: 0; }\n  .modal-backdrop.show {\n    opacity: 0.5; }\n\n.modal-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  padding: 1rem 1rem;\n  border-bottom: 1px solid #dee2e6;\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px); }\n  .modal-header .close {\n    padding: 1rem 1rem;\n    margin: -1rem -1rem -1rem auto; }\n\n.modal-title {\n  margin-bottom: 0;\n  line-height: 1.5; }\n\n.modal-body {\n  position: relative;\n  flex: 1 1 auto;\n  padding: 1rem; }\n\n.modal-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n  padding: 0.75rem;\n  border-top: 1px solid #dee2e6;\n  border-bottom-right-radius: calc(0.3rem - 1px);\n  border-bottom-left-radius: calc(0.3rem - 1px); }\n  .modal-footer > * {\n    margin: 0.25rem; }\n\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll; }\n\n@media (min-width: 576px) {\n  .modal-dialog {\n    max-width: 500px;\n    margin: 1.75rem auto; }\n  .modal-dialog-scrollable {\n    max-height: calc(100% - 3.5rem); }\n    .modal-dialog-scrollable .modal-content {\n      max-height: calc(100vh - 3.5rem); }\n  .modal-dialog-centered {\n    min-height: calc(100% - 3.5rem); }\n    .modal-dialog-centered::before {\n      height: calc(100vh - 3.5rem);\n      height: min-content; }\n  .modal-sm {\n    max-width: 300px; } }\n\n@media (min-width: 992px) {\n  .modal-lg,\n  .modal-xl {\n    max-width: 800px; } }\n\n@media (min-width: 1200px) {\n  .modal-xl {\n    max-width: 1140px; } }\n\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  white-space: normal;\n  word-spacing: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n  opacity: 0; }\n  .tooltip.show {\n    opacity: 0.9; }\n  .tooltip .arrow {\n    position: absolute;\n    display: block;\n    width: 0.8rem;\n    height: 0.4rem; }\n    .tooltip .arrow::before {\n      position: absolute;\n      content: \"\";\n      border-color: transparent;\n      border-style: solid; }\n\n.bs-tooltip-top, .bs-tooltip-auto[x-placement^=\"top\"] {\n  padding: 0.4rem 0; }\n  .bs-tooltip-top .arrow, .bs-tooltip-auto[x-placement^=\"top\"] .arrow {\n    bottom: 0; }\n    .bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^=\"top\"] .arrow::before {\n      top: 0;\n      border-width: 0.4rem 0.4rem 0;\n      border-top-color: #000; }\n\n.bs-tooltip-right, .bs-tooltip-auto[x-placement^=\"right\"] {\n  padding: 0 0.4rem; }\n  .bs-tooltip-right .arrow, .bs-tooltip-auto[x-placement^=\"right\"] .arrow {\n    left: 0;\n    width: 0.4rem;\n    height: 0.8rem; }\n    .bs-tooltip-right .arrow::before, .bs-tooltip-auto[x-placement^=\"right\"] .arrow::before {\n      right: 0;\n      border-width: 0.4rem 0.4rem 0.4rem 0;\n      border-right-color: #000; }\n\n.bs-tooltip-bottom, .bs-tooltip-auto[x-placement^=\"bottom\"] {\n  padding: 0.4rem 0; }\n  .bs-tooltip-bottom .arrow, .bs-tooltip-auto[x-placement^=\"bottom\"] .arrow {\n    top: 0; }\n    .bs-tooltip-bottom .arrow::before, .bs-tooltip-auto[x-placement^=\"bottom\"] .arrow::before {\n      bottom: 0;\n      border-width: 0 0.4rem 0.4rem;\n      border-bottom-color: #000; }\n\n.bs-tooltip-left, .bs-tooltip-auto[x-placement^=\"left\"] {\n  padding: 0 0.4rem; }\n  .bs-tooltip-left .arrow, .bs-tooltip-auto[x-placement^=\"left\"] .arrow {\n    right: 0;\n    width: 0.4rem;\n    height: 0.8rem; }\n    .bs-tooltip-left .arrow::before, .bs-tooltip-auto[x-placement^=\"left\"] .arrow::before {\n      left: 0;\n      border-width: 0.4rem 0 0.4rem 0.4rem;\n      border-left-color: #000; }\n\n.tooltip-inner {\n  max-width: 200px;\n  padding: 0.25rem 0.5rem;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 0.25rem; }\n\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: block;\n  max-width: 276px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  white-space: normal;\n  word-spacing: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem; }\n  .popover .arrow {\n    position: absolute;\n    display: block;\n    width: 1rem;\n    height: 0.5rem;\n    margin: 0 0.3rem; }\n    .popover .arrow::before, .popover .arrow::after {\n      position: absolute;\n      display: block;\n      content: \"\";\n      border-color: transparent;\n      border-style: solid; }\n\n.bs-popover-top, .bs-popover-auto[x-placement^=\"top\"] {\n  margin-bottom: 0.5rem; }\n  .bs-popover-top > .arrow, .bs-popover-auto[x-placement^=\"top\"] > .arrow {\n    bottom: calc(-0.5rem - 1px); }\n    .bs-popover-top > .arrow::before, .bs-popover-auto[x-placement^=\"top\"] > .arrow::before {\n      bottom: 0;\n      border-width: 0.5rem 0.5rem 0;\n      border-top-color: rgba(0, 0, 0, 0.25); }\n    .bs-popover-top > .arrow::after, .bs-popover-auto[x-placement^=\"top\"] > .arrow::after {\n      bottom: 1px;\n      border-width: 0.5rem 0.5rem 0;\n      border-top-color: #fff; }\n\n.bs-popover-right, .bs-popover-auto[x-placement^=\"right\"] {\n  margin-left: 0.5rem; }\n  .bs-popover-right > .arrow, .bs-popover-auto[x-placement^=\"right\"] > .arrow {\n    left: calc(-0.5rem - 1px);\n    width: 0.5rem;\n    height: 1rem;\n    margin: 0.3rem 0; }\n    .bs-popover-right > .arrow::before, .bs-popover-auto[x-placement^=\"right\"] > .arrow::before {\n      left: 0;\n      border-width: 0.5rem 0.5rem 0.5rem 0;\n      border-right-color: rgba(0, 0, 0, 0.25); }\n    .bs-popover-right > .arrow::after, .bs-popover-auto[x-placement^=\"right\"] > .arrow::after {\n      left: 1px;\n      border-width: 0.5rem 0.5rem 0.5rem 0;\n      border-right-color: #fff; }\n\n.bs-popover-bottom, .bs-popover-auto[x-placement^=\"bottom\"] {\n  margin-top: 0.5rem; }\n  .bs-popover-bottom > .arrow, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow {\n    top: calc(-0.5rem - 1px); }\n    .bs-popover-bottom > .arrow::before, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::before {\n      top: 0;\n      border-width: 0 0.5rem 0.5rem 0.5rem;\n      border-bottom-color: rgba(0, 0, 0, 0.25); }\n    .bs-popover-bottom > .arrow::after, .bs-popover-auto[x-placement^=\"bottom\"] > .arrow::after {\n      top: 1px;\n      border-width: 0 0.5rem 0.5rem 0.5rem;\n      border-bottom-color: #fff; }\n  .bs-popover-bottom .popover-header::before, .bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n    position: absolute;\n    top: 0;\n    left: 50%;\n    display: block;\n    width: 1rem;\n    margin-left: -0.5rem;\n    content: \"\";\n    border-bottom: 1px solid #f7f7f7; }\n\n.bs-popover-left, .bs-popover-auto[x-placement^=\"left\"] {\n  margin-right: 0.5rem; }\n  .bs-popover-left > .arrow, .bs-popover-auto[x-placement^=\"left\"] > .arrow {\n    right: calc(-0.5rem - 1px);\n    width: 0.5rem;\n    height: 1rem;\n    margin: 0.3rem 0; }\n    .bs-popover-left > .arrow::before, .bs-popover-auto[x-placement^=\"left\"] > .arrow::before {\n      right: 0;\n      border-width: 0.5rem 0 0.5rem 0.5rem;\n      border-left-color: rgba(0, 0, 0, 0.25); }\n    .bs-popover-left > .arrow::after, .bs-popover-auto[x-placement^=\"left\"] > .arrow::after {\n      right: 1px;\n      border-width: 0.5rem 0 0.5rem 0.5rem;\n      border-left-color: #fff; }\n\n.popover-header {\n  padding: 0.5rem 0.75rem;\n  margin-bottom: 0;\n  font-size: 1rem;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px); }\n  .popover-header:empty {\n    display: none; }\n\n.popover-body {\n  padding: 0.5rem 0.75rem;\n  color: #212529; }\n\n.carousel {\n  position: relative; }\n\n.carousel.pointer-event {\n  touch-action: pan-y; }\n\n.carousel-inner {\n  position: relative;\n  width: 100%;\n  overflow: hidden; }\n  .carousel-inner::after {\n    display: block;\n    clear: both;\n    content: \"\"; }\n\n.carousel-item {\n  position: relative;\n  display: none;\n  float: left;\n  width: 100%;\n  margin-right: -100%;\n  backface-visibility: hidden;\n  transition: transform 0.6s ease-in-out; }\n  @media (prefers-reduced-motion: reduce) {\n    .carousel-item {\n      transition: none; } }\n\n.carousel-item.active,\n.carousel-item-next,\n.carousel-item-prev {\n  display: block; }\n\n.carousel-item-next:not(.carousel-item-left),\n.active.carousel-item-right {\n  transform: translateX(100%); }\n\n.carousel-item-prev:not(.carousel-item-right),\n.active.carousel-item-left {\n  transform: translateX(-100%); }\n\n.carousel-fade .carousel-item {\n  opacity: 0;\n  transition-property: opacity;\n  transform: none; }\n\n.carousel-fade .carousel-item.active,\n.carousel-fade .carousel-item-next.carousel-item-left,\n.carousel-fade .carousel-item-prev.carousel-item-right {\n  z-index: 1;\n  opacity: 1; }\n\n.carousel-fade .active.carousel-item-left,\n.carousel-fade .active.carousel-item-right {\n  z-index: 0;\n  opacity: 0;\n  transition: opacity 0s 0.6s; }\n  @media (prefers-reduced-motion: reduce) {\n    .carousel-fade .active.carousel-item-left,\n    .carousel-fade .active.carousel-item-right {\n      transition: none; } }\n\n.carousel-control-prev,\n.carousel-control-next {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 15%;\n  padding: 0;\n  color: #fff;\n  text-align: center;\n  background: none;\n  border: 0;\n  opacity: 0.5;\n  transition: opacity 0.15s ease; }\n  @media (prefers-reduced-motion: reduce) {\n    .carousel-control-prev,\n    .carousel-control-next {\n      transition: none; } }\n  .carousel-control-prev:hover, .carousel-control-prev:focus,\n  .carousel-control-next:hover,\n  .carousel-control-next:focus {\n    color: #fff;\n    text-decoration: none;\n    outline: 0;\n    opacity: 0.9; }\n\n.carousel-control-prev {\n  left: 0; }\n\n.carousel-control-next {\n  right: 0; }\n\n.carousel-control-prev-icon,\n.carousel-control-next-icon {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: 50% / 100% 100% no-repeat; }\n\n.carousel-control-prev-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z'/%3e%3c/svg%3e\"); }\n\n.carousel-control-next-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M2.75 0l-1.5 1.5L3.75 4l-2.5 2.5L2.75 8l4-4-4-4z'/%3e%3c/svg%3e\"); }\n\n.carousel-indicators {\n  position: absolute;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 15;\n  display: flex;\n  justify-content: center;\n  padding-left: 0;\n  margin-right: 15%;\n  margin-left: 15%;\n  list-style: none; }\n  .carousel-indicators li {\n    box-sizing: content-box;\n    flex: 0 1 auto;\n    width: 30px;\n    height: 3px;\n    margin-right: 3px;\n    margin-left: 3px;\n    text-indent: -999px;\n    cursor: pointer;\n    background-color: #fff;\n    background-clip: padding-box;\n    border-top: 10px solid transparent;\n    border-bottom: 10px solid transparent;\n    opacity: .5;\n    transition: opacity 0.6s ease; }\n    @media (prefers-reduced-motion: reduce) {\n      .carousel-indicators li {\n        transition: none; } }\n  .carousel-indicators .active {\n    opacity: 1; }\n\n.carousel-caption {\n  position: absolute;\n  right: 15%;\n  bottom: 20px;\n  left: 15%;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center; }\n\n@keyframes spinner-border {\n  to {\n    transform: rotate(360deg); } }\n\n.spinner-border {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: -0.125em;\n  border: 0.25em solid currentcolor;\n  border-right-color: transparent;\n  border-radius: 50%;\n  animation: .75s linear infinite spinner-border; }\n\n.spinner-border-sm {\n  width: 1rem;\n  height: 1rem;\n  border-width: 0.2em; }\n\n@keyframes spinner-grow {\n  0% {\n    transform: scale(0); }\n  50% {\n    opacity: 1;\n    transform: none; } }\n\n.spinner-grow {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: -0.125em;\n  background-color: currentcolor;\n  border-radius: 50%;\n  opacity: 0;\n  animation: .75s linear infinite spinner-grow; }\n\n.spinner-grow-sm {\n  width: 1rem;\n  height: 1rem; }\n\n@media (prefers-reduced-motion: reduce) {\n  .spinner-border,\n  .spinner-grow {\n    animation-duration: 1.5s; } }\n\n.align-baseline {\n  vertical-align: baseline !important; }\n\n.align-top {\n  vertical-align: top !important; }\n\n.align-middle {\n  vertical-align: middle !important; }\n\n.align-bottom {\n  vertical-align: bottom !important; }\n\n.align-text-bottom {\n  vertical-align: text-bottom !important; }\n\n.align-text-top {\n  vertical-align: text-top !important; }\n\n.bg-primary {\n  background-color: #007bff !important; }\n\na.bg-primary:hover, a.bg-primary:focus,\nbutton.bg-primary:hover,\nbutton.bg-primary:focus {\n  background-color: #0062cc !important; }\n\n.bg-secondary {\n  background-color: #6c757d !important; }\n\na.bg-secondary:hover, a.bg-secondary:focus,\nbutton.bg-secondary:hover,\nbutton.bg-secondary:focus {\n  background-color: #545b62 !important; }\n\n.bg-success {\n  background-color: #28a745 !important; }\n\na.bg-success:hover, a.bg-success:focus,\nbutton.bg-success:hover,\nbutton.bg-success:focus {\n  background-color: #1e7e34 !important; }\n\n.bg-info {\n  background-color: #17a2b8 !important; }\n\na.bg-info:hover, a.bg-info:focus,\nbutton.bg-info:hover,\nbutton.bg-info:focus {\n  background-color: #117a8b !important; }\n\n.bg-warning {\n  background-color: #ffc107 !important; }\n\na.bg-warning:hover, a.bg-warning:focus,\nbutton.bg-warning:hover,\nbutton.bg-warning:focus {\n  background-color: #d39e00 !important; }\n\n.bg-danger {\n  background-color: #dc3545 !important; }\n\na.bg-danger:hover, a.bg-danger:focus,\nbutton.bg-danger:hover,\nbutton.bg-danger:focus {\n  background-color: #bd2130 !important; }\n\n.bg-light {\n  background-color: #f8f9fa !important; }\n\na.bg-light:hover, a.bg-light:focus,\nbutton.bg-light:hover,\nbutton.bg-light:focus {\n  background-color: #dae0e5 !important; }\n\n.bg-dark {\n  background-color: #343a40 !important; }\n\na.bg-dark:hover, a.bg-dark:focus,\nbutton.bg-dark:hover,\nbutton.bg-dark:focus {\n  background-color: #1d2124 !important; }\n\n.bg-white {\n  background-color: #fff !important; }\n\n.bg-transparent {\n  background-color: transparent !important; }\n\n.border {\n  border: 1px solid #dee2e6 !important; }\n\n.border-top {\n  border-top: 1px solid #dee2e6 !important; }\n\n.border-right {\n  border-right: 1px solid #dee2e6 !important; }\n\n.border-bottom {\n  border-bottom: 1px solid #dee2e6 !important; }\n\n.border-left {\n  border-left: 1px solid #dee2e6 !important; }\n\n.border-0 {\n  border: 0 !important; }\n\n.border-top-0 {\n  border-top: 0 !important; }\n\n.border-right-0 {\n  border-right: 0 !important; }\n\n.border-bottom-0 {\n  border-bottom: 0 !important; }\n\n.border-left-0 {\n  border-left: 0 !important; }\n\n.border-primary {\n  border-color: #007bff !important; }\n\n.border-secondary {\n  border-color: #6c757d !important; }\n\n.border-success {\n  border-color: #28a745 !important; }\n\n.border-info {\n  border-color: #17a2b8 !important; }\n\n.border-warning {\n  border-color: #ffc107 !important; }\n\n.border-danger {\n  border-color: #dc3545 !important; }\n\n.border-light {\n  border-color: #f8f9fa !important; }\n\n.border-dark {\n  border-color: #343a40 !important; }\n\n.border-white {\n  border-color: #fff !important; }\n\n.rounded-sm {\n  border-radius: 0.2rem !important; }\n\n.rounded {\n  border-radius: 0.25rem !important; }\n\n.rounded-top {\n  border-top-left-radius: 0.25rem !important;\n  border-top-right-radius: 0.25rem !important; }\n\n.rounded-right {\n  border-top-right-radius: 0.25rem !important;\n  border-bottom-right-radius: 0.25rem !important; }\n\n.rounded-bottom {\n  border-bottom-right-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important; }\n\n.rounded-left {\n  border-top-left-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important; }\n\n.rounded-lg {\n  border-radius: 0.3rem !important; }\n\n.rounded-circle {\n  border-radius: 50% !important; }\n\n.rounded-pill {\n  border-radius: 50rem !important; }\n\n.rounded-0 {\n  border-radius: 0 !important; }\n\n.clearfix::after {\n  display: block;\n  clear: both;\n  content: \"\"; }\n\n.d-none {\n  display: none !important; }\n\n.d-inline {\n  display: inline !important; }\n\n.d-inline-block {\n  display: inline-block !important; }\n\n.d-block {\n  display: block !important; }\n\n.d-table {\n  display: table !important; }\n\n.d-table-row {\n  display: table-row !important; }\n\n.d-table-cell {\n  display: table-cell !important; }\n\n.d-flex {\n  display: flex !important; }\n\n.d-inline-flex {\n  display: inline-flex !important; }\n\n@media (min-width: 576px) {\n  .d-sm-none {\n    display: none !important; }\n  .d-sm-inline {\n    display: inline !important; }\n  .d-sm-inline-block {\n    display: inline-block !important; }\n  .d-sm-block {\n    display: block !important; }\n  .d-sm-table {\n    display: table !important; }\n  .d-sm-table-row {\n    display: table-row !important; }\n  .d-sm-table-cell {\n    display: table-cell !important; }\n  .d-sm-flex {\n    display: flex !important; }\n  .d-sm-inline-flex {\n    display: inline-flex !important; } }\n\n@media (min-width: 768px) {\n  .d-md-none {\n    display: none !important; }\n  .d-md-inline {\n    display: inline !important; }\n  .d-md-inline-block {\n    display: inline-block !important; }\n  .d-md-block {\n    display: block !important; }\n  .d-md-table {\n    display: table !important; }\n  .d-md-table-row {\n    display: table-row !important; }\n  .d-md-table-cell {\n    display: table-cell !important; }\n  .d-md-flex {\n    display: flex !important; }\n  .d-md-inline-flex {\n    display: inline-flex !important; } }\n\n@media (min-width: 992px) {\n  .d-lg-none {\n    display: none !important; }\n  .d-lg-inline {\n    display: inline !important; }\n  .d-lg-inline-block {\n    display: inline-block !important; }\n  .d-lg-block {\n    display: block !important; }\n  .d-lg-table {\n    display: table !important; }\n  .d-lg-table-row {\n    display: table-row !important; }\n  .d-lg-table-cell {\n    display: table-cell !important; }\n  .d-lg-flex {\n    display: flex !important; }\n  .d-lg-inline-flex {\n    display: inline-flex !important; } }\n\n@media (min-width: 1200px) {\n  .d-xl-none {\n    display: none !important; }\n  .d-xl-inline {\n    display: inline !important; }\n  .d-xl-inline-block {\n    display: inline-block !important; }\n  .d-xl-block {\n    display: block !important; }\n  .d-xl-table {\n    display: table !important; }\n  .d-xl-table-row {\n    display: table-row !important; }\n  .d-xl-table-cell {\n    display: table-cell !important; }\n  .d-xl-flex {\n    display: flex !important; }\n  .d-xl-inline-flex {\n    display: inline-flex !important; } }\n\n@media print {\n  .d-print-none {\n    display: none !important; }\n  .d-print-inline {\n    display: inline !important; }\n  .d-print-inline-block {\n    display: inline-block !important; }\n  .d-print-block {\n    display: block !important; }\n  .d-print-table {\n    display: table !important; }\n  .d-print-table-row {\n    display: table-row !important; }\n  .d-print-table-cell {\n    display: table-cell !important; }\n  .d-print-flex {\n    display: flex !important; }\n  .d-print-inline-flex {\n    display: inline-flex !important; } }\n\n.embed-responsive {\n  position: relative;\n  display: block;\n  width: 100%;\n  padding: 0;\n  overflow: hidden; }\n  .embed-responsive::before {\n    display: block;\n    content: \"\"; }\n  .embed-responsive .embed-responsive-item,\n  .embed-responsive iframe,\n  .embed-responsive embed,\n  .embed-responsive object,\n  .embed-responsive video {\n    position: absolute;\n    top: 0;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    border: 0; }\n\n.embed-responsive-21by9::before {\n  padding-top: 42.85714%; }\n\n.embed-responsive-16by9::before {\n  padding-top: 56.25%; }\n\n.embed-responsive-4by3::before {\n  padding-top: 75%; }\n\n.embed-responsive-1by1::before {\n  padding-top: 100%; }\n\n.flex-row {\n  flex-direction: row !important; }\n\n.flex-column {\n  flex-direction: column !important; }\n\n.flex-row-reverse {\n  flex-direction: row-reverse !important; }\n\n.flex-column-reverse {\n  flex-direction: column-reverse !important; }\n\n.flex-wrap {\n  flex-wrap: wrap !important; }\n\n.flex-nowrap {\n  flex-wrap: nowrap !important; }\n\n.flex-wrap-reverse {\n  flex-wrap: wrap-reverse !important; }\n\n.flex-fill {\n  flex: 1 1 auto !important; }\n\n.flex-grow-0 {\n  flex-grow: 0 !important; }\n\n.flex-grow-1 {\n  flex-grow: 1 !important; }\n\n.flex-shrink-0 {\n  flex-shrink: 0 !important; }\n\n.flex-shrink-1 {\n  flex-shrink: 1 !important; }\n\n.justify-content-start {\n  justify-content: flex-start !important; }\n\n.justify-content-end {\n  justify-content: flex-end !important; }\n\n.justify-content-center {\n  justify-content: center !important; }\n\n.justify-content-between {\n  justify-content: space-between !important; }\n\n.justify-content-around {\n  justify-content: space-around !important; }\n\n.align-items-start {\n  align-items: flex-start !important; }\n\n.align-items-end {\n  align-items: flex-end !important; }\n\n.align-items-center {\n  align-items: center !important; }\n\n.align-items-baseline {\n  align-items: baseline !important; }\n\n.align-items-stretch {\n  align-items: stretch !important; }\n\n.align-content-start {\n  align-content: flex-start !important; }\n\n.align-content-end {\n  align-content: flex-end !important; }\n\n.align-content-center {\n  align-content: center !important; }\n\n.align-content-between {\n  align-content: space-between !important; }\n\n.align-content-around {\n  align-content: space-around !important; }\n\n.align-content-stretch {\n  align-content: stretch !important; }\n\n.align-self-auto {\n  align-self: auto !important; }\n\n.align-self-start {\n  align-self: flex-start !important; }\n\n.align-self-end {\n  align-self: flex-end !important; }\n\n.align-self-center {\n  align-self: center !important; }\n\n.align-self-baseline {\n  align-self: baseline !important; }\n\n.align-self-stretch {\n  align-self: stretch !important; }\n\n@media (min-width: 576px) {\n  .flex-sm-row {\n    flex-direction: row !important; }\n  .flex-sm-column {\n    flex-direction: column !important; }\n  .flex-sm-row-reverse {\n    flex-direction: row-reverse !important; }\n  .flex-sm-column-reverse {\n    flex-direction: column-reverse !important; }\n  .flex-sm-wrap {\n    flex-wrap: wrap !important; }\n  .flex-sm-nowrap {\n    flex-wrap: nowrap !important; }\n  .flex-sm-wrap-reverse {\n    flex-wrap: wrap-reverse !important; }\n  .flex-sm-fill {\n    flex: 1 1 auto !important; }\n  .flex-sm-grow-0 {\n    flex-grow: 0 !important; }\n  .flex-sm-grow-1 {\n    flex-grow: 1 !important; }\n  .flex-sm-shrink-0 {\n    flex-shrink: 0 !important; }\n  .flex-sm-shrink-1 {\n    flex-shrink: 1 !important; }\n  .justify-content-sm-start {\n    justify-content: flex-start !important; }\n  .justify-content-sm-end {\n    justify-content: flex-end !important; }\n  .justify-content-sm-center {\n    justify-content: center !important; }\n  .justify-content-sm-between {\n    justify-content: space-between !important; }\n  .justify-content-sm-around {\n    justify-content: space-around !important; }\n  .align-items-sm-start {\n    align-items: flex-start !important; }\n  .align-items-sm-end {\n    align-items: flex-end !important; }\n  .align-items-sm-center {\n    align-items: center !important; }\n  .align-items-sm-baseline {\n    align-items: baseline !important; }\n  .align-items-sm-stretch {\n    align-items: stretch !important; }\n  .align-content-sm-start {\n    align-content: flex-start !important; }\n  .align-content-sm-end {\n    align-content: flex-end !important; }\n  .align-content-sm-center {\n    align-content: center !important; }\n  .align-content-sm-between {\n    align-content: space-between !important; }\n  .align-content-sm-around {\n    align-content: space-around !important; }\n  .align-content-sm-stretch {\n    align-content: stretch !important; }\n  .align-self-sm-auto {\n    align-self: auto !important; }\n  .align-self-sm-start {\n    align-self: flex-start !important; }\n  .align-self-sm-end {\n    align-self: flex-end !important; }\n  .align-self-sm-center {\n    align-self: center !important; }\n  .align-self-sm-baseline {\n    align-self: baseline !important; }\n  .align-self-sm-stretch {\n    align-self: stretch !important; } }\n\n@media (min-width: 768px) {\n  .flex-md-row {\n    flex-direction: row !important; }\n  .flex-md-column {\n    flex-direction: column !important; }\n  .flex-md-row-reverse {\n    flex-direction: row-reverse !important; }\n  .flex-md-column-reverse {\n    flex-direction: column-reverse !important; }\n  .flex-md-wrap {\n    flex-wrap: wrap !important; }\n  .flex-md-nowrap {\n    flex-wrap: nowrap !important; }\n  .flex-md-wrap-reverse {\n    flex-wrap: wrap-reverse !important; }\n  .flex-md-fill {\n    flex: 1 1 auto !important; }\n  .flex-md-grow-0 {\n    flex-grow: 0 !important; }\n  .flex-md-grow-1 {\n    flex-grow: 1 !important; }\n  .flex-md-shrink-0 {\n    flex-shrink: 0 !important; }\n  .flex-md-shrink-1 {\n    flex-shrink: 1 !important; }\n  .justify-content-md-start {\n    justify-content: flex-start !important; }\n  .justify-content-md-end {\n    justify-content: flex-end !important; }\n  .justify-content-md-center {\n    justify-content: center !important; }\n  .justify-content-md-between {\n    justify-content: space-between !important; }\n  .justify-content-md-around {\n    justify-content: space-around !important; }\n  .align-items-md-start {\n    align-items: flex-start !important; }\n  .align-items-md-end {\n    align-items: flex-end !important; }\n  .align-items-md-center {\n    align-items: center !important; }\n  .align-items-md-baseline {\n    align-items: baseline !important; }\n  .align-items-md-stretch {\n    align-items: stretch !important; }\n  .align-content-md-start {\n    align-content: flex-start !important; }\n  .align-content-md-end {\n    align-content: flex-end !important; }\n  .align-content-md-center {\n    align-content: center !important; }\n  .align-content-md-between {\n    align-content: space-between !important; }\n  .align-content-md-around {\n    align-content: space-around !important; }\n  .align-content-md-stretch {\n    align-content: stretch !important; }\n  .align-self-md-auto {\n    align-self: auto !important; }\n  .align-self-md-start {\n    align-self: flex-start !important; }\n  .align-self-md-end {\n    align-self: flex-end !important; }\n  .align-self-md-center {\n    align-self: center !important; }\n  .align-self-md-baseline {\n    align-self: baseline !important; }\n  .align-self-md-stretch {\n    align-self: stretch !important; } }\n\n@media (min-width: 992px) {\n  .flex-lg-row {\n    flex-direction: row !important; }\n  .flex-lg-column {\n    flex-direction: column !important; }\n  .flex-lg-row-reverse {\n    flex-direction: row-reverse !important; }\n  .flex-lg-column-reverse {\n    flex-direction: column-reverse !important; }\n  .flex-lg-wrap {\n    flex-wrap: wrap !important; }\n  .flex-lg-nowrap {\n    flex-wrap: nowrap !important; }\n  .flex-lg-wrap-reverse {\n    flex-wrap: wrap-reverse !important; }\n  .flex-lg-fill {\n    flex: 1 1 auto !important; }\n  .flex-lg-grow-0 {\n    flex-grow: 0 !important; }\n  .flex-lg-grow-1 {\n    flex-grow: 1 !important; }\n  .flex-lg-shrink-0 {\n    flex-shrink: 0 !important; }\n  .flex-lg-shrink-1 {\n    flex-shrink: 1 !important; }\n  .justify-content-lg-start {\n    justify-content: flex-start !important; }\n  .justify-content-lg-end {\n    justify-content: flex-end !important; }\n  .justify-content-lg-center {\n    justify-content: center !important; }\n  .justify-content-lg-between {\n    justify-content: space-between !important; }\n  .justify-content-lg-around {\n    justify-content: space-around !important; }\n  .align-items-lg-start {\n    align-items: flex-start !important; }\n  .align-items-lg-end {\n    align-items: flex-end !important; }\n  .align-items-lg-center {\n    align-items: center !important; }\n  .align-items-lg-baseline {\n    align-items: baseline !important; }\n  .align-items-lg-stretch {\n    align-items: stretch !important; }\n  .align-content-lg-start {\n    align-content: flex-start !important; }\n  .align-content-lg-end {\n    align-content: flex-end !important; }\n  .align-content-lg-center {\n    align-content: center !important; }\n  .align-content-lg-between {\n    align-content: space-between !important; }\n  .align-content-lg-around {\n    align-content: space-around !important; }\n  .align-content-lg-stretch {\n    align-content: stretch !important; }\n  .align-self-lg-auto {\n    align-self: auto !important; }\n  .align-self-lg-start {\n    align-self: flex-start !important; }\n  .align-self-lg-end {\n    align-self: flex-end !important; }\n  .align-self-lg-center {\n    align-self: center !important; }\n  .align-self-lg-baseline {\n    align-self: baseline !important; }\n  .align-self-lg-stretch {\n    align-self: stretch !important; } }\n\n@media (min-width: 1200px) {\n  .flex-xl-row {\n    flex-direction: row !important; }\n  .flex-xl-column {\n    flex-direction: column !important; }\n  .flex-xl-row-reverse {\n    flex-direction: row-reverse !important; }\n  .flex-xl-column-reverse {\n    flex-direction: column-reverse !important; }\n  .flex-xl-wrap {\n    flex-wrap: wrap !important; }\n  .flex-xl-nowrap {\n    flex-wrap: nowrap !important; }\n  .flex-xl-wrap-reverse {\n    flex-wrap: wrap-reverse !important; }\n  .flex-xl-fill {\n    flex: 1 1 auto !important; }\n  .flex-xl-grow-0 {\n    flex-grow: 0 !important; }\n  .flex-xl-grow-1 {\n    flex-grow: 1 !important; }\n  .flex-xl-shrink-0 {\n    flex-shrink: 0 !important; }\n  .flex-xl-shrink-1 {\n    flex-shrink: 1 !important; }\n  .justify-content-xl-start {\n    justify-content: flex-start !important; }\n  .justify-content-xl-end {\n    justify-content: flex-end !important; }\n  .justify-content-xl-center {\n    justify-content: center !important; }\n  .justify-content-xl-between {\n    justify-content: space-between !important; }\n  .justify-content-xl-around {\n    justify-content: space-around !important; }\n  .align-items-xl-start {\n    align-items: flex-start !important; }\n  .align-items-xl-end {\n    align-items: flex-end !important; }\n  .align-items-xl-center {\n    align-items: center !important; }\n  .align-items-xl-baseline {\n    align-items: baseline !important; }\n  .align-items-xl-stretch {\n    align-items: stretch !important; }\n  .align-content-xl-start {\n    align-content: flex-start !important; }\n  .align-content-xl-end {\n    align-content: flex-end !important; }\n  .align-content-xl-center {\n    align-content: center !important; }\n  .align-content-xl-between {\n    align-content: space-between !important; }\n  .align-content-xl-around {\n    align-content: space-around !important; }\n  .align-content-xl-stretch {\n    align-content: stretch !important; }\n  .align-self-xl-auto {\n    align-self: auto !important; }\n  .align-self-xl-start {\n    align-self: flex-start !important; }\n  .align-self-xl-end {\n    align-self: flex-end !important; }\n  .align-self-xl-center {\n    align-self: center !important; }\n  .align-self-xl-baseline {\n    align-self: baseline !important; }\n  .align-self-xl-stretch {\n    align-self: stretch !important; } }\n\n.float-left {\n  float: left !important; }\n\n.float-right {\n  float: right !important; }\n\n.float-none {\n  float: none !important; }\n\n@media (min-width: 576px) {\n  .float-sm-left {\n    float: left !important; }\n  .float-sm-right {\n    float: right !important; }\n  .float-sm-none {\n    float: none !important; } }\n\n@media (min-width: 768px) {\n  .float-md-left {\n    float: left !important; }\n  .float-md-right {\n    float: right !important; }\n  .float-md-none {\n    float: none !important; } }\n\n@media (min-width: 992px) {\n  .float-lg-left {\n    float: left !important; }\n  .float-lg-right {\n    float: right !important; }\n  .float-lg-none {\n    float: none !important; } }\n\n@media (min-width: 1200px) {\n  .float-xl-left {\n    float: left !important; }\n  .float-xl-right {\n    float: right !important; }\n  .float-xl-none {\n    float: none !important; } }\n\n.user-select-all {\n  user-select: all !important; }\n\n.user-select-auto {\n  user-select: auto !important; }\n\n.user-select-none {\n  user-select: none !important; }\n\n.overflow-auto {\n  overflow: auto !important; }\n\n.overflow-hidden {\n  overflow: hidden !important; }\n\n.position-static {\n  position: static !important; }\n\n.position-relative {\n  position: relative !important; }\n\n.position-absolute {\n  position: absolute !important; }\n\n.position-fixed {\n  position: fixed !important; }\n\n.position-sticky {\n  position: sticky !important; }\n\n.fixed-top {\n  position: fixed;\n  top: 0;\n  right: 0;\n  left: 0;\n  z-index: 1030; }\n\n.fixed-bottom {\n  position: fixed;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1030; }\n\n@supports (position: sticky) {\n  .sticky-top {\n    position: sticky;\n    top: 0;\n    z-index: 1020; } }\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0; }\n\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  overflow: visible;\n  clip: auto;\n  white-space: normal; }\n\n.shadow-sm {\n  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important; }\n\n.shadow {\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important; }\n\n.shadow-lg {\n  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important; }\n\n.shadow-none {\n  box-shadow: none !important; }\n\n.w-25 {\n  width: 25% !important; }\n\n.w-50 {\n  width: 50% !important; }\n\n.w-75 {\n  width: 75% !important; }\n\n.w-100 {\n  width: 100% !important; }\n\n.w-auto {\n  width: auto !important; }\n\n.h-25 {\n  height: 25% !important; }\n\n.h-50 {\n  height: 50% !important; }\n\n.h-75 {\n  height: 75% !important; }\n\n.h-100 {\n  height: 100% !important; }\n\n.h-auto {\n  height: auto !important; }\n\n.mw-100 {\n  max-width: 100% !important; }\n\n.mh-100 {\n  max-height: 100% !important; }\n\n.min-vw-100 {\n  min-width: 100vw !important; }\n\n.min-vh-100 {\n  min-height: 100vh !important; }\n\n.vw-100 {\n  width: 100vw !important; }\n\n.vh-100 {\n  height: 100vh !important; }\n\n.m-0 {\n  margin: 0 !important; }\n\n.mt-0,\n.my-0 {\n  margin-top: 0 !important; }\n\n.mr-0,\n.mx-0 {\n  margin-right: 0 !important; }\n\n.mb-0,\n.my-0 {\n  margin-bottom: 0 !important; }\n\n.ml-0,\n.mx-0 {\n  margin-left: 0 !important; }\n\n.m-1 {\n  margin: 0.25rem !important; }\n\n.mt-1,\n.my-1 {\n  margin-top: 0.25rem !important; }\n\n.mr-1,\n.mx-1 {\n  margin-right: 0.25rem !important; }\n\n.mb-1,\n.my-1 {\n  margin-bottom: 0.25rem !important; }\n\n.ml-1,\n.mx-1 {\n  margin-left: 0.25rem !important; }\n\n.m-2 {\n  margin: 0.5rem !important; }\n\n.mt-2,\n.my-2 {\n  margin-top: 0.5rem !important; }\n\n.mr-2,\n.mx-2 {\n  margin-right: 0.5rem !important; }\n\n.mb-2,\n.my-2 {\n  margin-bottom: 0.5rem !important; }\n\n.ml-2,\n.mx-2 {\n  margin-left: 0.5rem !important; }\n\n.m-3 {\n  margin: 1rem !important; }\n\n.mt-3,\n.my-3 {\n  margin-top: 1rem !important; }\n\n.mr-3,\n.mx-3 {\n  margin-right: 1rem !important; }\n\n.mb-3,\n.my-3 {\n  margin-bottom: 1rem !important; }\n\n.ml-3,\n.mx-3 {\n  margin-left: 1rem !important; }\n\n.m-4 {\n  margin: 1.5rem !important; }\n\n.mt-4,\n.my-4 {\n  margin-top: 1.5rem !important; }\n\n.mr-4,\n.mx-4 {\n  margin-right: 1.5rem !important; }\n\n.mb-4,\n.my-4 {\n  margin-bottom: 1.5rem !important; }\n\n.ml-4,\n.mx-4 {\n  margin-left: 1.5rem !important; }\n\n.m-5 {\n  margin: 3rem !important; }\n\n.mt-5,\n.my-5 {\n  margin-top: 3rem !important; }\n\n.mr-5,\n.mx-5 {\n  margin-right: 3rem !important; }\n\n.mb-5,\n.my-5 {\n  margin-bottom: 3rem !important; }\n\n.ml-5,\n.mx-5 {\n  margin-left: 3rem !important; }\n\n.p-0 {\n  padding: 0 !important; }\n\n.pt-0,\n.py-0 {\n  padding-top: 0 !important; }\n\n.pr-0,\n.px-0 {\n  padding-right: 0 !important; }\n\n.pb-0,\n.py-0 {\n  padding-bottom: 0 !important; }\n\n.pl-0,\n.px-0 {\n  padding-left: 0 !important; }\n\n.p-1 {\n  padding: 0.25rem !important; }\n\n.pt-1,\n.py-1 {\n  padding-top: 0.25rem !important; }\n\n.pr-1,\n.px-1 {\n  padding-right: 0.25rem !important; }\n\n.pb-1,\n.py-1 {\n  padding-bottom: 0.25rem !important; }\n\n.pl-1,\n.px-1 {\n  padding-left: 0.25rem !important; }\n\n.p-2 {\n  padding: 0.5rem !important; }\n\n.pt-2,\n.py-2 {\n  padding-top: 0.5rem !important; }\n\n.pr-2,\n.px-2 {\n  padding-right: 0.5rem !important; }\n\n.pb-2,\n.py-2 {\n  padding-bottom: 0.5rem !important; }\n\n.pl-2,\n.px-2 {\n  padding-left: 0.5rem !important; }\n\n.p-3 {\n  padding: 1rem !important; }\n\n.pt-3,\n.py-3 {\n  padding-top: 1rem !important; }\n\n.pr-3,\n.px-3 {\n  padding-right: 1rem !important; }\n\n.pb-3,\n.py-3 {\n  padding-bottom: 1rem !important; }\n\n.pl-3,\n.px-3 {\n  padding-left: 1rem !important; }\n\n.p-4 {\n  padding: 1.5rem !important; }\n\n.pt-4,\n.py-4 {\n  padding-top: 1.5rem !important; }\n\n.pr-4,\n.px-4 {\n  padding-right: 1.5rem !important; }\n\n.pb-4,\n.py-4 {\n  padding-bottom: 1.5rem !important; }\n\n.pl-4,\n.px-4 {\n  padding-left: 1.5rem !important; }\n\n.p-5 {\n  padding: 3rem !important; }\n\n.pt-5,\n.py-5 {\n  padding-top: 3rem !important; }\n\n.pr-5,\n.px-5 {\n  padding-right: 3rem !important; }\n\n.pb-5,\n.py-5 {\n  padding-bottom: 3rem !important; }\n\n.pl-5,\n.px-5 {\n  padding-left: 3rem !important; }\n\n.m-n1 {\n  margin: -0.25rem !important; }\n\n.mt-n1,\n.my-n1 {\n  margin-top: -0.25rem !important; }\n\n.mr-n1,\n.mx-n1 {\n  margin-right: -0.25rem !important; }\n\n.mb-n1,\n.my-n1 {\n  margin-bottom: -0.25rem !important; }\n\n.ml-n1,\n.mx-n1 {\n  margin-left: -0.25rem !important; }\n\n.m-n2 {\n  margin: -0.5rem !important; }\n\n.mt-n2,\n.my-n2 {\n  margin-top: -0.5rem !important; }\n\n.mr-n2,\n.mx-n2 {\n  margin-right: -0.5rem !important; }\n\n.mb-n2,\n.my-n2 {\n  margin-bottom: -0.5rem !important; }\n\n.ml-n2,\n.mx-n2 {\n  margin-left: -0.5rem !important; }\n\n.m-n3 {\n  margin: -1rem !important; }\n\n.mt-n3,\n.my-n3 {\n  margin-top: -1rem !important; }\n\n.mr-n3,\n.mx-n3 {\n  margin-right: -1rem !important; }\n\n.mb-n3,\n.my-n3 {\n  margin-bottom: -1rem !important; }\n\n.ml-n3,\n.mx-n3 {\n  margin-left: -1rem !important; }\n\n.m-n4 {\n  margin: -1.5rem !important; }\n\n.mt-n4,\n.my-n4 {\n  margin-top: -1.5rem !important; }\n\n.mr-n4,\n.mx-n4 {\n  margin-right: -1.5rem !important; }\n\n.mb-n4,\n.my-n4 {\n  margin-bottom: -1.5rem !important; }\n\n.ml-n4,\n.mx-n4 {\n  margin-left: -1.5rem !important; }\n\n.m-n5 {\n  margin: -3rem !important; }\n\n.mt-n5,\n.my-n5 {\n  margin-top: -3rem !important; }\n\n.mr-n5,\n.mx-n5 {\n  margin-right: -3rem !important; }\n\n.mb-n5,\n.my-n5 {\n  margin-bottom: -3rem !important; }\n\n.ml-n5,\n.mx-n5 {\n  margin-left: -3rem !important; }\n\n.m-auto {\n  margin: auto !important; }\n\n.mt-auto,\n.my-auto {\n  margin-top: auto !important; }\n\n.mr-auto,\n.mx-auto {\n  margin-right: auto !important; }\n\n.mb-auto,\n.my-auto {\n  margin-bottom: auto !important; }\n\n.ml-auto,\n.mx-auto {\n  margin-left: auto !important; }\n\n@media (min-width: 576px) {\n  .m-sm-0 {\n    margin: 0 !important; }\n  .mt-sm-0,\n  .my-sm-0 {\n    margin-top: 0 !important; }\n  .mr-sm-0,\n  .mx-sm-0 {\n    margin-right: 0 !important; }\n  .mb-sm-0,\n  .my-sm-0 {\n    margin-bottom: 0 !important; }\n  .ml-sm-0,\n  .mx-sm-0 {\n    margin-left: 0 !important; }\n  .m-sm-1 {\n    margin: 0.25rem !important; }\n  .mt-sm-1,\n  .my-sm-1 {\n    margin-top: 0.25rem !important; }\n  .mr-sm-1,\n  .mx-sm-1 {\n    margin-right: 0.25rem !important; }\n  .mb-sm-1,\n  .my-sm-1 {\n    margin-bottom: 0.25rem !important; }\n  .ml-sm-1,\n  .mx-sm-1 {\n    margin-left: 0.25rem !important; }\n  .m-sm-2 {\n    margin: 0.5rem !important; }\n  .mt-sm-2,\n  .my-sm-2 {\n    margin-top: 0.5rem !important; }\n  .mr-sm-2,\n  .mx-sm-2 {\n    margin-right: 0.5rem !important; }\n  .mb-sm-2,\n  .my-sm-2 {\n    margin-bottom: 0.5rem !important; }\n  .ml-sm-2,\n  .mx-sm-2 {\n    margin-left: 0.5rem !important; }\n  .m-sm-3 {\n    margin: 1rem !important; }\n  .mt-sm-3,\n  .my-sm-3 {\n    margin-top: 1rem !important; }\n  .mr-sm-3,\n  .mx-sm-3 {\n    margin-right: 1rem !important; }\n  .mb-sm-3,\n  .my-sm-3 {\n    margin-bottom: 1rem !important; }\n  .ml-sm-3,\n  .mx-sm-3 {\n    margin-left: 1rem !important; }\n  .m-sm-4 {\n    margin: 1.5rem !important; }\n  .mt-sm-4,\n  .my-sm-4 {\n    margin-top: 1.5rem !important; }\n  .mr-sm-4,\n  .mx-sm-4 {\n    margin-right: 1.5rem !important; }\n  .mb-sm-4,\n  .my-sm-4 {\n    margin-bottom: 1.5rem !important; }\n  .ml-sm-4,\n  .mx-sm-4 {\n    margin-left: 1.5rem !important; }\n  .m-sm-5 {\n    margin: 3rem !important; }\n  .mt-sm-5,\n  .my-sm-5 {\n    margin-top: 3rem !important; }\n  .mr-sm-5,\n  .mx-sm-5 {\n    margin-right: 3rem !important; }\n  .mb-sm-5,\n  .my-sm-5 {\n    margin-bottom: 3rem !important; }\n  .ml-sm-5,\n  .mx-sm-5 {\n    margin-left: 3rem !important; }\n  .p-sm-0 {\n    padding: 0 !important; }\n  .pt-sm-0,\n  .py-sm-0 {\n    padding-top: 0 !important; }\n  .pr-sm-0,\n  .px-sm-0 {\n    padding-right: 0 !important; }\n  .pb-sm-0,\n  .py-sm-0 {\n    padding-bottom: 0 !important; }\n  .pl-sm-0,\n  .px-sm-0 {\n    padding-left: 0 !important; }\n  .p-sm-1 {\n    padding: 0.25rem !important; }\n  .pt-sm-1,\n  .py-sm-1 {\n    padding-top: 0.25rem !important; }\n  .pr-sm-1,\n  .px-sm-1 {\n    padding-right: 0.25rem !important; }\n  .pb-sm-1,\n  .py-sm-1 {\n    padding-bottom: 0.25rem !important; }\n  .pl-sm-1,\n  .px-sm-1 {\n    padding-left: 0.25rem !important; }\n  .p-sm-2 {\n    padding: 0.5rem !important; }\n  .pt-sm-2,\n  .py-sm-2 {\n    padding-top: 0.5rem !important; }\n  .pr-sm-2,\n  .px-sm-2 {\n    padding-right: 0.5rem !important; }\n  .pb-sm-2,\n  .py-sm-2 {\n    padding-bottom: 0.5rem !important; }\n  .pl-sm-2,\n  .px-sm-2 {\n    padding-left: 0.5rem !important; }\n  .p-sm-3 {\n    padding: 1rem !important; }\n  .pt-sm-3,\n  .py-sm-3 {\n    padding-top: 1rem !important; }\n  .pr-sm-3,\n  .px-sm-3 {\n    padding-right: 1rem !important; }\n  .pb-sm-3,\n  .py-sm-3 {\n    padding-bottom: 1rem !important; }\n  .pl-sm-3,\n  .px-sm-3 {\n    padding-left: 1rem !important; }\n  .p-sm-4 {\n    padding: 1.5rem !important; }\n  .pt-sm-4,\n  .py-sm-4 {\n    padding-top: 1.5rem !important; }\n  .pr-sm-4,\n  .px-sm-4 {\n    padding-right: 1.5rem !important; }\n  .pb-sm-4,\n  .py-sm-4 {\n    padding-bottom: 1.5rem !important; }\n  .pl-sm-4,\n  .px-sm-4 {\n    padding-left: 1.5rem !important; }\n  .p-sm-5 {\n    padding: 3rem !important; }\n  .pt-sm-5,\n  .py-sm-5 {\n    padding-top: 3rem !important; }\n  .pr-sm-5,\n  .px-sm-5 {\n    padding-right: 3rem !important; }\n  .pb-sm-5,\n  .py-sm-5 {\n    padding-bottom: 3rem !important; }\n  .pl-sm-5,\n  .px-sm-5 {\n    padding-left: 3rem !important; }\n  .m-sm-n1 {\n    margin: -0.25rem !important; }\n  .mt-sm-n1,\n  .my-sm-n1 {\n    margin-top: -0.25rem !important; }\n  .mr-sm-n1,\n  .mx-sm-n1 {\n    margin-right: -0.25rem !important; }\n  .mb-sm-n1,\n  .my-sm-n1 {\n    margin-bottom: -0.25rem !important; }\n  .ml-sm-n1,\n  .mx-sm-n1 {\n    margin-left: -0.25rem !important; }\n  .m-sm-n2 {\n    margin: -0.5rem !important; }\n  .mt-sm-n2,\n  .my-sm-n2 {\n    margin-top: -0.5rem !important; }\n  .mr-sm-n2,\n  .mx-sm-n2 {\n    margin-right: -0.5rem !important; }\n  .mb-sm-n2,\n  .my-sm-n2 {\n    margin-bottom: -0.5rem !important; }\n  .ml-sm-n2,\n  .mx-sm-n2 {\n    margin-left: -0.5rem !important; }\n  .m-sm-n3 {\n    margin: -1rem !important; }\n  .mt-sm-n3,\n  .my-sm-n3 {\n    margin-top: -1rem !important; }\n  .mr-sm-n3,\n  .mx-sm-n3 {\n    margin-right: -1rem !important; }\n  .mb-sm-n3,\n  .my-sm-n3 {\n    margin-bottom: -1rem !important; }\n  .ml-sm-n3,\n  .mx-sm-n3 {\n    margin-left: -1rem !important; }\n  .m-sm-n4 {\n    margin: -1.5rem !important; }\n  .mt-sm-n4,\n  .my-sm-n4 {\n    margin-top: -1.5rem !important; }\n  .mr-sm-n4,\n  .mx-sm-n4 {\n    margin-right: -1.5rem !important; }\n  .mb-sm-n4,\n  .my-sm-n4 {\n    margin-bottom: -1.5rem !important; }\n  .ml-sm-n4,\n  .mx-sm-n4 {\n    margin-left: -1.5rem !important; }\n  .m-sm-n5 {\n    margin: -3rem !important; }\n  .mt-sm-n5,\n  .my-sm-n5 {\n    margin-top: -3rem !important; }\n  .mr-sm-n5,\n  .mx-sm-n5 {\n    margin-right: -3rem !important; }\n  .mb-sm-n5,\n  .my-sm-n5 {\n    margin-bottom: -3rem !important; }\n  .ml-sm-n5,\n  .mx-sm-n5 {\n    margin-left: -3rem !important; }\n  .m-sm-auto {\n    margin: auto !important; }\n  .mt-sm-auto,\n  .my-sm-auto {\n    margin-top: auto !important; }\n  .mr-sm-auto,\n  .mx-sm-auto {\n    margin-right: auto !important; }\n  .mb-sm-auto,\n  .my-sm-auto {\n    margin-bottom: auto !important; }\n  .ml-sm-auto,\n  .mx-sm-auto {\n    margin-left: auto !important; } }\n\n@media (min-width: 768px) {\n  .m-md-0 {\n    margin: 0 !important; }\n  .mt-md-0,\n  .my-md-0 {\n    margin-top: 0 !important; }\n  .mr-md-0,\n  .mx-md-0 {\n    margin-right: 0 !important; }\n  .mb-md-0,\n  .my-md-0 {\n    margin-bottom: 0 !important; }\n  .ml-md-0,\n  .mx-md-0 {\n    margin-left: 0 !important; }\n  .m-md-1 {\n    margin: 0.25rem !important; }\n  .mt-md-1,\n  .my-md-1 {\n    margin-top: 0.25rem !important; }\n  .mr-md-1,\n  .mx-md-1 {\n    margin-right: 0.25rem !important; }\n  .mb-md-1,\n  .my-md-1 {\n    margin-bottom: 0.25rem !important; }\n  .ml-md-1,\n  .mx-md-1 {\n    margin-left: 0.25rem !important; }\n  .m-md-2 {\n    margin: 0.5rem !important; }\n  .mt-md-2,\n  .my-md-2 {\n    margin-top: 0.5rem !important; }\n  .mr-md-2,\n  .mx-md-2 {\n    margin-right: 0.5rem !important; }\n  .mb-md-2,\n  .my-md-2 {\n    margin-bottom: 0.5rem !important; }\n  .ml-md-2,\n  .mx-md-2 {\n    margin-left: 0.5rem !important; }\n  .m-md-3 {\n    margin: 1rem !important; }\n  .mt-md-3,\n  .my-md-3 {\n    margin-top: 1rem !important; }\n  .mr-md-3,\n  .mx-md-3 {\n    margin-right: 1rem !important; }\n  .mb-md-3,\n  .my-md-3 {\n    margin-bottom: 1rem !important; }\n  .ml-md-3,\n  .mx-md-3 {\n    margin-left: 1rem !important; }\n  .m-md-4 {\n    margin: 1.5rem !important; }\n  .mt-md-4,\n  .my-md-4 {\n    margin-top: 1.5rem !important; }\n  .mr-md-4,\n  .mx-md-4 {\n    margin-right: 1.5rem !important; }\n  .mb-md-4,\n  .my-md-4 {\n    margin-bottom: 1.5rem !important; }\n  .ml-md-4,\n  .mx-md-4 {\n    margin-left: 1.5rem !important; }\n  .m-md-5 {\n    margin: 3rem !important; }\n  .mt-md-5,\n  .my-md-5 {\n    margin-top: 3rem !important; }\n  .mr-md-5,\n  .mx-md-5 {\n    margin-right: 3rem !important; }\n  .mb-md-5,\n  .my-md-5 {\n    margin-bottom: 3rem !important; }\n  .ml-md-5,\n  .mx-md-5 {\n    margin-left: 3rem !important; }\n  .p-md-0 {\n    padding: 0 !important; }\n  .pt-md-0,\n  .py-md-0 {\n    padding-top: 0 !important; }\n  .pr-md-0,\n  .px-md-0 {\n    padding-right: 0 !important; }\n  .pb-md-0,\n  .py-md-0 {\n    padding-bottom: 0 !important; }\n  .pl-md-0,\n  .px-md-0 {\n    padding-left: 0 !important; }\n  .p-md-1 {\n    padding: 0.25rem !important; }\n  .pt-md-1,\n  .py-md-1 {\n    padding-top: 0.25rem !important; }\n  .pr-md-1,\n  .px-md-1 {\n    padding-right: 0.25rem !important; }\n  .pb-md-1,\n  .py-md-1 {\n    padding-bottom: 0.25rem !important; }\n  .pl-md-1,\n  .px-md-1 {\n    padding-left: 0.25rem !important; }\n  .p-md-2 {\n    padding: 0.5rem !important; }\n  .pt-md-2,\n  .py-md-2 {\n    padding-top: 0.5rem !important; }\n  .pr-md-2,\n  .px-md-2 {\n    padding-right: 0.5rem !important; }\n  .pb-md-2,\n  .py-md-2 {\n    padding-bottom: 0.5rem !important; }\n  .pl-md-2,\n  .px-md-2 {\n    padding-left: 0.5rem !important; }\n  .p-md-3 {\n    padding: 1rem !important; }\n  .pt-md-3,\n  .py-md-3 {\n    padding-top: 1rem !important; }\n  .pr-md-3,\n  .px-md-3 {\n    padding-right: 1rem !important; }\n  .pb-md-3,\n  .py-md-3 {\n    padding-bottom: 1rem !important; }\n  .pl-md-3,\n  .px-md-3 {\n    padding-left: 1rem !important; }\n  .p-md-4 {\n    padding: 1.5rem !important; }\n  .pt-md-4,\n  .py-md-4 {\n    padding-top: 1.5rem !important; }\n  .pr-md-4,\n  .px-md-4 {\n    padding-right: 1.5rem !important; }\n  .pb-md-4,\n  .py-md-4 {\n    padding-bottom: 1.5rem !important; }\n  .pl-md-4,\n  .px-md-4 {\n    padding-left: 1.5rem !important; }\n  .p-md-5 {\n    padding: 3rem !important; }\n  .pt-md-5,\n  .py-md-5 {\n    padding-top: 3rem !important; }\n  .pr-md-5,\n  .px-md-5 {\n    padding-right: 3rem !important; }\n  .pb-md-5,\n  .py-md-5 {\n    padding-bottom: 3rem !important; }\n  .pl-md-5,\n  .px-md-5 {\n    padding-left: 3rem !important; }\n  .m-md-n1 {\n    margin: -0.25rem !important; }\n  .mt-md-n1,\n  .my-md-n1 {\n    margin-top: -0.25rem !important; }\n  .mr-md-n1,\n  .mx-md-n1 {\n    margin-right: -0.25rem !important; }\n  .mb-md-n1,\n  .my-md-n1 {\n    margin-bottom: -0.25rem !important; }\n  .ml-md-n1,\n  .mx-md-n1 {\n    margin-left: -0.25rem !important; }\n  .m-md-n2 {\n    margin: -0.5rem !important; }\n  .mt-md-n2,\n  .my-md-n2 {\n    margin-top: -0.5rem !important; }\n  .mr-md-n2,\n  .mx-md-n2 {\n    margin-right: -0.5rem !important; }\n  .mb-md-n2,\n  .my-md-n2 {\n    margin-bottom: -0.5rem !important; }\n  .ml-md-n2,\n  .mx-md-n2 {\n    margin-left: -0.5rem !important; }\n  .m-md-n3 {\n    margin: -1rem !important; }\n  .mt-md-n3,\n  .my-md-n3 {\n    margin-top: -1rem !important; }\n  .mr-md-n3,\n  .mx-md-n3 {\n    margin-right: -1rem !important; }\n  .mb-md-n3,\n  .my-md-n3 {\n    margin-bottom: -1rem !important; }\n  .ml-md-n3,\n  .mx-md-n3 {\n    margin-left: -1rem !important; }\n  .m-md-n4 {\n    margin: -1.5rem !important; }\n  .mt-md-n4,\n  .my-md-n4 {\n    margin-top: -1.5rem !important; }\n  .mr-md-n4,\n  .mx-md-n4 {\n    margin-right: -1.5rem !important; }\n  .mb-md-n4,\n  .my-md-n4 {\n    margin-bottom: -1.5rem !important; }\n  .ml-md-n4,\n  .mx-md-n4 {\n    margin-left: -1.5rem !important; }\n  .m-md-n5 {\n    margin: -3rem !important; }\n  .mt-md-n5,\n  .my-md-n5 {\n    margin-top: -3rem !important; }\n  .mr-md-n5,\n  .mx-md-n5 {\n    margin-right: -3rem !important; }\n  .mb-md-n5,\n  .my-md-n5 {\n    margin-bottom: -3rem !important; }\n  .ml-md-n5,\n  .mx-md-n5 {\n    margin-left: -3rem !important; }\n  .m-md-auto {\n    margin: auto !important; }\n  .mt-md-auto,\n  .my-md-auto {\n    margin-top: auto !important; }\n  .mr-md-auto,\n  .mx-md-auto {\n    margin-right: auto !important; }\n  .mb-md-auto,\n  .my-md-auto {\n    margin-bottom: auto !important; }\n  .ml-md-auto,\n  .mx-md-auto {\n    margin-left: auto !important; } }\n\n@media (min-width: 992px) {\n  .m-lg-0 {\n    margin: 0 !important; }\n  .mt-lg-0,\n  .my-lg-0 {\n    margin-top: 0 !important; }\n  .mr-lg-0,\n  .mx-lg-0 {\n    margin-right: 0 !important; }\n  .mb-lg-0,\n  .my-lg-0 {\n    margin-bottom: 0 !important; }\n  .ml-lg-0,\n  .mx-lg-0 {\n    margin-left: 0 !important; }\n  .m-lg-1 {\n    margin: 0.25rem !important; }\n  .mt-lg-1,\n  .my-lg-1 {\n    margin-top: 0.25rem !important; }\n  .mr-lg-1,\n  .mx-lg-1 {\n    margin-right: 0.25rem !important; }\n  .mb-lg-1,\n  .my-lg-1 {\n    margin-bottom: 0.25rem !important; }\n  .ml-lg-1,\n  .mx-lg-1 {\n    margin-left: 0.25rem !important; }\n  .m-lg-2 {\n    margin: 0.5rem !important; }\n  .mt-lg-2,\n  .my-lg-2 {\n    margin-top: 0.5rem !important; }\n  .mr-lg-2,\n  .mx-lg-2 {\n    margin-right: 0.5rem !important; }\n  .mb-lg-2,\n  .my-lg-2 {\n    margin-bottom: 0.5rem !important; }\n  .ml-lg-2,\n  .mx-lg-2 {\n    margin-left: 0.5rem !important; }\n  .m-lg-3 {\n    margin: 1rem !important; }\n  .mt-lg-3,\n  .my-lg-3 {\n    margin-top: 1rem !important; }\n  .mr-lg-3,\n  .mx-lg-3 {\n    margin-right: 1rem !important; }\n  .mb-lg-3,\n  .my-lg-3 {\n    margin-bottom: 1rem !important; }\n  .ml-lg-3,\n  .mx-lg-3 {\n    margin-left: 1rem !important; }\n  .m-lg-4 {\n    margin: 1.5rem !important; }\n  .mt-lg-4,\n  .my-lg-4 {\n    margin-top: 1.5rem !important; }\n  .mr-lg-4,\n  .mx-lg-4 {\n    margin-right: 1.5rem !important; }\n  .mb-lg-4,\n  .my-lg-4 {\n    margin-bottom: 1.5rem !important; }\n  .ml-lg-4,\n  .mx-lg-4 {\n    margin-left: 1.5rem !important; }\n  .m-lg-5 {\n    margin: 3rem !important; }\n  .mt-lg-5,\n  .my-lg-5 {\n    margin-top: 3rem !important; }\n  .mr-lg-5,\n  .mx-lg-5 {\n    margin-right: 3rem !important; }\n  .mb-lg-5,\n  .my-lg-5 {\n    margin-bottom: 3rem !important; }\n  .ml-lg-5,\n  .mx-lg-5 {\n    margin-left: 3rem !important; }\n  .p-lg-0 {\n    padding: 0 !important; }\n  .pt-lg-0,\n  .py-lg-0 {\n    padding-top: 0 !important; }\n  .pr-lg-0,\n  .px-lg-0 {\n    padding-right: 0 !important; }\n  .pb-lg-0,\n  .py-lg-0 {\n    padding-bottom: 0 !important; }\n  .pl-lg-0,\n  .px-lg-0 {\n    padding-left: 0 !important; }\n  .p-lg-1 {\n    padding: 0.25rem !important; }\n  .pt-lg-1,\n  .py-lg-1 {\n    padding-top: 0.25rem !important; }\n  .pr-lg-1,\n  .px-lg-1 {\n    padding-right: 0.25rem !important; }\n  .pb-lg-1,\n  .py-lg-1 {\n    padding-bottom: 0.25rem !important; }\n  .pl-lg-1,\n  .px-lg-1 {\n    padding-left: 0.25rem !important; }\n  .p-lg-2 {\n    padding: 0.5rem !important; }\n  .pt-lg-2,\n  .py-lg-2 {\n    padding-top: 0.5rem !important; }\n  .pr-lg-2,\n  .px-lg-2 {\n    padding-right: 0.5rem !important; }\n  .pb-lg-2,\n  .py-lg-2 {\n    padding-bottom: 0.5rem !important; }\n  .pl-lg-2,\n  .px-lg-2 {\n    padding-left: 0.5rem !important; }\n  .p-lg-3 {\n    padding: 1rem !important; }\n  .pt-lg-3,\n  .py-lg-3 {\n    padding-top: 1rem !important; }\n  .pr-lg-3,\n  .px-lg-3 {\n    padding-right: 1rem !important; }\n  .pb-lg-3,\n  .py-lg-3 {\n    padding-bottom: 1rem !important; }\n  .pl-lg-3,\n  .px-lg-3 {\n    padding-left: 1rem !important; }\n  .p-lg-4 {\n    padding: 1.5rem !important; }\n  .pt-lg-4,\n  .py-lg-4 {\n    padding-top: 1.5rem !important; }\n  .pr-lg-4,\n  .px-lg-4 {\n    padding-right: 1.5rem !important; }\n  .pb-lg-4,\n  .py-lg-4 {\n    padding-bottom: 1.5rem !important; }\n  .pl-lg-4,\n  .px-lg-4 {\n    padding-left: 1.5rem !important; }\n  .p-lg-5 {\n    padding: 3rem !important; }\n  .pt-lg-5,\n  .py-lg-5 {\n    padding-top: 3rem !important; }\n  .pr-lg-5,\n  .px-lg-5 {\n    padding-right: 3rem !important; }\n  .pb-lg-5,\n  .py-lg-5 {\n    padding-bottom: 3rem !important; }\n  .pl-lg-5,\n  .px-lg-5 {\n    padding-left: 3rem !important; }\n  .m-lg-n1 {\n    margin: -0.25rem !important; }\n  .mt-lg-n1,\n  .my-lg-n1 {\n    margin-top: -0.25rem !important; }\n  .mr-lg-n1,\n  .mx-lg-n1 {\n    margin-right: -0.25rem !important; }\n  .mb-lg-n1,\n  .my-lg-n1 {\n    margin-bottom: -0.25rem !important; }\n  .ml-lg-n1,\n  .mx-lg-n1 {\n    margin-left: -0.25rem !important; }\n  .m-lg-n2 {\n    margin: -0.5rem !important; }\n  .mt-lg-n2,\n  .my-lg-n2 {\n    margin-top: -0.5rem !important; }\n  .mr-lg-n2,\n  .mx-lg-n2 {\n    margin-right: -0.5rem !important; }\n  .mb-lg-n2,\n  .my-lg-n2 {\n    margin-bottom: -0.5rem !important; }\n  .ml-lg-n2,\n  .mx-lg-n2 {\n    margin-left: -0.5rem !important; }\n  .m-lg-n3 {\n    margin: -1rem !important; }\n  .mt-lg-n3,\n  .my-lg-n3 {\n    margin-top: -1rem !important; }\n  .mr-lg-n3,\n  .mx-lg-n3 {\n    margin-right: -1rem !important; }\n  .mb-lg-n3,\n  .my-lg-n3 {\n    margin-bottom: -1rem !important; }\n  .ml-lg-n3,\n  .mx-lg-n3 {\n    margin-left: -1rem !important; }\n  .m-lg-n4 {\n    margin: -1.5rem !important; }\n  .mt-lg-n4,\n  .my-lg-n4 {\n    margin-top: -1.5rem !important; }\n  .mr-lg-n4,\n  .mx-lg-n4 {\n    margin-right: -1.5rem !important; }\n  .mb-lg-n4,\n  .my-lg-n4 {\n    margin-bottom: -1.5rem !important; }\n  .ml-lg-n4,\n  .mx-lg-n4 {\n    margin-left: -1.5rem !important; }\n  .m-lg-n5 {\n    margin: -3rem !important; }\n  .mt-lg-n5,\n  .my-lg-n5 {\n    margin-top: -3rem !important; }\n  .mr-lg-n5,\n  .mx-lg-n5 {\n    margin-right: -3rem !important; }\n  .mb-lg-n5,\n  .my-lg-n5 {\n    margin-bottom: -3rem !important; }\n  .ml-lg-n5,\n  .mx-lg-n5 {\n    margin-left: -3rem !important; }\n  .m-lg-auto {\n    margin: auto !important; }\n  .mt-lg-auto,\n  .my-lg-auto {\n    margin-top: auto !important; }\n  .mr-lg-auto,\n  .mx-lg-auto {\n    margin-right: auto !important; }\n  .mb-lg-auto,\n  .my-lg-auto {\n    margin-bottom: auto !important; }\n  .ml-lg-auto,\n  .mx-lg-auto {\n    margin-left: auto !important; } }\n\n@media (min-width: 1200px) {\n  .m-xl-0 {\n    margin: 0 !important; }\n  .mt-xl-0,\n  .my-xl-0 {\n    margin-top: 0 !important; }\n  .mr-xl-0,\n  .mx-xl-0 {\n    margin-right: 0 !important; }\n  .mb-xl-0,\n  .my-xl-0 {\n    margin-bottom: 0 !important; }\n  .ml-xl-0,\n  .mx-xl-0 {\n    margin-left: 0 !important; }\n  .m-xl-1 {\n    margin: 0.25rem !important; }\n  .mt-xl-1,\n  .my-xl-1 {\n    margin-top: 0.25rem !important; }\n  .mr-xl-1,\n  .mx-xl-1 {\n    margin-right: 0.25rem !important; }\n  .mb-xl-1,\n  .my-xl-1 {\n    margin-bottom: 0.25rem !important; }\n  .ml-xl-1,\n  .mx-xl-1 {\n    margin-left: 0.25rem !important; }\n  .m-xl-2 {\n    margin: 0.5rem !important; }\n  .mt-xl-2,\n  .my-xl-2 {\n    margin-top: 0.5rem !important; }\n  .mr-xl-2,\n  .mx-xl-2 {\n    margin-right: 0.5rem !important; }\n  .mb-xl-2,\n  .my-xl-2 {\n    margin-bottom: 0.5rem !important; }\n  .ml-xl-2,\n  .mx-xl-2 {\n    margin-left: 0.5rem !important; }\n  .m-xl-3 {\n    margin: 1rem !important; }\n  .mt-xl-3,\n  .my-xl-3 {\n    margin-top: 1rem !important; }\n  .mr-xl-3,\n  .mx-xl-3 {\n    margin-right: 1rem !important; }\n  .mb-xl-3,\n  .my-xl-3 {\n    margin-bottom: 1rem !important; }\n  .ml-xl-3,\n  .mx-xl-3 {\n    margin-left: 1rem !important; }\n  .m-xl-4 {\n    margin: 1.5rem !important; }\n  .mt-xl-4,\n  .my-xl-4 {\n    margin-top: 1.5rem !important; }\n  .mr-xl-4,\n  .mx-xl-4 {\n    margin-right: 1.5rem !important; }\n  .mb-xl-4,\n  .my-xl-4 {\n    margin-bottom: 1.5rem !important; }\n  .ml-xl-4,\n  .mx-xl-4 {\n    margin-left: 1.5rem !important; }\n  .m-xl-5 {\n    margin: 3rem !important; }\n  .mt-xl-5,\n  .my-xl-5 {\n    margin-top: 3rem !important; }\n  .mr-xl-5,\n  .mx-xl-5 {\n    margin-right: 3rem !important; }\n  .mb-xl-5,\n  .my-xl-5 {\n    margin-bottom: 3rem !important; }\n  .ml-xl-5,\n  .mx-xl-5 {\n    margin-left: 3rem !important; }\n  .p-xl-0 {\n    padding: 0 !important; }\n  .pt-xl-0,\n  .py-xl-0 {\n    padding-top: 0 !important; }\n  .pr-xl-0,\n  .px-xl-0 {\n    padding-right: 0 !important; }\n  .pb-xl-0,\n  .py-xl-0 {\n    padding-bottom: 0 !important; }\n  .pl-xl-0,\n  .px-xl-0 {\n    padding-left: 0 !important; }\n  .p-xl-1 {\n    padding: 0.25rem !important; }\n  .pt-xl-1,\n  .py-xl-1 {\n    padding-top: 0.25rem !important; }\n  .pr-xl-1,\n  .px-xl-1 {\n    padding-right: 0.25rem !important; }\n  .pb-xl-1,\n  .py-xl-1 {\n    padding-bottom: 0.25rem !important; }\n  .pl-xl-1,\n  .px-xl-1 {\n    padding-left: 0.25rem !important; }\n  .p-xl-2 {\n    padding: 0.5rem !important; }\n  .pt-xl-2,\n  .py-xl-2 {\n    padding-top: 0.5rem !important; }\n  .pr-xl-2,\n  .px-xl-2 {\n    padding-right: 0.5rem !important; }\n  .pb-xl-2,\n  .py-xl-2 {\n    padding-bottom: 0.5rem !important; }\n  .pl-xl-2,\n  .px-xl-2 {\n    padding-left: 0.5rem !important; }\n  .p-xl-3 {\n    padding: 1rem !important; }\n  .pt-xl-3,\n  .py-xl-3 {\n    padding-top: 1rem !important; }\n  .pr-xl-3,\n  .px-xl-3 {\n    padding-right: 1rem !important; }\n  .pb-xl-3,\n  .py-xl-3 {\n    padding-bottom: 1rem !important; }\n  .pl-xl-3,\n  .px-xl-3 {\n    padding-left: 1rem !important; }\n  .p-xl-4 {\n    padding: 1.5rem !important; }\n  .pt-xl-4,\n  .py-xl-4 {\n    padding-top: 1.5rem !important; }\n  .pr-xl-4,\n  .px-xl-4 {\n    padding-right: 1.5rem !important; }\n  .pb-xl-4,\n  .py-xl-4 {\n    padding-bottom: 1.5rem !important; }\n  .pl-xl-4,\n  .px-xl-4 {\n    padding-left: 1.5rem !important; }\n  .p-xl-5 {\n    padding: 3rem !important; }\n  .pt-xl-5,\n  .py-xl-5 {\n    padding-top: 3rem !important; }\n  .pr-xl-5,\n  .px-xl-5 {\n    padding-right: 3rem !important; }\n  .pb-xl-5,\n  .py-xl-5 {\n    padding-bottom: 3rem !important; }\n  .pl-xl-5,\n  .px-xl-5 {\n    padding-left: 3rem !important; }\n  .m-xl-n1 {\n    margin: -0.25rem !important; }\n  .mt-xl-n1,\n  .my-xl-n1 {\n    margin-top: -0.25rem !important; }\n  .mr-xl-n1,\n  .mx-xl-n1 {\n    margin-right: -0.25rem !important; }\n  .mb-xl-n1,\n  .my-xl-n1 {\n    margin-bottom: -0.25rem !important; }\n  .ml-xl-n1,\n  .mx-xl-n1 {\n    margin-left: -0.25rem !important; }\n  .m-xl-n2 {\n    margin: -0.5rem !important; }\n  .mt-xl-n2,\n  .my-xl-n2 {\n    margin-top: -0.5rem !important; }\n  .mr-xl-n2,\n  .mx-xl-n2 {\n    margin-right: -0.5rem !important; }\n  .mb-xl-n2,\n  .my-xl-n2 {\n    margin-bottom: -0.5rem !important; }\n  .ml-xl-n2,\n  .mx-xl-n2 {\n    margin-left: -0.5rem !important; }\n  .m-xl-n3 {\n    margin: -1rem !important; }\n  .mt-xl-n3,\n  .my-xl-n3 {\n    margin-top: -1rem !important; }\n  .mr-xl-n3,\n  .mx-xl-n3 {\n    margin-right: -1rem !important; }\n  .mb-xl-n3,\n  .my-xl-n3 {\n    margin-bottom: -1rem !important; }\n  .ml-xl-n3,\n  .mx-xl-n3 {\n    margin-left: -1rem !important; }\n  .m-xl-n4 {\n    margin: -1.5rem !important; }\n  .mt-xl-n4,\n  .my-xl-n4 {\n    margin-top: -1.5rem !important; }\n  .mr-xl-n4,\n  .mx-xl-n4 {\n    margin-right: -1.5rem !important; }\n  .mb-xl-n4,\n  .my-xl-n4 {\n    margin-bottom: -1.5rem !important; }\n  .ml-xl-n4,\n  .mx-xl-n4 {\n    margin-left: -1.5rem !important; }\n  .m-xl-n5 {\n    margin: -3rem !important; }\n  .mt-xl-n5,\n  .my-xl-n5 {\n    margin-top: -3rem !important; }\n  .mr-xl-n5,\n  .mx-xl-n5 {\n    margin-right: -3rem !important; }\n  .mb-xl-n5,\n  .my-xl-n5 {\n    margin-bottom: -3rem !important; }\n  .ml-xl-n5,\n  .mx-xl-n5 {\n    margin-left: -3rem !important; }\n  .m-xl-auto {\n    margin: auto !important; }\n  .mt-xl-auto,\n  .my-xl-auto {\n    margin-top: auto !important; }\n  .mr-xl-auto,\n  .mx-xl-auto {\n    margin-right: auto !important; }\n  .mb-xl-auto,\n  .my-xl-auto {\n    margin-bottom: auto !important; }\n  .ml-xl-auto,\n  .mx-xl-auto {\n    margin-left: auto !important; } }\n\n.stretched-link::after {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1;\n  pointer-events: auto;\n  content: \"\";\n  background-color: rgba(0, 0, 0, 0); }\n\n.text-monospace {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace !important; }\n\n.text-justify {\n  text-align: justify !important; }\n\n.text-wrap {\n  white-space: normal !important; }\n\n.text-nowrap {\n  white-space: nowrap !important; }\n\n.text-truncate {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap; }\n\n.text-left {\n  text-align: left !important; }\n\n.text-right {\n  text-align: right !important; }\n\n.text-center {\n  text-align: center !important; }\n\n@media (min-width: 576px) {\n  .text-sm-left {\n    text-align: left !important; }\n  .text-sm-right {\n    text-align: right !important; }\n  .text-sm-center {\n    text-align: center !important; } }\n\n@media (min-width: 768px) {\n  .text-md-left {\n    text-align: left !important; }\n  .text-md-right {\n    text-align: right !important; }\n  .text-md-center {\n    text-align: center !important; } }\n\n@media (min-width: 992px) {\n  .text-lg-left {\n    text-align: left !important; }\n  .text-lg-right {\n    text-align: right !important; }\n  .text-lg-center {\n    text-align: center !important; } }\n\n@media (min-width: 1200px) {\n  .text-xl-left {\n    text-align: left !important; }\n  .text-xl-right {\n    text-align: right !important; }\n  .text-xl-center {\n    text-align: center !important; } }\n\n.text-lowercase {\n  text-transform: lowercase !important; }\n\n.text-uppercase {\n  text-transform: uppercase !important; }\n\n.text-capitalize {\n  text-transform: capitalize !important; }\n\n.font-weight-light {\n  font-weight: 300 !important; }\n\n.font-weight-lighter {\n  font-weight: lighter !important; }\n\n.font-weight-normal {\n  font-weight: 400 !important; }\n\n.font-weight-bold {\n  font-weight: 700 !important; }\n\n.font-weight-bolder {\n  font-weight: bolder !important; }\n\n.font-italic {\n  font-style: italic !important; }\n\n.text-white {\n  color: #fff !important; }\n\n.text-primary {\n  color: #007bff !important; }\n\na.text-primary:hover, a.text-primary:focus {\n  color: #0056b3 !important; }\n\n.text-secondary {\n  color: #6c757d !important; }\n\na.text-secondary:hover, a.text-secondary:focus {\n  color: #494f54 !important; }\n\n.text-success {\n  color: #28a745 !important; }\n\na.text-success:hover, a.text-success:focus {\n  color: #19692c !important; }\n\n.text-info {\n  color: #17a2b8 !important; }\n\na.text-info:hover, a.text-info:focus {\n  color: #0f6674 !important; }\n\n.text-warning {\n  color: #ffc107 !important; }\n\na.text-warning:hover, a.text-warning:focus {\n  color: #ba8b00 !important; }\n\n.text-danger {\n  color: #dc3545 !important; }\n\na.text-danger:hover, a.text-danger:focus {\n  color: #a71d2a !important; }\n\n.text-light {\n  color: #f8f9fa !important; }\n\na.text-light:hover, a.text-light:focus {\n  color: #cbd3da !important; }\n\n.text-dark {\n  color: #343a40 !important; }\n\na.text-dark:hover, a.text-dark:focus {\n  color: #121416 !important; }\n\n.text-body {\n  color: #212529 !important; }\n\n.text-muted {\n  color: #6c757d !important; }\n\n.text-black-50 {\n  color: rgba(0, 0, 0, 0.5) !important; }\n\n.text-white-50 {\n  color: rgba(255, 255, 255, 0.5) !important; }\n\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0; }\n\n.text-decoration-none {\n  text-decoration: none !important; }\n\n.text-break {\n  word-break: break-word !important;\n  word-wrap: break-word !important; }\n\n.text-reset {\n  color: inherit !important; }\n\n.visible {\n  visibility: visible !important; }\n\n.invisible {\n  visibility: hidden !important; }\n\n@media print {\n  *,\n  *::before,\n  *::after {\n    text-shadow: none !important;\n    box-shadow: none !important; }\n  a:not(.btn) {\n    text-decoration: underline; }\n  abbr[title]::after {\n    content: \" (\" attr(title) \")\"; }\n  pre {\n    white-space: pre-wrap !important; }\n  pre,\n  blockquote {\n    border: 1px solid #adb5bd;\n    page-break-inside: avoid; }\n  tr,\n  img {\n    page-break-inside: avoid; }\n  p,\n  h2,\n  h3 {\n    orphans: 3;\n    widows: 3; }\n  h2,\n  h3 {\n    page-break-after: avoid; }\n  @page {\n    size: a3; }\n  body {\n    min-width: 992px !important; }\n  .container {\n    min-width: 992px !important; }\n  .navbar {\n    display: none; }\n  .badge {\n    border: 1px solid #000; }\n  .table {\n    border-collapse: collapse !important; }\n    .table td,\n    .table th {\n      background-color: #fff !important; }\n  .table-bordered th,\n  .table-bordered td {\n    border: 1px solid #dee2e6 !important; }\n  .table-dark {\n    color: inherit; }\n    .table-dark th,\n    .table-dark td,\n    .table-dark thead th,\n    .table-dark tbody + tbody {\n      border-color: #dee2e6; }\n  .table .thead-dark th {\n    color: inherit;\n    border-color: #dee2e6; } }\n\n.axustable {\n  padding: 1em 0.5em 0.5em 0.5em; }\n  .axustable.bordered {\n    border: 1px solid #0000001a; }\n  .axustable:not(.transparent) {\n    background-color: #fff; }\n  .axustable .axustable-actions {\n    width: 100%;\n    padding: 0em 1em;\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: flex-start;\n    flex-direction: row;\n    align-items: center; }\n    .axustable .axustable-actions .axustable-actions-left {\n      flex-grow: 1;\n      width: 33%;\n      display: flex; }\n      .axustable .axustable-actions .axustable-actions-left .axustable-clear-filter {\n        user-select: none; }\n        .axustable .axustable-actions .axustable-actions-left .axustable-clear-filter.active {\n          cursor: pointer; }\n      .axustable .axustable-actions .axustable-actions-left .axustable-export {\n        user-select: none;\n        cursor: pointer; }\n    .axustable .axustable-actions .axustable-actions-middle {\n      flex-grow: 1;\n      width: 33%; }\n      .axustable .axustable-actions .axustable-actions-middle .axustable-search {\n        text-align: center; }\n        .axustable .axustable-actions .axustable-actions-middle .axustable-search input {\n          border-style: solid;\n          border-width: 1px;\n          line-height: 2em; }\n    .axustable .axustable-actions .axustable-actions-right {\n      flex-grow: 1;\n      width: 33%; }\n      .axustable .axustable-actions .axustable-actions-right .axustable-pagination {\n        text-align: right; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .ellipsis,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .select,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .total {\n          display: inline-block;\n          min-width: 1.25em;\n          font-size: 1em;\n          padding-right: 0.5em;\n          text-align: center; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num {\n          cursor: pointer; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .ellipsis,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .total {\n          opacity: 0.4; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num,\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow {\n          opacity: 0.4;\n          border-radius: 0.25em; }\n          .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num.active,\n          .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow.active {\n            opacity: 1; }\n          .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num:hover:not(.active),\n          .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow:hover:not(.active) {\n            background-color: #ddd; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow {\n          font-size: 1.5em; }\n        .axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num.active {\n          font-size: 1.5em; }\n  .axustable .axustable-table-wrap {\n    display: block;\n    overflow-x: auto;\n    white-space: nowrap; }\n    .axustable .axustable-table-wrap .axustable-table {\n      display: table;\n      border-collapse: separate;\n      border-spacing: 0.5em 0;\n      width: 100%; }\n      .axustable .axustable-table-wrap .axustable-table .axustable-header {\n        display: table-row; }\n        @media screen and (max-width: 768px) {\n          .axustable .axustable-table-wrap .axustable-table .axustable-header {\n            display: none !important; } }\n        .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field {\n          display: table-cell;\n          font-style: italic;\n          font-weight: bold;\n          color: #969696;\n          border-bottom: 1px solid #000000bf;\n          padding: 0.25em 0em;\n          vertical-align: middle; }\n          .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner {\n            display: flex;\n            align-items: center;\n            justify-content: left;\n            user-select: none; }\n            .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions {\n              white-space: nowrap;\n              /*a:not(:first-child) {\n                padding-left: 0.25em;\n              }*/ }\n              .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions a {\n                opacity: 0.3;\n                font-size: 1.5em;\n                cursor: pointer; }\n              .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions a.active {\n                opacity: 1;\n                color: #229e09; }\n            .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-label {\n              cursor: pointer; }\n              .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-label.filterable {\n                text-decoration: underline; }\n              .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-label.active {\n                color: #229e09; }\n          .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-right {\n            text-align: right; }\n            .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-right .axustable-header-field-inner {\n              justify-content: right; }\n          .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-center {\n            text-align: center; }\n            .axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-center .axustable-header-field-inner {\n              justify-content: center; }\n      .axustable .axustable-table-wrap .axustable-table .axustable-row:not(:last-child) .axustable-item {\n        border-bottom: 1px solid #00000020; }\n      .axustable .axustable-table-wrap .axustable-table .axustable-row {\n        display: table-row; }\n        @media screen and (max-width: 768px) {\n          .axustable .axustable-table-wrap .axustable-table .axustable-row {\n            display: block !important;\n            border: 1px solid #00000020;\n            margin-bottom: 1em; } }\n        .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item {\n          display: table-cell;\n          padding: 0.25em 0em;\n          vertical-align: middle;\n          min-height: 35px; }\n          @media screen and (max-width: 768px) {\n            .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item {\n              display: block;\n              position: relative;\n              padding: 1em;\n              min-height: 2em; } }\n        @media screen and (max-width: 768px) {\n          .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-main {\n            text-align: center; } }\n        @media screen and (max-width: 768px) {\n          .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item:not(.axustable-item-main):not(.axustable-item-right)::after {\n            content: attr(data-name);\n            color: #ddd9d9;\n            font-size: 0.9em;\n            font-style: italic;\n            position: absolute;\n            top: 0.15em;\n            right: 1em; } }\n        @media screen and (max-width: 768px) {\n          .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-empty {\n            display: none; } }\n        .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-textual {\n          color: gray;\n          font-style: italic;\n          font-size: 0.9em; }\n        .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-right {\n          text-align: right;\n          white-space: nowrap; }\n        .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-price {\n          text-align: right;\n          color: green; }\n        .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-cut_200 .axustable-item-inner {\n          white-space: nowrap;\n          overflow: hidden;\n          text-overflow: ellipsis;\n          max-width: 200px; }\n\n.axustable-filter-modal {\n  max-width: 250px; }\n  .axustable-filter-modal .modal-header h5.modal-title {\n    width: 100%; }\n  .axustable-filter-modal .modal-header button.close {\n    padding: 0;\n    margin: unset;\n    position: absolute;\n    right: 1em;\n    top: 1em; }\n  .axustable-filter-modal .axustable-filter-search {\n    margin-top: 1em;\n    margin-bottom: -0.5em; }\n    .axustable-filter-modal .axustable-filter-search .input-group-text {\n      transform: rotate(180deg); }\n  .axustable-filter-modal .axustable-filter-list {\n    max-height: 200px;\n    overflow-y: auto; }\n    .axustable-filter-modal .axustable-filter-list .axustable-filter-val {\n      cursor: pointer;\n      padding: 0.25em 0;\n      user-select: none; }\n      .axustable-filter-modal .axustable-filter-list .axustable-filter-val.active {\n        opacity: 1; }\n      .axustable-filter-modal .axustable-filter-list .axustable-filter-val.inactive {\n        opacity: 0.8; }\n  .axustable-filter-modal .modal-footer {\n    display: block; }\n    .axustable-filter-modal .modal-footer button {\n      text-align: center;\n      margin-top: 1em; }\n\nh1 {\n  text-align: center; }\n";
-	styleInject(css_248z$1);
+	var data$1 = /*@__PURE__*/getDefaultExportFromCjs(data);
 
 	var fields = [{
 	  label: "Id",
@@ -59026,14 +59035,45 @@
 	}];
 	var Demo = () => {
 	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Welcome to axustable demo"), /*#__PURE__*/React.createElement(Axustable, {
-	    data: data,
+	    data: data$1,
 	    fields: fields,
 	    initialSort: [0, "asc"],
-	    makeKey: p => "person_".concat(p.id)
+	    makeKey: p => "person_".concat(p.id),
+	    exportable: true
 	  }));
 	};
 
-	var css_248z = "body {\n  background-color: #ece3e3;\n  font-size: 15pt; }\n";
+	function styleInject(css, ref) {
+	  if ( ref === void 0 ) ref = {};
+	  var insertAt = ref.insertAt;
+
+	  if (!css || typeof document === 'undefined') { return; }
+
+	  var head = document.head || document.getElementsByTagName('head')[0];
+	  var style = document.createElement('style');
+	  style.type = 'text/css';
+
+	  if (insertAt === 'top') {
+	    if (head.firstChild) {
+	      head.insertBefore(style, head.firstChild);
+	    } else {
+	      head.appendChild(style);
+	    }
+	  } else {
+	    head.appendChild(style);
+	  }
+
+	  if (style.styleSheet) {
+	    style.styleSheet.cssText = css;
+	  } else {
+	    style.appendChild(document.createTextNode(css));
+	  }
+	}
+
+	var css_248z$1 = "@charset \"UTF-8\";\n/*!\n * Bootstrap v4.6.2 (https://getbootstrap.com/)\n * Copyright 2011-2022 The Bootstrap Authors\n * Copyright 2011-2022 Twitter, Inc.\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)\n */\n:root {\n  --blue: #007bff;\n  --indigo: #6610f2;\n  --purple: #6f42c1;\n  --pink: #e83e8c;\n  --red: #dc3545;\n  --orange: #fd7e14;\n  --yellow: #ffc107;\n  --green: #28a745;\n  --teal: #20c997;\n  --cyan: #17a2b8;\n  --white: #fff;\n  --gray: #6c757d;\n  --gray-dark: #343a40;\n  --primary: #007bff;\n  --secondary: #6c757d;\n  --success: #28a745;\n  --info: #17a2b8;\n  --warning: #ffc107;\n  --danger: #dc3545;\n  --light: #f8f9fa;\n  --dark: #343a40;\n  --breakpoint-xs: 0;\n  --breakpoint-sm: 576px;\n  --breakpoint-md: 768px;\n  --breakpoint-lg: 992px;\n  --breakpoint-xl: 1200px;\n  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n}\n\n*,\n*::before,\n*::after {\n  box-sizing: border-box;\n}\n\nhtml {\n  font-family: sans-serif;\n  line-height: 1.15;\n  -webkit-text-size-adjust: 100%;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n}\n\narticle, aside, figcaption, figure, footer, header, hgroup, main, nav, section {\n  display: block;\n}\n\nbody {\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #212529;\n  text-align: left;\n  background-color: #fff;\n}\n\n[tabindex=\"-1\"]:focus:not(:focus-visible) {\n  outline: 0 !important;\n}\n\nhr {\n  box-sizing: content-box;\n  height: 0;\n  overflow: visible;\n}\n\nh1, h2, h3, h4, h5, h6 {\n  margin-top: 0;\n  margin-bottom: 0.5rem;\n}\n\np {\n  margin-top: 0;\n  margin-bottom: 1rem;\n}\n\nabbr[title],\nabbr[data-original-title] {\n  text-decoration: underline;\n  text-decoration: underline dotted;\n  cursor: help;\n  border-bottom: 0;\n  text-decoration-skip-ink: none;\n}\n\naddress {\n  margin-bottom: 1rem;\n  font-style: normal;\n  line-height: inherit;\n}\n\nol,\nul,\ndl {\n  margin-top: 0;\n  margin-bottom: 1rem;\n}\n\nol ol,\nul ul,\nol ul,\nul ol {\n  margin-bottom: 0;\n}\n\ndt {\n  font-weight: 700;\n}\n\ndd {\n  margin-bottom: 0.5rem;\n  margin-left: 0;\n}\n\nblockquote {\n  margin: 0 0 1rem;\n}\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\nsmall {\n  font-size: 80%;\n}\n\nsub,\nsup {\n  position: relative;\n  font-size: 75%;\n  line-height: 0;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\na {\n  color: #007bff;\n  text-decoration: none;\n  background-color: transparent;\n}\na:hover {\n  color: #0056b3;\n  text-decoration: underline;\n}\n\na:not([href]):not([class]) {\n  color: inherit;\n  text-decoration: none;\n}\na:not([href]):not([class]):hover {\n  color: inherit;\n  text-decoration: none;\n}\n\npre,\ncode,\nkbd,\nsamp {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace;\n  font-size: 1em;\n}\n\npre {\n  margin-top: 0;\n  margin-bottom: 1rem;\n  overflow: auto;\n  -ms-overflow-style: scrollbar;\n}\n\nfigure {\n  margin: 0 0 1rem;\n}\n\nimg {\n  vertical-align: middle;\n  border-style: none;\n}\n\nsvg {\n  overflow: hidden;\n  vertical-align: middle;\n}\n\ntable {\n  border-collapse: collapse;\n}\n\ncaption {\n  padding-top: 0.75rem;\n  padding-bottom: 0.75rem;\n  color: #6c757d;\n  text-align: left;\n  caption-side: bottom;\n}\n\nth {\n  text-align: inherit;\n  text-align: -webkit-match-parent;\n}\n\nlabel {\n  display: inline-block;\n  margin-bottom: 0.5rem;\n}\n\nbutton {\n  border-radius: 0;\n}\n\nbutton:focus:not(:focus-visible) {\n  outline: 0;\n}\n\ninput,\nbutton,\nselect,\noptgroup,\ntextarea {\n  margin: 0;\n  font-family: inherit;\n  font-size: inherit;\n  line-height: inherit;\n}\n\nbutton,\ninput {\n  overflow: visible;\n}\n\nbutton,\nselect {\n  text-transform: none;\n}\n\n[role=button] {\n  cursor: pointer;\n}\n\nselect {\n  word-wrap: normal;\n}\n\nbutton,\n[type=button],\n[type=reset],\n[type=submit] {\n  -webkit-appearance: button;\n}\n\nbutton:not(:disabled),\n[type=button]:not(:disabled),\n[type=reset]:not(:disabled),\n[type=submit]:not(:disabled) {\n  cursor: pointer;\n}\n\nbutton::-moz-focus-inner,\n[type=button]::-moz-focus-inner,\n[type=reset]::-moz-focus-inner,\n[type=submit]::-moz-focus-inner {\n  padding: 0;\n  border-style: none;\n}\n\ninput[type=radio],\ninput[type=checkbox] {\n  box-sizing: border-box;\n  padding: 0;\n}\n\ntextarea {\n  overflow: auto;\n  resize: vertical;\n}\n\nfieldset {\n  min-width: 0;\n  padding: 0;\n  margin: 0;\n  border: 0;\n}\n\nlegend {\n  display: block;\n  width: 100%;\n  max-width: 100%;\n  padding: 0;\n  margin-bottom: 0.5rem;\n  font-size: 1.5rem;\n  line-height: inherit;\n  color: inherit;\n  white-space: normal;\n}\n\nprogress {\n  vertical-align: baseline;\n}\n\n[type=number]::-webkit-inner-spin-button,\n[type=number]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n[type=search] {\n  outline-offset: -2px;\n  -webkit-appearance: none;\n}\n\n[type=search]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n::-webkit-file-upload-button {\n  font: inherit;\n  -webkit-appearance: button;\n}\n\noutput {\n  display: inline-block;\n}\n\nsummary {\n  display: list-item;\n  cursor: pointer;\n}\n\ntemplate {\n  display: none;\n}\n\n[hidden] {\n  display: none !important;\n}\n\nh1, h2, h3, h4, h5, h6,\n.h1, .h2, .h3, .h4, .h5, .h6 {\n  margin-bottom: 0.5rem;\n  font-weight: 500;\n  line-height: 1.2;\n}\n\nh1, .h1 {\n  font-size: 2.5rem;\n}\n\nh2, .h2 {\n  font-size: 2rem;\n}\n\nh3, .h3 {\n  font-size: 1.75rem;\n}\n\nh4, .h4 {\n  font-size: 1.5rem;\n}\n\nh5, .h5 {\n  font-size: 1.25rem;\n}\n\nh6, .h6 {\n  font-size: 1rem;\n}\n\n.lead {\n  font-size: 1.25rem;\n  font-weight: 300;\n}\n\n.display-1 {\n  font-size: 6rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-2 {\n  font-size: 5.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-3 {\n  font-size: 4.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\n.display-4 {\n  font-size: 3.5rem;\n  font-weight: 300;\n  line-height: 1.2;\n}\n\nhr {\n  margin-top: 1rem;\n  margin-bottom: 1rem;\n  border: 0;\n  border-top: 1px solid rgba(0, 0, 0, 0.1);\n}\n\nsmall,\n.small {\n  font-size: 0.875em;\n  font-weight: 400;\n}\n\nmark,\n.mark {\n  padding: 0.2em;\n  background-color: #fcf8e3;\n}\n\n.list-unstyled {\n  padding-left: 0;\n  list-style: none;\n}\n\n.list-inline {\n  padding-left: 0;\n  list-style: none;\n}\n\n.list-inline-item {\n  display: inline-block;\n}\n.list-inline-item:not(:last-child) {\n  margin-right: 0.5rem;\n}\n\n.initialism {\n  font-size: 90%;\n  text-transform: uppercase;\n}\n\n.blockquote {\n  margin-bottom: 1rem;\n  font-size: 1.25rem;\n}\n\n.blockquote-footer {\n  display: block;\n  font-size: 0.875em;\n  color: #6c757d;\n}\n.blockquote-footer::before {\n  content: \"— \";\n}\n\n.img-fluid {\n  max-width: 100%;\n  height: auto;\n}\n\n.img-thumbnail {\n  padding: 0.25rem;\n  background-color: #fff;\n  border: 1px solid #dee2e6;\n  border-radius: 0.25rem;\n  max-width: 100%;\n  height: auto;\n}\n\n.figure {\n  display: inline-block;\n}\n\n.figure-img {\n  margin-bottom: 0.5rem;\n  line-height: 1;\n}\n\n.figure-caption {\n  font-size: 90%;\n  color: #6c757d;\n}\n\ncode {\n  font-size: 87.5%;\n  color: #e83e8c;\n  word-wrap: break-word;\n}\na > code {\n  color: inherit;\n}\n\nkbd {\n  padding: 0.2rem 0.4rem;\n  font-size: 87.5%;\n  color: #fff;\n  background-color: #212529;\n  border-radius: 0.2rem;\n}\nkbd kbd {\n  padding: 0;\n  font-size: 100%;\n  font-weight: 700;\n}\n\npre {\n  display: block;\n  font-size: 87.5%;\n  color: #212529;\n}\npre code {\n  font-size: inherit;\n  color: inherit;\n  word-break: normal;\n}\n\n.pre-scrollable {\n  max-height: 340px;\n  overflow-y: scroll;\n}\n\n.container,\n.container-fluid,\n.container-xl,\n.container-lg,\n.container-md,\n.container-sm {\n  width: 100%;\n  padding-right: 15px;\n  padding-left: 15px;\n  margin-right: auto;\n  margin-left: auto;\n}\n\n@media (min-width: 576px) {\n  .container-sm, .container {\n    max-width: 540px;\n  }\n}\n@media (min-width: 768px) {\n  .container-md, .container-sm, .container {\n    max-width: 720px;\n  }\n}\n@media (min-width: 992px) {\n  .container-lg, .container-md, .container-sm, .container {\n    max-width: 960px;\n  }\n}\n@media (min-width: 1200px) {\n  .container-xl, .container-lg, .container-md, .container-sm, .container {\n    max-width: 1140px;\n  }\n}\n.row {\n  display: flex;\n  flex-wrap: wrap;\n  margin-right: -15px;\n  margin-left: -15px;\n}\n\n.no-gutters {\n  margin-right: 0;\n  margin-left: 0;\n}\n.no-gutters > .col,\n.no-gutters > [class*=col-] {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n.col-xl,\n.col-xl-auto, .col-xl-12, .col-xl-11, .col-xl-10, .col-xl-9, .col-xl-8, .col-xl-7, .col-xl-6, .col-xl-5, .col-xl-4, .col-xl-3, .col-xl-2, .col-xl-1, .col-lg,\n.col-lg-auto, .col-lg-12, .col-lg-11, .col-lg-10, .col-lg-9, .col-lg-8, .col-lg-7, .col-lg-6, .col-lg-5, .col-lg-4, .col-lg-3, .col-lg-2, .col-lg-1, .col-md,\n.col-md-auto, .col-md-12, .col-md-11, .col-md-10, .col-md-9, .col-md-8, .col-md-7, .col-md-6, .col-md-5, .col-md-4, .col-md-3, .col-md-2, .col-md-1, .col-sm,\n.col-sm-auto, .col-sm-12, .col-sm-11, .col-sm-10, .col-sm-9, .col-sm-8, .col-sm-7, .col-sm-6, .col-sm-5, .col-sm-4, .col-sm-3, .col-sm-2, .col-sm-1, .col,\n.col-auto, .col-12, .col-11, .col-10, .col-9, .col-8, .col-7, .col-6, .col-5, .col-4, .col-3, .col-2, .col-1 {\n  position: relative;\n  width: 100%;\n  padding-right: 15px;\n  padding-left: 15px;\n}\n\n.col {\n  flex-basis: 0;\n  flex-grow: 1;\n  max-width: 100%;\n}\n\n.row-cols-1 > * {\n  flex: 0 0 100%;\n  max-width: 100%;\n}\n\n.row-cols-2 > * {\n  flex: 0 0 50%;\n  max-width: 50%;\n}\n\n.row-cols-3 > * {\n  flex: 0 0 33.3333333333%;\n  max-width: 33.3333333333%;\n}\n\n.row-cols-4 > * {\n  flex: 0 0 25%;\n  max-width: 25%;\n}\n\n.row-cols-5 > * {\n  flex: 0 0 20%;\n  max-width: 20%;\n}\n\n.row-cols-6 > * {\n  flex: 0 0 16.6666666667%;\n  max-width: 16.6666666667%;\n}\n\n.col-auto {\n  flex: 0 0 auto;\n  width: auto;\n  max-width: 100%;\n}\n\n.col-1 {\n  flex: 0 0 8.33333333%;\n  max-width: 8.33333333%;\n}\n\n.col-2 {\n  flex: 0 0 16.66666667%;\n  max-width: 16.66666667%;\n}\n\n.col-3 {\n  flex: 0 0 25%;\n  max-width: 25%;\n}\n\n.col-4 {\n  flex: 0 0 33.33333333%;\n  max-width: 33.33333333%;\n}\n\n.col-5 {\n  flex: 0 0 41.66666667%;\n  max-width: 41.66666667%;\n}\n\n.col-6 {\n  flex: 0 0 50%;\n  max-width: 50%;\n}\n\n.col-7 {\n  flex: 0 0 58.33333333%;\n  max-width: 58.33333333%;\n}\n\n.col-8 {\n  flex: 0 0 66.66666667%;\n  max-width: 66.66666667%;\n}\n\n.col-9 {\n  flex: 0 0 75%;\n  max-width: 75%;\n}\n\n.col-10 {\n  flex: 0 0 83.33333333%;\n  max-width: 83.33333333%;\n}\n\n.col-11 {\n  flex: 0 0 91.66666667%;\n  max-width: 91.66666667%;\n}\n\n.col-12 {\n  flex: 0 0 100%;\n  max-width: 100%;\n}\n\n.order-first {\n  order: -1;\n}\n\n.order-last {\n  order: 13;\n}\n\n.order-0 {\n  order: 0;\n}\n\n.order-1 {\n  order: 1;\n}\n\n.order-2 {\n  order: 2;\n}\n\n.order-3 {\n  order: 3;\n}\n\n.order-4 {\n  order: 4;\n}\n\n.order-5 {\n  order: 5;\n}\n\n.order-6 {\n  order: 6;\n}\n\n.order-7 {\n  order: 7;\n}\n\n.order-8 {\n  order: 8;\n}\n\n.order-9 {\n  order: 9;\n}\n\n.order-10 {\n  order: 10;\n}\n\n.order-11 {\n  order: 11;\n}\n\n.order-12 {\n  order: 12;\n}\n\n.offset-1 {\n  margin-left: 8.33333333%;\n}\n\n.offset-2 {\n  margin-left: 16.66666667%;\n}\n\n.offset-3 {\n  margin-left: 25%;\n}\n\n.offset-4 {\n  margin-left: 33.33333333%;\n}\n\n.offset-5 {\n  margin-left: 41.66666667%;\n}\n\n.offset-6 {\n  margin-left: 50%;\n}\n\n.offset-7 {\n  margin-left: 58.33333333%;\n}\n\n.offset-8 {\n  margin-left: 66.66666667%;\n}\n\n.offset-9 {\n  margin-left: 75%;\n}\n\n.offset-10 {\n  margin-left: 83.33333333%;\n}\n\n.offset-11 {\n  margin-left: 91.66666667%;\n}\n\n@media (min-width: 576px) {\n  .col-sm {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n  .row-cols-sm-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .row-cols-sm-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .row-cols-sm-3 > * {\n    flex: 0 0 33.3333333333%;\n    max-width: 33.3333333333%;\n  }\n  .row-cols-sm-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .row-cols-sm-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n  .row-cols-sm-6 > * {\n    flex: 0 0 16.6666666667%;\n    max-width: 16.6666666667%;\n  }\n  .col-sm-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n  .col-sm-1 {\n    flex: 0 0 8.33333333%;\n    max-width: 8.33333333%;\n  }\n  .col-sm-2 {\n    flex: 0 0 16.66666667%;\n    max-width: 16.66666667%;\n  }\n  .col-sm-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .col-sm-4 {\n    flex: 0 0 33.33333333%;\n    max-width: 33.33333333%;\n  }\n  .col-sm-5 {\n    flex: 0 0 41.66666667%;\n    max-width: 41.66666667%;\n  }\n  .col-sm-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .col-sm-7 {\n    flex: 0 0 58.33333333%;\n    max-width: 58.33333333%;\n  }\n  .col-sm-8 {\n    flex: 0 0 66.66666667%;\n    max-width: 66.66666667%;\n  }\n  .col-sm-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n  .col-sm-10 {\n    flex: 0 0 83.33333333%;\n    max-width: 83.33333333%;\n  }\n  .col-sm-11 {\n    flex: 0 0 91.66666667%;\n    max-width: 91.66666667%;\n  }\n  .col-sm-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .order-sm-first {\n    order: -1;\n  }\n  .order-sm-last {\n    order: 13;\n  }\n  .order-sm-0 {\n    order: 0;\n  }\n  .order-sm-1 {\n    order: 1;\n  }\n  .order-sm-2 {\n    order: 2;\n  }\n  .order-sm-3 {\n    order: 3;\n  }\n  .order-sm-4 {\n    order: 4;\n  }\n  .order-sm-5 {\n    order: 5;\n  }\n  .order-sm-6 {\n    order: 6;\n  }\n  .order-sm-7 {\n    order: 7;\n  }\n  .order-sm-8 {\n    order: 8;\n  }\n  .order-sm-9 {\n    order: 9;\n  }\n  .order-sm-10 {\n    order: 10;\n  }\n  .order-sm-11 {\n    order: 11;\n  }\n  .order-sm-12 {\n    order: 12;\n  }\n  .offset-sm-0 {\n    margin-left: 0;\n  }\n  .offset-sm-1 {\n    margin-left: 8.33333333%;\n  }\n  .offset-sm-2 {\n    margin-left: 16.66666667%;\n  }\n  .offset-sm-3 {\n    margin-left: 25%;\n  }\n  .offset-sm-4 {\n    margin-left: 33.33333333%;\n  }\n  .offset-sm-5 {\n    margin-left: 41.66666667%;\n  }\n  .offset-sm-6 {\n    margin-left: 50%;\n  }\n  .offset-sm-7 {\n    margin-left: 58.33333333%;\n  }\n  .offset-sm-8 {\n    margin-left: 66.66666667%;\n  }\n  .offset-sm-9 {\n    margin-left: 75%;\n  }\n  .offset-sm-10 {\n    margin-left: 83.33333333%;\n  }\n  .offset-sm-11 {\n    margin-left: 91.66666667%;\n  }\n}\n@media (min-width: 768px) {\n  .col-md {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n  .row-cols-md-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .row-cols-md-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .row-cols-md-3 > * {\n    flex: 0 0 33.3333333333%;\n    max-width: 33.3333333333%;\n  }\n  .row-cols-md-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .row-cols-md-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n  .row-cols-md-6 > * {\n    flex: 0 0 16.6666666667%;\n    max-width: 16.6666666667%;\n  }\n  .col-md-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n  .col-md-1 {\n    flex: 0 0 8.33333333%;\n    max-width: 8.33333333%;\n  }\n  .col-md-2 {\n    flex: 0 0 16.66666667%;\n    max-width: 16.66666667%;\n  }\n  .col-md-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .col-md-4 {\n    flex: 0 0 33.33333333%;\n    max-width: 33.33333333%;\n  }\n  .col-md-5 {\n    flex: 0 0 41.66666667%;\n    max-width: 41.66666667%;\n  }\n  .col-md-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .col-md-7 {\n    flex: 0 0 58.33333333%;\n    max-width: 58.33333333%;\n  }\n  .col-md-8 {\n    flex: 0 0 66.66666667%;\n    max-width: 66.66666667%;\n  }\n  .col-md-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n  .col-md-10 {\n    flex: 0 0 83.33333333%;\n    max-width: 83.33333333%;\n  }\n  .col-md-11 {\n    flex: 0 0 91.66666667%;\n    max-width: 91.66666667%;\n  }\n  .col-md-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .order-md-first {\n    order: -1;\n  }\n  .order-md-last {\n    order: 13;\n  }\n  .order-md-0 {\n    order: 0;\n  }\n  .order-md-1 {\n    order: 1;\n  }\n  .order-md-2 {\n    order: 2;\n  }\n  .order-md-3 {\n    order: 3;\n  }\n  .order-md-4 {\n    order: 4;\n  }\n  .order-md-5 {\n    order: 5;\n  }\n  .order-md-6 {\n    order: 6;\n  }\n  .order-md-7 {\n    order: 7;\n  }\n  .order-md-8 {\n    order: 8;\n  }\n  .order-md-9 {\n    order: 9;\n  }\n  .order-md-10 {\n    order: 10;\n  }\n  .order-md-11 {\n    order: 11;\n  }\n  .order-md-12 {\n    order: 12;\n  }\n  .offset-md-0 {\n    margin-left: 0;\n  }\n  .offset-md-1 {\n    margin-left: 8.33333333%;\n  }\n  .offset-md-2 {\n    margin-left: 16.66666667%;\n  }\n  .offset-md-3 {\n    margin-left: 25%;\n  }\n  .offset-md-4 {\n    margin-left: 33.33333333%;\n  }\n  .offset-md-5 {\n    margin-left: 41.66666667%;\n  }\n  .offset-md-6 {\n    margin-left: 50%;\n  }\n  .offset-md-7 {\n    margin-left: 58.33333333%;\n  }\n  .offset-md-8 {\n    margin-left: 66.66666667%;\n  }\n  .offset-md-9 {\n    margin-left: 75%;\n  }\n  .offset-md-10 {\n    margin-left: 83.33333333%;\n  }\n  .offset-md-11 {\n    margin-left: 91.66666667%;\n  }\n}\n@media (min-width: 992px) {\n  .col-lg {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n  .row-cols-lg-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .row-cols-lg-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .row-cols-lg-3 > * {\n    flex: 0 0 33.3333333333%;\n    max-width: 33.3333333333%;\n  }\n  .row-cols-lg-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .row-cols-lg-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n  .row-cols-lg-6 > * {\n    flex: 0 0 16.6666666667%;\n    max-width: 16.6666666667%;\n  }\n  .col-lg-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n  .col-lg-1 {\n    flex: 0 0 8.33333333%;\n    max-width: 8.33333333%;\n  }\n  .col-lg-2 {\n    flex: 0 0 16.66666667%;\n    max-width: 16.66666667%;\n  }\n  .col-lg-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .col-lg-4 {\n    flex: 0 0 33.33333333%;\n    max-width: 33.33333333%;\n  }\n  .col-lg-5 {\n    flex: 0 0 41.66666667%;\n    max-width: 41.66666667%;\n  }\n  .col-lg-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .col-lg-7 {\n    flex: 0 0 58.33333333%;\n    max-width: 58.33333333%;\n  }\n  .col-lg-8 {\n    flex: 0 0 66.66666667%;\n    max-width: 66.66666667%;\n  }\n  .col-lg-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n  .col-lg-10 {\n    flex: 0 0 83.33333333%;\n    max-width: 83.33333333%;\n  }\n  .col-lg-11 {\n    flex: 0 0 91.66666667%;\n    max-width: 91.66666667%;\n  }\n  .col-lg-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .order-lg-first {\n    order: -1;\n  }\n  .order-lg-last {\n    order: 13;\n  }\n  .order-lg-0 {\n    order: 0;\n  }\n  .order-lg-1 {\n    order: 1;\n  }\n  .order-lg-2 {\n    order: 2;\n  }\n  .order-lg-3 {\n    order: 3;\n  }\n  .order-lg-4 {\n    order: 4;\n  }\n  .order-lg-5 {\n    order: 5;\n  }\n  .order-lg-6 {\n    order: 6;\n  }\n  .order-lg-7 {\n    order: 7;\n  }\n  .order-lg-8 {\n    order: 8;\n  }\n  .order-lg-9 {\n    order: 9;\n  }\n  .order-lg-10 {\n    order: 10;\n  }\n  .order-lg-11 {\n    order: 11;\n  }\n  .order-lg-12 {\n    order: 12;\n  }\n  .offset-lg-0 {\n    margin-left: 0;\n  }\n  .offset-lg-1 {\n    margin-left: 8.33333333%;\n  }\n  .offset-lg-2 {\n    margin-left: 16.66666667%;\n  }\n  .offset-lg-3 {\n    margin-left: 25%;\n  }\n  .offset-lg-4 {\n    margin-left: 33.33333333%;\n  }\n  .offset-lg-5 {\n    margin-left: 41.66666667%;\n  }\n  .offset-lg-6 {\n    margin-left: 50%;\n  }\n  .offset-lg-7 {\n    margin-left: 58.33333333%;\n  }\n  .offset-lg-8 {\n    margin-left: 66.66666667%;\n  }\n  .offset-lg-9 {\n    margin-left: 75%;\n  }\n  .offset-lg-10 {\n    margin-left: 83.33333333%;\n  }\n  .offset-lg-11 {\n    margin-left: 91.66666667%;\n  }\n}\n@media (min-width: 1200px) {\n  .col-xl {\n    flex-basis: 0;\n    flex-grow: 1;\n    max-width: 100%;\n  }\n  .row-cols-xl-1 > * {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .row-cols-xl-2 > * {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .row-cols-xl-3 > * {\n    flex: 0 0 33.3333333333%;\n    max-width: 33.3333333333%;\n  }\n  .row-cols-xl-4 > * {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .row-cols-xl-5 > * {\n    flex: 0 0 20%;\n    max-width: 20%;\n  }\n  .row-cols-xl-6 > * {\n    flex: 0 0 16.6666666667%;\n    max-width: 16.6666666667%;\n  }\n  .col-xl-auto {\n    flex: 0 0 auto;\n    width: auto;\n    max-width: 100%;\n  }\n  .col-xl-1 {\n    flex: 0 0 8.33333333%;\n    max-width: 8.33333333%;\n  }\n  .col-xl-2 {\n    flex: 0 0 16.66666667%;\n    max-width: 16.66666667%;\n  }\n  .col-xl-3 {\n    flex: 0 0 25%;\n    max-width: 25%;\n  }\n  .col-xl-4 {\n    flex: 0 0 33.33333333%;\n    max-width: 33.33333333%;\n  }\n  .col-xl-5 {\n    flex: 0 0 41.66666667%;\n    max-width: 41.66666667%;\n  }\n  .col-xl-6 {\n    flex: 0 0 50%;\n    max-width: 50%;\n  }\n  .col-xl-7 {\n    flex: 0 0 58.33333333%;\n    max-width: 58.33333333%;\n  }\n  .col-xl-8 {\n    flex: 0 0 66.66666667%;\n    max-width: 66.66666667%;\n  }\n  .col-xl-9 {\n    flex: 0 0 75%;\n    max-width: 75%;\n  }\n  .col-xl-10 {\n    flex: 0 0 83.33333333%;\n    max-width: 83.33333333%;\n  }\n  .col-xl-11 {\n    flex: 0 0 91.66666667%;\n    max-width: 91.66666667%;\n  }\n  .col-xl-12 {\n    flex: 0 0 100%;\n    max-width: 100%;\n  }\n  .order-xl-first {\n    order: -1;\n  }\n  .order-xl-last {\n    order: 13;\n  }\n  .order-xl-0 {\n    order: 0;\n  }\n  .order-xl-1 {\n    order: 1;\n  }\n  .order-xl-2 {\n    order: 2;\n  }\n  .order-xl-3 {\n    order: 3;\n  }\n  .order-xl-4 {\n    order: 4;\n  }\n  .order-xl-5 {\n    order: 5;\n  }\n  .order-xl-6 {\n    order: 6;\n  }\n  .order-xl-7 {\n    order: 7;\n  }\n  .order-xl-8 {\n    order: 8;\n  }\n  .order-xl-9 {\n    order: 9;\n  }\n  .order-xl-10 {\n    order: 10;\n  }\n  .order-xl-11 {\n    order: 11;\n  }\n  .order-xl-12 {\n    order: 12;\n  }\n  .offset-xl-0 {\n    margin-left: 0;\n  }\n  .offset-xl-1 {\n    margin-left: 8.33333333%;\n  }\n  .offset-xl-2 {\n    margin-left: 16.66666667%;\n  }\n  .offset-xl-3 {\n    margin-left: 25%;\n  }\n  .offset-xl-4 {\n    margin-left: 33.33333333%;\n  }\n  .offset-xl-5 {\n    margin-left: 41.66666667%;\n  }\n  .offset-xl-6 {\n    margin-left: 50%;\n  }\n  .offset-xl-7 {\n    margin-left: 58.33333333%;\n  }\n  .offset-xl-8 {\n    margin-left: 66.66666667%;\n  }\n  .offset-xl-9 {\n    margin-left: 75%;\n  }\n  .offset-xl-10 {\n    margin-left: 83.33333333%;\n  }\n  .offset-xl-11 {\n    margin-left: 91.66666667%;\n  }\n}\n.table {\n  width: 100%;\n  margin-bottom: 1rem;\n  color: #212529;\n}\n.table th,\n.table td {\n  padding: 0.75rem;\n  vertical-align: top;\n  border-top: 1px solid #dee2e6;\n}\n.table thead th {\n  vertical-align: bottom;\n  border-bottom: 2px solid #dee2e6;\n}\n.table tbody + tbody {\n  border-top: 2px solid #dee2e6;\n}\n\n.table-sm th,\n.table-sm td {\n  padding: 0.3rem;\n}\n\n.table-bordered {\n  border: 1px solid #dee2e6;\n}\n.table-bordered th,\n.table-bordered td {\n  border: 1px solid #dee2e6;\n}\n.table-bordered thead th,\n.table-bordered thead td {\n  border-bottom-width: 2px;\n}\n\n.table-borderless th,\n.table-borderless td,\n.table-borderless thead th,\n.table-borderless tbody + tbody {\n  border: 0;\n}\n\n.table-striped tbody tr:nth-of-type(odd) {\n  background-color: rgba(0, 0, 0, 0.05);\n}\n\n.table-hover tbody tr:hover {\n  color: #212529;\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n.table-primary,\n.table-primary > th,\n.table-primary > td {\n  background-color: #b8daff;\n}\n.table-primary th,\n.table-primary td,\n.table-primary thead th,\n.table-primary tbody + tbody {\n  border-color: #7abaff;\n}\n\n.table-hover .table-primary:hover {\n  background-color: #9fcdff;\n}\n.table-hover .table-primary:hover > td,\n.table-hover .table-primary:hover > th {\n  background-color: #9fcdff;\n}\n\n.table-secondary,\n.table-secondary > th,\n.table-secondary > td {\n  background-color: #d6d8db;\n}\n.table-secondary th,\n.table-secondary td,\n.table-secondary thead th,\n.table-secondary tbody + tbody {\n  border-color: #b3b7bb;\n}\n\n.table-hover .table-secondary:hover {\n  background-color: #c8cbcf;\n}\n.table-hover .table-secondary:hover > td,\n.table-hover .table-secondary:hover > th {\n  background-color: #c8cbcf;\n}\n\n.table-success,\n.table-success > th,\n.table-success > td {\n  background-color: #c3e6cb;\n}\n.table-success th,\n.table-success td,\n.table-success thead th,\n.table-success tbody + tbody {\n  border-color: #8fd19e;\n}\n\n.table-hover .table-success:hover {\n  background-color: #b1dfbb;\n}\n.table-hover .table-success:hover > td,\n.table-hover .table-success:hover > th {\n  background-color: #b1dfbb;\n}\n\n.table-info,\n.table-info > th,\n.table-info > td {\n  background-color: #bee5eb;\n}\n.table-info th,\n.table-info td,\n.table-info thead th,\n.table-info tbody + tbody {\n  border-color: #86cfda;\n}\n\n.table-hover .table-info:hover {\n  background-color: #abdde5;\n}\n.table-hover .table-info:hover > td,\n.table-hover .table-info:hover > th {\n  background-color: #abdde5;\n}\n\n.table-warning,\n.table-warning > th,\n.table-warning > td {\n  background-color: #ffeeba;\n}\n.table-warning th,\n.table-warning td,\n.table-warning thead th,\n.table-warning tbody + tbody {\n  border-color: #ffdf7e;\n}\n\n.table-hover .table-warning:hover {\n  background-color: #ffe8a1;\n}\n.table-hover .table-warning:hover > td,\n.table-hover .table-warning:hover > th {\n  background-color: #ffe8a1;\n}\n\n.table-danger,\n.table-danger > th,\n.table-danger > td {\n  background-color: #f5c6cb;\n}\n.table-danger th,\n.table-danger td,\n.table-danger thead th,\n.table-danger tbody + tbody {\n  border-color: #ed969e;\n}\n\n.table-hover .table-danger:hover {\n  background-color: #f1b0b7;\n}\n.table-hover .table-danger:hover > td,\n.table-hover .table-danger:hover > th {\n  background-color: #f1b0b7;\n}\n\n.table-light,\n.table-light > th,\n.table-light > td {\n  background-color: #fdfdfe;\n}\n.table-light th,\n.table-light td,\n.table-light thead th,\n.table-light tbody + tbody {\n  border-color: #fbfcfc;\n}\n\n.table-hover .table-light:hover {\n  background-color: #ececf6;\n}\n.table-hover .table-light:hover > td,\n.table-hover .table-light:hover > th {\n  background-color: #ececf6;\n}\n\n.table-dark,\n.table-dark > th,\n.table-dark > td {\n  background-color: #c6c8ca;\n}\n.table-dark th,\n.table-dark td,\n.table-dark thead th,\n.table-dark tbody + tbody {\n  border-color: #95999c;\n}\n\n.table-hover .table-dark:hover {\n  background-color: #b9bbbe;\n}\n.table-hover .table-dark:hover > td,\n.table-hover .table-dark:hover > th {\n  background-color: #b9bbbe;\n}\n\n.table-active,\n.table-active > th,\n.table-active > td {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n.table-hover .table-active:hover {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n.table-hover .table-active:hover > td,\n.table-hover .table-active:hover > th {\n  background-color: rgba(0, 0, 0, 0.075);\n}\n\n.table .thead-dark th {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #454d55;\n}\n.table .thead-light th {\n  color: #495057;\n  background-color: #e9ecef;\n  border-color: #dee2e6;\n}\n\n.table-dark {\n  color: #fff;\n  background-color: #343a40;\n}\n.table-dark th,\n.table-dark td,\n.table-dark thead th {\n  border-color: #454d55;\n}\n.table-dark.table-bordered {\n  border: 0;\n}\n.table-dark.table-striped tbody tr:nth-of-type(odd) {\n  background-color: rgba(255, 255, 255, 0.05);\n}\n.table-dark.table-hover tbody tr:hover {\n  color: #fff;\n  background-color: rgba(255, 255, 255, 0.075);\n}\n\n@media (max-width: 575.98px) {\n  .table-responsive-sm {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n  .table-responsive-sm > .table-bordered {\n    border: 0;\n  }\n}\n@media (max-width: 767.98px) {\n  .table-responsive-md {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n  .table-responsive-md > .table-bordered {\n    border: 0;\n  }\n}\n@media (max-width: 991.98px) {\n  .table-responsive-lg {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n  .table-responsive-lg > .table-bordered {\n    border: 0;\n  }\n}\n@media (max-width: 1199.98px) {\n  .table-responsive-xl {\n    display: block;\n    width: 100%;\n    overflow-x: auto;\n    -webkit-overflow-scrolling: touch;\n  }\n  .table-responsive-xl > .table-bordered {\n    border: 0;\n  }\n}\n.table-responsive {\n  display: block;\n  width: 100%;\n  overflow-x: auto;\n  -webkit-overflow-scrolling: touch;\n}\n.table-responsive > .table-bordered {\n  border: 0;\n}\n\n.form-control {\n  display: block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 0.75rem;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .form-control {\n    transition: none;\n  }\n}\n.form-control::-ms-expand {\n  background-color: transparent;\n  border: 0;\n}\n.form-control:focus {\n  color: #495057;\n  background-color: #fff;\n  border-color: #80bdff;\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.form-control::placeholder {\n  color: #6c757d;\n  opacity: 1;\n}\n.form-control:disabled, .form-control[readonly] {\n  background-color: #e9ecef;\n  opacity: 1;\n}\n\ninput[type=date].form-control,\ninput[type=time].form-control,\ninput[type=datetime-local].form-control,\ninput[type=month].form-control {\n  appearance: none;\n}\n\nselect.form-control:-moz-focusring {\n  color: transparent;\n  text-shadow: 0 0 0 #495057;\n}\nselect.form-control:focus::-ms-value {\n  color: #495057;\n  background-color: #fff;\n}\n\n.form-control-file,\n.form-control-range {\n  display: block;\n  width: 100%;\n}\n\n.col-form-label {\n  padding-top: calc(0.375rem + 1px);\n  padding-bottom: calc(0.375rem + 1px);\n  margin-bottom: 0;\n  font-size: inherit;\n  line-height: 1.5;\n}\n\n.col-form-label-lg {\n  padding-top: calc(0.5rem + 1px);\n  padding-bottom: calc(0.5rem + 1px);\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n\n.col-form-label-sm {\n  padding-top: calc(0.25rem + 1px);\n  padding-bottom: calc(0.25rem + 1px);\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n\n.form-control-plaintext {\n  display: block;\n  width: 100%;\n  padding: 0.375rem 0;\n  margin-bottom: 0;\n  font-size: 1rem;\n  line-height: 1.5;\n  color: #212529;\n  background-color: transparent;\n  border: solid transparent;\n  border-width: 1px 0;\n}\n.form-control-plaintext.form-control-sm, .form-control-plaintext.form-control-lg {\n  padding-right: 0;\n  padding-left: 0;\n}\n\n.form-control-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem;\n}\n\n.form-control-lg {\n  height: calc(1.5em + 1rem + 2px);\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem;\n}\n\nselect.form-control[size], select.form-control[multiple] {\n  height: auto;\n}\n\ntextarea.form-control {\n  height: auto;\n}\n\n.form-group {\n  margin-bottom: 1rem;\n}\n\n.form-text {\n  display: block;\n  margin-top: 0.25rem;\n}\n\n.form-row {\n  display: flex;\n  flex-wrap: wrap;\n  margin-right: -5px;\n  margin-left: -5px;\n}\n.form-row > .col,\n.form-row > [class*=col-] {\n  padding-right: 5px;\n  padding-left: 5px;\n}\n\n.form-check {\n  position: relative;\n  display: block;\n  padding-left: 1.25rem;\n}\n\n.form-check-input {\n  position: absolute;\n  margin-top: 0.3rem;\n  margin-left: -1.25rem;\n}\n.form-check-input[disabled] ~ .form-check-label, .form-check-input:disabled ~ .form-check-label {\n  color: #6c757d;\n}\n\n.form-check-label {\n  margin-bottom: 0;\n}\n\n.form-check-inline {\n  display: inline-flex;\n  align-items: center;\n  padding-left: 0;\n  margin-right: 0.75rem;\n}\n.form-check-inline .form-check-input {\n  position: static;\n  margin-top: 0;\n  margin-right: 0.3125rem;\n  margin-left: 0;\n}\n\n.valid-feedback {\n  display: none;\n  width: 100%;\n  margin-top: 0.25rem;\n  font-size: 0.875em;\n  color: #28a745;\n}\n\n.valid-tooltip {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  padding: 0.25rem 0.5rem;\n  margin-top: 0.1rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n  background-color: rgba(40, 167, 69, 0.9);\n  border-radius: 0.25rem;\n}\n.form-row > .col > .valid-tooltip, .form-row > [class*=col-] > .valid-tooltip {\n  left: 5px;\n}\n\n.was-validated :valid ~ .valid-feedback,\n.was-validated :valid ~ .valid-tooltip,\n.is-valid ~ .valid-feedback,\n.is-valid ~ .valid-tooltip {\n  display: block;\n}\n\n.was-validated .form-control:valid, .form-control.is-valid {\n  border-color: #28a745;\n  padding-right: calc(1.5em + 0.75rem) !important;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-position: right calc(0.375em + 0.1875rem) center;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n.was-validated .form-control:valid:focus, .form-control.is-valid:focus {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n.was-validated select.form-control:valid, select.form-control.is-valid {\n  padding-right: 3rem !important;\n  background-position: right 1.5rem center;\n}\n\n.was-validated textarea.form-control:valid, textarea.form-control.is-valid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);\n}\n\n.was-validated .custom-select:valid, .custom-select.is-valid {\n  border-color: #28a745;\n  padding-right: calc(0.75em + 2.3125rem) !important;\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat, #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e\") center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) no-repeat;\n}\n.was-validated .custom-select:valid:focus, .custom-select.is-valid:focus {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n.was-validated .form-check-input:valid ~ .form-check-label, .form-check-input.is-valid ~ .form-check-label {\n  color: #28a745;\n}\n.was-validated .form-check-input:valid ~ .valid-feedback,\n.was-validated .form-check-input:valid ~ .valid-tooltip, .form-check-input.is-valid ~ .valid-feedback,\n.form-check-input.is-valid ~ .valid-tooltip {\n  display: block;\n}\n\n.was-validated .custom-control-input:valid ~ .custom-control-label, .custom-control-input.is-valid ~ .custom-control-label {\n  color: #28a745;\n}\n.was-validated .custom-control-input:valid ~ .custom-control-label::before, .custom-control-input.is-valid ~ .custom-control-label::before {\n  border-color: #28a745;\n}\n.was-validated .custom-control-input:valid:checked ~ .custom-control-label::before, .custom-control-input.is-valid:checked ~ .custom-control-label::before {\n  border-color: #34ce57;\n  background-color: #34ce57;\n}\n.was-validated .custom-control-input:valid:focus ~ .custom-control-label::before, .custom-control-input.is-valid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n.was-validated .custom-control-input:valid:focus:not(:checked) ~ .custom-control-label::before, .custom-control-input.is-valid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #28a745;\n}\n\n.was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {\n  border-color: #28a745;\n}\n.was-validated .custom-file-input:valid:focus ~ .custom-file-label, .custom-file-input.is-valid:focus ~ .custom-file-label {\n  border-color: #28a745;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);\n}\n\n.invalid-feedback {\n  display: none;\n  width: 100%;\n  margin-top: 0.25rem;\n  font-size: 0.875em;\n  color: #dc3545;\n}\n\n.invalid-tooltip {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 5;\n  display: none;\n  max-width: 100%;\n  padding: 0.25rem 0.5rem;\n  margin-top: 0.1rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  color: #fff;\n  background-color: rgba(220, 53, 69, 0.9);\n  border-radius: 0.25rem;\n}\n.form-row > .col > .invalid-tooltip, .form-row > [class*=col-] > .invalid-tooltip {\n  left: 5px;\n}\n\n.was-validated :invalid ~ .invalid-feedback,\n.was-validated :invalid ~ .invalid-tooltip,\n.is-invalid ~ .invalid-feedback,\n.is-invalid ~ .invalid-tooltip {\n  display: block;\n}\n\n.was-validated .form-control:invalid, .form-control.is-invalid {\n  border-color: #dc3545;\n  padding-right: calc(1.5em + 0.75rem) !important;\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\");\n  background-repeat: no-repeat;\n  background-position: right calc(0.375em + 0.1875rem) center;\n  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);\n}\n.was-validated .form-control:invalid:focus, .form-control.is-invalid:focus {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n.was-validated select.form-control:invalid, select.form-control.is-invalid {\n  padding-right: 3rem !important;\n  background-position: right 1.5rem center;\n}\n\n.was-validated textarea.form-control:invalid, textarea.form-control.is-invalid {\n  padding-right: calc(1.5em + 0.75rem);\n  background-position: top calc(0.375em + 0.1875rem) right calc(0.375em + 0.1875rem);\n}\n\n.was-validated .custom-select:invalid, .custom-select.is-invalid {\n  border-color: #dc3545;\n  padding-right: calc(0.75em + 2.3125rem) !important;\n  background: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat, #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e\") center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem) no-repeat;\n}\n.was-validated .custom-select:invalid:focus, .custom-select.is-invalid:focus {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n.was-validated .form-check-input:invalid ~ .form-check-label, .form-check-input.is-invalid ~ .form-check-label {\n  color: #dc3545;\n}\n.was-validated .form-check-input:invalid ~ .invalid-feedback,\n.was-validated .form-check-input:invalid ~ .invalid-tooltip, .form-check-input.is-invalid ~ .invalid-feedback,\n.form-check-input.is-invalid ~ .invalid-tooltip {\n  display: block;\n}\n\n.was-validated .custom-control-input:invalid ~ .custom-control-label, .custom-control-input.is-invalid ~ .custom-control-label {\n  color: #dc3545;\n}\n.was-validated .custom-control-input:invalid ~ .custom-control-label::before, .custom-control-input.is-invalid ~ .custom-control-label::before {\n  border-color: #dc3545;\n}\n.was-validated .custom-control-input:invalid:checked ~ .custom-control-label::before, .custom-control-input.is-invalid:checked ~ .custom-control-label::before {\n  border-color: #e4606d;\n  background-color: #e4606d;\n}\n.was-validated .custom-control-input:invalid:focus ~ .custom-control-label::before, .custom-control-input.is-invalid:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n.was-validated .custom-control-input:invalid:focus:not(:checked) ~ .custom-control-label::before, .custom-control-input.is-invalid:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #dc3545;\n}\n\n.was-validated .custom-file-input:invalid ~ .custom-file-label, .custom-file-input.is-invalid ~ .custom-file-label {\n  border-color: #dc3545;\n}\n.was-validated .custom-file-input:invalid:focus ~ .custom-file-label, .custom-file-input.is-invalid:focus ~ .custom-file-label {\n  border-color: #dc3545;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);\n}\n\n.form-inline {\n  display: flex;\n  flex-flow: row wrap;\n  align-items: center;\n}\n.form-inline .form-check {\n  width: 100%;\n}\n@media (min-width: 576px) {\n  .form-inline label {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin-bottom: 0;\n  }\n  .form-inline .form-group {\n    display: flex;\n    flex: 0 0 auto;\n    flex-flow: row wrap;\n    align-items: center;\n    margin-bottom: 0;\n  }\n  .form-inline .form-control {\n    display: inline-block;\n    width: auto;\n    vertical-align: middle;\n  }\n  .form-inline .form-control-plaintext {\n    display: inline-block;\n  }\n  .form-inline .input-group,\n  .form-inline .custom-select {\n    width: auto;\n  }\n  .form-inline .form-check {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    width: auto;\n    padding-left: 0;\n  }\n  .form-inline .form-check-input {\n    position: relative;\n    flex-shrink: 0;\n    margin-top: 0;\n    margin-right: 0.25rem;\n    margin-left: 0;\n  }\n  .form-inline .custom-control {\n    align-items: center;\n    justify-content: center;\n  }\n  .form-inline .custom-control-label {\n    margin-bottom: 0;\n  }\n}\n\n.btn {\n  display: inline-block;\n  font-weight: 400;\n  color: #212529;\n  text-align: center;\n  vertical-align: middle;\n  user-select: none;\n  background-color: transparent;\n  border: 1px solid transparent;\n  padding: 0.375rem 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  border-radius: 0.25rem;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .btn {\n    transition: none;\n  }\n}\n.btn:hover {\n  color: #212529;\n  text-decoration: none;\n}\n.btn:focus, .btn.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.btn.disabled, .btn:disabled {\n  opacity: 0.65;\n}\n.btn:not(:disabled):not(.disabled) {\n  cursor: pointer;\n}\na.btn.disabled,\nfieldset:disabled a.btn {\n  pointer-events: none;\n}\n\n.btn-primary {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.btn-primary:hover {\n  color: #fff;\n  background-color: #0069d9;\n  border-color: #0062cc;\n}\n.btn-primary:focus, .btn-primary.focus {\n  color: #fff;\n  background-color: #0069d9;\n  border-color: #0062cc;\n  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);\n}\n.btn-primary.disabled, .btn-primary:disabled {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {\n  color: #fff;\n  background-color: #0062cc;\n  border-color: #005cbf;\n}\n.btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-primary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5);\n}\n\n.btn-secondary {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n.btn-secondary:hover {\n  color: #fff;\n  background-color: #5a6268;\n  border-color: #545b62;\n}\n.btn-secondary:focus, .btn-secondary.focus {\n  color: #fff;\n  background-color: #5a6268;\n  border-color: #545b62;\n  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);\n}\n.btn-secondary.disabled, .btn-secondary:disabled {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show > .btn-secondary.dropdown-toggle {\n  color: #fff;\n  background-color: #545b62;\n  border-color: #4e555b;\n}\n.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show > .btn-secondary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);\n}\n\n.btn-success {\n  color: #fff;\n  background-color: #28a745;\n  border-color: #28a745;\n}\n.btn-success:hover {\n  color: #fff;\n  background-color: #218838;\n  border-color: #1e7e34;\n}\n.btn-success:focus, .btn-success.focus {\n  color: #fff;\n  background-color: #218838;\n  border-color: #1e7e34;\n  box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5);\n}\n.btn-success.disabled, .btn-success:disabled {\n  color: #fff;\n  background-color: #28a745;\n  border-color: #28a745;\n}\n.btn-success:not(:disabled):not(.disabled):active, .btn-success:not(:disabled):not(.disabled).active, .show > .btn-success.dropdown-toggle {\n  color: #fff;\n  background-color: #1e7e34;\n  border-color: #1c7430;\n}\n.btn-success:not(:disabled):not(.disabled):active:focus, .btn-success:not(:disabled):not(.disabled).active:focus, .show > .btn-success.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(72, 180, 97, 0.5);\n}\n\n.btn-info {\n  color: #fff;\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n.btn-info:hover {\n  color: #fff;\n  background-color: #138496;\n  border-color: #117a8b;\n}\n.btn-info:focus, .btn-info.focus {\n  color: #fff;\n  background-color: #138496;\n  border-color: #117a8b;\n  box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5);\n}\n.btn-info.disabled, .btn-info:disabled {\n  color: #fff;\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n.btn-info:not(:disabled):not(.disabled):active, .btn-info:not(:disabled):not(.disabled).active, .show > .btn-info.dropdown-toggle {\n  color: #fff;\n  background-color: #117a8b;\n  border-color: #10707f;\n}\n.btn-info:not(:disabled):not(.disabled):active:focus, .btn-info:not(:disabled):not(.disabled).active:focus, .show > .btn-info.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(58, 176, 195, 0.5);\n}\n\n.btn-warning {\n  color: #212529;\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n.btn-warning:hover {\n  color: #212529;\n  background-color: #e0a800;\n  border-color: #d39e00;\n}\n.btn-warning:focus, .btn-warning.focus {\n  color: #212529;\n  background-color: #e0a800;\n  border-color: #d39e00;\n  box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);\n}\n.btn-warning.disabled, .btn-warning:disabled {\n  color: #212529;\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n.btn-warning:not(:disabled):not(.disabled):active, .btn-warning:not(:disabled):not(.disabled).active, .show > .btn-warning.dropdown-toggle {\n  color: #212529;\n  background-color: #d39e00;\n  border-color: #c69500;\n}\n.btn-warning:not(:disabled):not(.disabled):active:focus, .btn-warning:not(:disabled):not(.disabled).active:focus, .show > .btn-warning.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(222, 170, 12, 0.5);\n}\n\n.btn-danger {\n  color: #fff;\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n.btn-danger:hover {\n  color: #fff;\n  background-color: #c82333;\n  border-color: #bd2130;\n}\n.btn-danger:focus, .btn-danger.focus {\n  color: #fff;\n  background-color: #c82333;\n  border-color: #bd2130;\n  box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5);\n}\n.btn-danger.disabled, .btn-danger:disabled {\n  color: #fff;\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n.btn-danger:not(:disabled):not(.disabled):active, .btn-danger:not(:disabled):not(.disabled).active, .show > .btn-danger.dropdown-toggle {\n  color: #fff;\n  background-color: #bd2130;\n  border-color: #b21f2d;\n}\n.btn-danger:not(:disabled):not(.disabled):active:focus, .btn-danger:not(:disabled):not(.disabled).active:focus, .show > .btn-danger.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(225, 83, 97, 0.5);\n}\n\n.btn-light {\n  color: #212529;\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n.btn-light:hover {\n  color: #212529;\n  background-color: #e2e6ea;\n  border-color: #dae0e5;\n}\n.btn-light:focus, .btn-light.focus {\n  color: #212529;\n  background-color: #e2e6ea;\n  border-color: #dae0e5;\n  box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5);\n}\n.btn-light.disabled, .btn-light:disabled {\n  color: #212529;\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n.btn-light:not(:disabled):not(.disabled):active, .btn-light:not(:disabled):not(.disabled).active, .show > .btn-light.dropdown-toggle {\n  color: #212529;\n  background-color: #dae0e5;\n  border-color: #d3d9df;\n}\n.btn-light:not(:disabled):not(.disabled):active:focus, .btn-light:not(:disabled):not(.disabled).active:focus, .show > .btn-light.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(216, 217, 219, 0.5);\n}\n\n.btn-dark {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #343a40;\n}\n.btn-dark:hover {\n  color: #fff;\n  background-color: #23272b;\n  border-color: #1d2124;\n}\n.btn-dark:focus, .btn-dark.focus {\n  color: #fff;\n  background-color: #23272b;\n  border-color: #1d2124;\n  box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);\n}\n.btn-dark.disabled, .btn-dark:disabled {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #343a40;\n}\n.btn-dark:not(:disabled):not(.disabled):active, .btn-dark:not(:disabled):not(.disabled).active, .show > .btn-dark.dropdown-toggle {\n  color: #fff;\n  background-color: #1d2124;\n  border-color: #171a1d;\n}\n.btn-dark:not(:disabled):not(.disabled):active:focus, .btn-dark:not(:disabled):not(.disabled).active:focus, .show > .btn-dark.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(82, 88, 93, 0.5);\n}\n\n.btn-outline-primary {\n  color: #007bff;\n  border-color: #007bff;\n}\n.btn-outline-primary:hover {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.btn-outline-primary:focus, .btn-outline-primary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n.btn-outline-primary.disabled, .btn-outline-primary:disabled {\n  color: #007bff;\n  background-color: transparent;\n}\n.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .show > .btn-outline-primary.dropdown-toggle {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.btn-outline-primary:not(:disabled):not(.disabled):active:focus, .btn-outline-primary:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-primary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n\n.btn-outline-secondary {\n  color: #6c757d;\n  border-color: #6c757d;\n}\n.btn-outline-secondary:hover {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n.btn-outline-secondary:focus, .btn-outline-secondary.focus {\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n.btn-outline-secondary.disabled, .btn-outline-secondary:disabled {\n  color: #6c757d;\n  background-color: transparent;\n}\n.btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active, .show > .btn-outline-secondary.dropdown-toggle {\n  color: #fff;\n  background-color: #6c757d;\n  border-color: #6c757d;\n}\n.btn-outline-secondary:not(:disabled):not(.disabled):active:focus, .btn-outline-secondary:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-secondary.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n\n.btn-outline-success {\n  color: #28a745;\n  border-color: #28a745;\n}\n.btn-outline-success:hover {\n  color: #fff;\n  background-color: #28a745;\n  border-color: #28a745;\n}\n.btn-outline-success:focus, .btn-outline-success.focus {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n.btn-outline-success.disabled, .btn-outline-success:disabled {\n  color: #28a745;\n  background-color: transparent;\n}\n.btn-outline-success:not(:disabled):not(.disabled):active, .btn-outline-success:not(:disabled):not(.disabled).active, .show > .btn-outline-success.dropdown-toggle {\n  color: #fff;\n  background-color: #28a745;\n  border-color: #28a745;\n}\n.btn-outline-success:not(:disabled):not(.disabled):active:focus, .btn-outline-success:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-success.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n\n.btn-outline-info {\n  color: #17a2b8;\n  border-color: #17a2b8;\n}\n.btn-outline-info:hover {\n  color: #fff;\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n.btn-outline-info:focus, .btn-outline-info.focus {\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n.btn-outline-info.disabled, .btn-outline-info:disabled {\n  color: #17a2b8;\n  background-color: transparent;\n}\n.btn-outline-info:not(:disabled):not(.disabled):active, .btn-outline-info:not(:disabled):not(.disabled).active, .show > .btn-outline-info.dropdown-toggle {\n  color: #fff;\n  background-color: #17a2b8;\n  border-color: #17a2b8;\n}\n.btn-outline-info:not(:disabled):not(.disabled):active:focus, .btn-outline-info:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-info.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n\n.btn-outline-warning {\n  color: #ffc107;\n  border-color: #ffc107;\n}\n.btn-outline-warning:hover {\n  color: #212529;\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n.btn-outline-warning:focus, .btn-outline-warning.focus {\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n.btn-outline-warning.disabled, .btn-outline-warning:disabled {\n  color: #ffc107;\n  background-color: transparent;\n}\n.btn-outline-warning:not(:disabled):not(.disabled):active, .btn-outline-warning:not(:disabled):not(.disabled).active, .show > .btn-outline-warning.dropdown-toggle {\n  color: #212529;\n  background-color: #ffc107;\n  border-color: #ffc107;\n}\n.btn-outline-warning:not(:disabled):not(.disabled):active:focus, .btn-outline-warning:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-warning.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n\n.btn-outline-danger {\n  color: #dc3545;\n  border-color: #dc3545;\n}\n.btn-outline-danger:hover {\n  color: #fff;\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n.btn-outline-danger:focus, .btn-outline-danger.focus {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n.btn-outline-danger.disabled, .btn-outline-danger:disabled {\n  color: #dc3545;\n  background-color: transparent;\n}\n.btn-outline-danger:not(:disabled):not(.disabled):active, .btn-outline-danger:not(:disabled):not(.disabled).active, .show > .btn-outline-danger.dropdown-toggle {\n  color: #fff;\n  background-color: #dc3545;\n  border-color: #dc3545;\n}\n.btn-outline-danger:not(:disabled):not(.disabled):active:focus, .btn-outline-danger:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-danger.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n\n.btn-outline-light {\n  color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n.btn-outline-light:hover {\n  color: #212529;\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n.btn-outline-light:focus, .btn-outline-light.focus {\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n.btn-outline-light.disabled, .btn-outline-light:disabled {\n  color: #f8f9fa;\n  background-color: transparent;\n}\n.btn-outline-light:not(:disabled):not(.disabled):active, .btn-outline-light:not(:disabled):not(.disabled).active, .show > .btn-outline-light.dropdown-toggle {\n  color: #212529;\n  background-color: #f8f9fa;\n  border-color: #f8f9fa;\n}\n.btn-outline-light:not(:disabled):not(.disabled):active:focus, .btn-outline-light:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-light.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n\n.btn-outline-dark {\n  color: #343a40;\n  border-color: #343a40;\n}\n.btn-outline-dark:hover {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #343a40;\n}\n.btn-outline-dark:focus, .btn-outline-dark.focus {\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n.btn-outline-dark.disabled, .btn-outline-dark:disabled {\n  color: #343a40;\n  background-color: transparent;\n}\n.btn-outline-dark:not(:disabled):not(.disabled):active, .btn-outline-dark:not(:disabled):not(.disabled).active, .show > .btn-outline-dark.dropdown-toggle {\n  color: #fff;\n  background-color: #343a40;\n  border-color: #343a40;\n}\n.btn-outline-dark:not(:disabled):not(.disabled):active:focus, .btn-outline-dark:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-dark.dropdown-toggle:focus {\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n\n.btn-link {\n  font-weight: 400;\n  color: #007bff;\n  text-decoration: none;\n}\n.btn-link:hover {\n  color: #0056b3;\n  text-decoration: underline;\n}\n.btn-link:focus, .btn-link.focus {\n  text-decoration: underline;\n}\n.btn-link:disabled, .btn-link.disabled {\n  color: #6c757d;\n  pointer-events: none;\n}\n\n.btn-lg, .btn-group-lg > .btn {\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem;\n}\n\n.btn-sm, .btn-group-sm > .btn {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem;\n}\n\n.btn-block {\n  display: block;\n  width: 100%;\n}\n.btn-block + .btn-block {\n  margin-top: 0.5rem;\n}\n\ninput[type=submit].btn-block,\ninput[type=reset].btn-block,\ninput[type=button].btn-block {\n  width: 100%;\n}\n\n.fade {\n  transition: opacity 0.15s linear;\n}\n@media (prefers-reduced-motion: reduce) {\n  .fade {\n    transition: none;\n  }\n}\n.fade:not(.show) {\n  opacity: 0;\n}\n\n.collapse:not(.show) {\n  display: none;\n}\n\n.collapsing {\n  position: relative;\n  height: 0;\n  overflow: hidden;\n  transition: height 0.35s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .collapsing {\n    transition: none;\n  }\n}\n.collapsing.width {\n  width: 0;\n  height: auto;\n  transition: width 0.35s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .collapsing.width {\n    transition: none;\n  }\n}\n\n.dropup,\n.dropright,\n.dropdown,\n.dropleft {\n  position: relative;\n}\n\n.dropdown-toggle {\n  white-space: nowrap;\n}\n.dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0.3em solid;\n  border-right: 0.3em solid transparent;\n  border-bottom: 0;\n  border-left: 0.3em solid transparent;\n}\n.dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n.dropdown-menu {\n  position: absolute;\n  top: 100%;\n  left: 0;\n  z-index: 1000;\n  display: none;\n  float: left;\n  min-width: 10rem;\n  padding: 0.5rem 0;\n  margin: 0.125rem 0 0;\n  font-size: 1rem;\n  color: #212529;\n  text-align: left;\n  list-style: none;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0.25rem;\n}\n\n.dropdown-menu-left {\n  right: auto;\n  left: 0;\n}\n\n.dropdown-menu-right {\n  right: 0;\n  left: auto;\n}\n\n@media (min-width: 576px) {\n  .dropdown-menu-sm-left {\n    right: auto;\n    left: 0;\n  }\n  .dropdown-menu-sm-right {\n    right: 0;\n    left: auto;\n  }\n}\n@media (min-width: 768px) {\n  .dropdown-menu-md-left {\n    right: auto;\n    left: 0;\n  }\n  .dropdown-menu-md-right {\n    right: 0;\n    left: auto;\n  }\n}\n@media (min-width: 992px) {\n  .dropdown-menu-lg-left {\n    right: auto;\n    left: 0;\n  }\n  .dropdown-menu-lg-right {\n    right: 0;\n    left: auto;\n  }\n}\n@media (min-width: 1200px) {\n  .dropdown-menu-xl-left {\n    right: auto;\n    left: 0;\n  }\n  .dropdown-menu-xl-right {\n    right: 0;\n    left: auto;\n  }\n}\n.dropup .dropdown-menu {\n  top: auto;\n  bottom: 100%;\n  margin-top: 0;\n  margin-bottom: 0.125rem;\n}\n.dropup .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0;\n  border-right: 0.3em solid transparent;\n  border-bottom: 0.3em solid;\n  border-left: 0.3em solid transparent;\n}\n.dropup .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n\n.dropright .dropdown-menu {\n  top: 0;\n  right: auto;\n  left: 100%;\n  margin-top: 0;\n  margin-left: 0.125rem;\n}\n.dropright .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0.3em solid transparent;\n  border-right: 0;\n  border-bottom: 0.3em solid transparent;\n  border-left: 0.3em solid;\n}\n.dropright .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n.dropright .dropdown-toggle::after {\n  vertical-align: 0;\n}\n\n.dropleft .dropdown-menu {\n  top: 0;\n  right: 100%;\n  left: auto;\n  margin-top: 0;\n  margin-right: 0.125rem;\n}\n.dropleft .dropdown-toggle::after {\n  display: inline-block;\n  margin-left: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n}\n.dropleft .dropdown-toggle::after {\n  display: none;\n}\n.dropleft .dropdown-toggle::before {\n  display: inline-block;\n  margin-right: 0.255em;\n  vertical-align: 0.255em;\n  content: \"\";\n  border-top: 0.3em solid transparent;\n  border-right: 0.3em solid;\n  border-bottom: 0.3em solid transparent;\n}\n.dropleft .dropdown-toggle:empty::after {\n  margin-left: 0;\n}\n.dropleft .dropdown-toggle::before {\n  vertical-align: 0;\n}\n\n.dropdown-menu[x-placement^=top], .dropdown-menu[x-placement^=right], .dropdown-menu[x-placement^=bottom], .dropdown-menu[x-placement^=left] {\n  right: auto;\n  bottom: auto;\n}\n\n.dropdown-divider {\n  height: 0;\n  margin: 0.5rem 0;\n  overflow: hidden;\n  border-top: 1px solid #e9ecef;\n}\n\n.dropdown-item {\n  display: block;\n  width: 100%;\n  padding: 0.25rem 1.5rem;\n  clear: both;\n  font-weight: 400;\n  color: #212529;\n  text-align: inherit;\n  white-space: nowrap;\n  background-color: transparent;\n  border: 0;\n}\n.dropdown-item:hover, .dropdown-item:focus {\n  color: #16181b;\n  text-decoration: none;\n  background-color: #e9ecef;\n}\n.dropdown-item.active, .dropdown-item:active {\n  color: #fff;\n  text-decoration: none;\n  background-color: #007bff;\n}\n.dropdown-item.disabled, .dropdown-item:disabled {\n  color: #adb5bd;\n  pointer-events: none;\n  background-color: transparent;\n}\n\n.dropdown-menu.show {\n  display: block;\n}\n\n.dropdown-header {\n  display: block;\n  padding: 0.5rem 1.5rem;\n  margin-bottom: 0;\n  font-size: 0.875rem;\n  color: #6c757d;\n  white-space: nowrap;\n}\n\n.dropdown-item-text {\n  display: block;\n  padding: 0.25rem 1.5rem;\n  color: #212529;\n}\n\n.btn-group,\n.btn-group-vertical {\n  position: relative;\n  display: inline-flex;\n  vertical-align: middle;\n}\n.btn-group > .btn,\n.btn-group-vertical > .btn {\n  position: relative;\n  flex: 1 1 auto;\n}\n.btn-group > .btn:hover,\n.btn-group-vertical > .btn:hover {\n  z-index: 1;\n}\n.btn-group > .btn:focus, .btn-group > .btn:active, .btn-group > .btn.active,\n.btn-group-vertical > .btn:focus,\n.btn-group-vertical > .btn:active,\n.btn-group-vertical > .btn.active {\n  z-index: 1;\n}\n\n.btn-toolbar {\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-start;\n}\n.btn-toolbar .input-group {\n  width: auto;\n}\n\n.btn-group > .btn:not(:first-child),\n.btn-group > .btn-group:not(:first-child) {\n  margin-left: -1px;\n}\n.btn-group > .btn:not(:last-child):not(.dropdown-toggle),\n.btn-group > .btn-group:not(:last-child) > .btn {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.btn-group > .btn:not(:first-child),\n.btn-group > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n.dropdown-toggle-split {\n  padding-right: 0.5625rem;\n  padding-left: 0.5625rem;\n}\n.dropdown-toggle-split::after, .dropup .dropdown-toggle-split::after, .dropright .dropdown-toggle-split::after {\n  margin-left: 0;\n}\n.dropleft .dropdown-toggle-split::before {\n  margin-right: 0;\n}\n\n.btn-sm + .dropdown-toggle-split, .btn-group-sm > .btn + .dropdown-toggle-split {\n  padding-right: 0.375rem;\n  padding-left: 0.375rem;\n}\n\n.btn-lg + .dropdown-toggle-split, .btn-group-lg > .btn + .dropdown-toggle-split {\n  padding-right: 0.75rem;\n  padding-left: 0.75rem;\n}\n\n.btn-group-vertical {\n  flex-direction: column;\n  align-items: flex-start;\n  justify-content: center;\n}\n.btn-group-vertical > .btn,\n.btn-group-vertical > .btn-group {\n  width: 100%;\n}\n.btn-group-vertical > .btn:not(:first-child),\n.btn-group-vertical > .btn-group:not(:first-child) {\n  margin-top: -1px;\n}\n.btn-group-vertical > .btn:not(:last-child):not(.dropdown-toggle),\n.btn-group-vertical > .btn-group:not(:last-child) > .btn {\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.btn-group-vertical > .btn:not(:first-child),\n.btn-group-vertical > .btn-group:not(:first-child) > .btn {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n.btn-group-toggle > .btn,\n.btn-group-toggle > .btn-group > .btn {\n  margin-bottom: 0;\n}\n.btn-group-toggle > .btn input[type=radio],\n.btn-group-toggle > .btn input[type=checkbox],\n.btn-group-toggle > .btn-group > .btn input[type=radio],\n.btn-group-toggle > .btn-group > .btn input[type=checkbox] {\n  position: absolute;\n  clip: rect(0, 0, 0, 0);\n  pointer-events: none;\n}\n\n.input-group {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: stretch;\n  width: 100%;\n}\n.input-group > .form-control,\n.input-group > .form-control-plaintext,\n.input-group > .custom-select,\n.input-group > .custom-file {\n  position: relative;\n  flex: 1 1 auto;\n  width: 1%;\n  min-width: 0;\n  margin-bottom: 0;\n}\n.input-group > .form-control + .form-control,\n.input-group > .form-control + .custom-select,\n.input-group > .form-control + .custom-file,\n.input-group > .form-control-plaintext + .form-control,\n.input-group > .form-control-plaintext + .custom-select,\n.input-group > .form-control-plaintext + .custom-file,\n.input-group > .custom-select + .form-control,\n.input-group > .custom-select + .custom-select,\n.input-group > .custom-select + .custom-file,\n.input-group > .custom-file + .form-control,\n.input-group > .custom-file + .custom-select,\n.input-group > .custom-file + .custom-file {\n  margin-left: -1px;\n}\n.input-group > .form-control:focus,\n.input-group > .custom-select:focus,\n.input-group > .custom-file .custom-file-input:focus ~ .custom-file-label {\n  z-index: 3;\n}\n.input-group > .custom-file .custom-file-input:focus {\n  z-index: 4;\n}\n.input-group > .form-control:not(:first-child),\n.input-group > .custom-select:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.input-group > .custom-file {\n  display: flex;\n  align-items: center;\n}\n.input-group > .custom-file:not(:last-child) .custom-file-label, .input-group > .custom-file:not(:last-child) .custom-file-label::after {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.input-group > .custom-file:not(:first-child) .custom-file-label {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.input-group:not(.has-validation) > .form-control:not(:last-child),\n.input-group:not(.has-validation) > .custom-select:not(:last-child),\n.input-group:not(.has-validation) > .custom-file:not(:last-child) .custom-file-label,\n.input-group:not(.has-validation) > .custom-file:not(:last-child) .custom-file-label::after {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n.input-group.has-validation > .form-control:nth-last-child(n+3),\n.input-group.has-validation > .custom-select:nth-last-child(n+3),\n.input-group.has-validation > .custom-file:nth-last-child(n+3) .custom-file-label,\n.input-group.has-validation > .custom-file:nth-last-child(n+3) .custom-file-label::after {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.input-group-prepend,\n.input-group-append {\n  display: flex;\n}\n.input-group-prepend .btn,\n.input-group-append .btn {\n  position: relative;\n  z-index: 2;\n}\n.input-group-prepend .btn:focus,\n.input-group-append .btn:focus {\n  z-index: 3;\n}\n.input-group-prepend .btn + .btn,\n.input-group-prepend .btn + .input-group-text,\n.input-group-prepend .input-group-text + .input-group-text,\n.input-group-prepend .input-group-text + .btn,\n.input-group-append .btn + .btn,\n.input-group-append .btn + .input-group-text,\n.input-group-append .input-group-text + .input-group-text,\n.input-group-append .input-group-text + .btn {\n  margin-left: -1px;\n}\n\n.input-group-prepend {\n  margin-right: -1px;\n}\n\n.input-group-append {\n  margin-left: -1px;\n}\n\n.input-group-text {\n  display: flex;\n  align-items: center;\n  padding: 0.375rem 0.75rem;\n  margin-bottom: 0;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  text-align: center;\n  white-space: nowrap;\n  background-color: #e9ecef;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n.input-group-text input[type=radio],\n.input-group-text input[type=checkbox] {\n  margin-top: 0;\n}\n\n.input-group-lg > .form-control:not(textarea),\n.input-group-lg > .custom-select {\n  height: calc(1.5em + 1rem + 2px);\n}\n\n.input-group-lg > .form-control,\n.input-group-lg > .custom-select,\n.input-group-lg > .input-group-prepend > .input-group-text,\n.input-group-lg > .input-group-append > .input-group-text,\n.input-group-lg > .input-group-prepend > .btn,\n.input-group-lg > .input-group-append > .btn {\n  padding: 0.5rem 1rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n  border-radius: 0.3rem;\n}\n\n.input-group-sm > .form-control:not(textarea),\n.input-group-sm > .custom-select {\n  height: calc(1.5em + 0.5rem + 2px);\n}\n\n.input-group-sm > .form-control,\n.input-group-sm > .custom-select,\n.input-group-sm > .input-group-prepend > .input-group-text,\n.input-group-sm > .input-group-append > .input-group-text,\n.input-group-sm > .input-group-prepend > .btn,\n.input-group-sm > .input-group-append > .btn {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n  border-radius: 0.2rem;\n}\n\n.input-group-lg > .custom-select,\n.input-group-sm > .custom-select {\n  padding-right: 1.75rem;\n}\n\n.input-group > .input-group-prepend > .btn,\n.input-group > .input-group-prepend > .input-group-text,\n.input-group:not(.has-validation) > .input-group-append:not(:last-child) > .btn,\n.input-group:not(.has-validation) > .input-group-append:not(:last-child) > .input-group-text,\n.input-group.has-validation > .input-group-append:nth-last-child(n+3) > .btn,\n.input-group.has-validation > .input-group-append:nth-last-child(n+3) > .input-group-text,\n.input-group > .input-group-append:last-child > .btn:not(:last-child):not(.dropdown-toggle),\n.input-group > .input-group-append:last-child > .input-group-text:not(:last-child) {\n  border-top-right-radius: 0;\n  border-bottom-right-radius: 0;\n}\n\n.input-group > .input-group-append > .btn,\n.input-group > .input-group-append > .input-group-text,\n.input-group > .input-group-prepend:not(:first-child) > .btn,\n.input-group > .input-group-prepend:not(:first-child) > .input-group-text,\n.input-group > .input-group-prepend:first-child > .btn:not(:first-child),\n.input-group > .input-group-prepend:first-child > .input-group-text:not(:first-child) {\n  border-top-left-radius: 0;\n  border-bottom-left-radius: 0;\n}\n\n.custom-control {\n  position: relative;\n  z-index: 1;\n  display: block;\n  min-height: 1.5rem;\n  padding-left: 1.5rem;\n  print-color-adjust: exact;\n}\n\n.custom-control-inline {\n  display: inline-flex;\n  margin-right: 1rem;\n}\n\n.custom-control-input {\n  position: absolute;\n  left: 0;\n  z-index: -1;\n  width: 1rem;\n  height: 1.25rem;\n  opacity: 0;\n}\n.custom-control-input:checked ~ .custom-control-label::before {\n  color: #fff;\n  border-color: #007bff;\n  background-color: #007bff;\n}\n.custom-control-input:focus ~ .custom-control-label::before {\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {\n  border-color: #80bdff;\n}\n.custom-control-input:not(:disabled):active ~ .custom-control-label::before {\n  color: #fff;\n  background-color: #b3d7ff;\n  border-color: #b3d7ff;\n}\n.custom-control-input[disabled] ~ .custom-control-label, .custom-control-input:disabled ~ .custom-control-label {\n  color: #6c757d;\n}\n.custom-control-input[disabled] ~ .custom-control-label::before, .custom-control-input:disabled ~ .custom-control-label::before {\n  background-color: #e9ecef;\n}\n\n.custom-control-label {\n  position: relative;\n  margin-bottom: 0;\n  vertical-align: top;\n}\n.custom-control-label::before {\n  position: absolute;\n  top: 0.25rem;\n  left: -1.5rem;\n  display: block;\n  width: 1rem;\n  height: 1rem;\n  pointer-events: none;\n  content: \"\";\n  background-color: #fff;\n  border: 1px solid #adb5bd;\n}\n.custom-control-label::after {\n  position: absolute;\n  top: 0.25rem;\n  left: -1.5rem;\n  display: block;\n  width: 1rem;\n  height: 1rem;\n  content: \"\";\n  background: 50%/50% 50% no-repeat;\n}\n\n.custom-checkbox .custom-control-label::before {\n  border-radius: 0.25rem;\n}\n.custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fff' d='M6.564.75l-3.59 3.612-1.538-1.55L0 4.26l2.974 2.99L8 2.193z'/%3e%3c/svg%3e\");\n}\n.custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::before {\n  border-color: #007bff;\n  background-color: #007bff;\n}\n.custom-checkbox .custom-control-input:indeterminate ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3e%3cpath stroke='%23fff' d='M0 2h4'/%3e%3c/svg%3e\");\n}\n.custom-checkbox .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n.custom-checkbox .custom-control-input:disabled:indeterminate ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n.custom-radio .custom-control-label::before {\n  border-radius: 50%;\n}\n.custom-radio .custom-control-input:checked ~ .custom-control-label::after {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e\");\n}\n.custom-radio .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n.custom-switch {\n  padding-left: 2.25rem;\n}\n.custom-switch .custom-control-label::before {\n  left: -2.25rem;\n  width: 1.75rem;\n  pointer-events: all;\n  border-radius: 0.5rem;\n}\n.custom-switch .custom-control-label::after {\n  top: calc(0.25rem + 2px);\n  left: calc(-2.25rem + 2px);\n  width: calc(1rem - 4px);\n  height: calc(1rem - 4px);\n  background-color: #adb5bd;\n  border-radius: 0.5rem;\n  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .custom-switch .custom-control-label::after {\n    transition: none;\n  }\n}\n.custom-switch .custom-control-input:checked ~ .custom-control-label::after {\n  background-color: #fff;\n  transform: translateX(0.75rem);\n}\n.custom-switch .custom-control-input:disabled:checked ~ .custom-control-label::before {\n  background-color: rgba(0, 123, 255, 0.5);\n}\n\n.custom-select {\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 1.75rem 0.375rem 0.75rem;\n  font-size: 1rem;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  vertical-align: middle;\n  background: #fff url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e\") right 0.75rem center/8px 10px no-repeat;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n  appearance: none;\n}\n.custom-select:focus {\n  border-color: #80bdff;\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-select:focus::-ms-value {\n  color: #495057;\n  background-color: #fff;\n}\n.custom-select[multiple], .custom-select[size]:not([size=\"1\"]) {\n  height: auto;\n  padding-right: 0.75rem;\n  background-image: none;\n}\n.custom-select:disabled {\n  color: #6c757d;\n  background-color: #e9ecef;\n}\n.custom-select::-ms-expand {\n  display: none;\n}\n.custom-select:-moz-focusring {\n  color: transparent;\n  text-shadow: 0 0 0 #495057;\n}\n\n.custom-select-sm {\n  height: calc(1.5em + 0.5rem + 2px);\n  padding-top: 0.25rem;\n  padding-bottom: 0.25rem;\n  padding-left: 0.5rem;\n  font-size: 0.875rem;\n}\n\n.custom-select-lg {\n  height: calc(1.5em + 1rem + 2px);\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n  padding-left: 1rem;\n  font-size: 1.25rem;\n}\n\n.custom-file {\n  position: relative;\n  display: inline-block;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  margin-bottom: 0;\n}\n\n.custom-file-input {\n  position: relative;\n  z-index: 2;\n  width: 100%;\n  height: calc(1.5em + 0.75rem + 2px);\n  margin: 0;\n  overflow: hidden;\n  opacity: 0;\n}\n.custom-file-input:focus ~ .custom-file-label {\n  border-color: #80bdff;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-file-input[disabled] ~ .custom-file-label, .custom-file-input:disabled ~ .custom-file-label {\n  background-color: #e9ecef;\n}\n.custom-file-input:lang(en) ~ .custom-file-label::after {\n  content: \"Browse\";\n}\n.custom-file-input ~ .custom-file-label[data-browse]::after {\n  content: attr(data-browse);\n}\n\n.custom-file-label {\n  position: absolute;\n  top: 0;\n  right: 0;\n  left: 0;\n  z-index: 1;\n  height: calc(1.5em + 0.75rem + 2px);\n  padding: 0.375rem 0.75rem;\n  overflow: hidden;\n  font-weight: 400;\n  line-height: 1.5;\n  color: #495057;\n  background-color: #fff;\n  border: 1px solid #ced4da;\n  border-radius: 0.25rem;\n}\n.custom-file-label::after {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  z-index: 3;\n  display: block;\n  height: calc(1.5em + 0.75rem);\n  padding: 0.375rem 0.75rem;\n  line-height: 1.5;\n  color: #495057;\n  content: \"Browse\";\n  background-color: #e9ecef;\n  border-left: inherit;\n  border-radius: 0 0.25rem 0.25rem 0;\n}\n\n.custom-range {\n  width: 100%;\n  height: 1.4rem;\n  padding: 0;\n  background-color: transparent;\n  appearance: none;\n}\n.custom-range:focus {\n  outline: 0;\n}\n.custom-range:focus::-webkit-slider-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-range:focus::-moz-range-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-range:focus::-ms-thumb {\n  box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n.custom-range::-moz-focus-outer {\n  border: 0;\n}\n.custom-range::-webkit-slider-thumb {\n  width: 1rem;\n  height: 1rem;\n  margin-top: -0.25rem;\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  appearance: none;\n}\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-webkit-slider-thumb {\n    transition: none;\n  }\n}\n.custom-range::-webkit-slider-thumb:active {\n  background-color: #b3d7ff;\n}\n.custom-range::-webkit-slider-runnable-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n  cursor: pointer;\n  background-color: #dee2e6;\n  border-color: transparent;\n  border-radius: 1rem;\n}\n.custom-range::-moz-range-thumb {\n  width: 1rem;\n  height: 1rem;\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  appearance: none;\n}\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-moz-range-thumb {\n    transition: none;\n  }\n}\n.custom-range::-moz-range-thumb:active {\n  background-color: #b3d7ff;\n}\n.custom-range::-moz-range-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n  cursor: pointer;\n  background-color: #dee2e6;\n  border-color: transparent;\n  border-radius: 1rem;\n}\n.custom-range::-ms-thumb {\n  width: 1rem;\n  height: 1rem;\n  margin-top: 0;\n  margin-right: 0.2rem;\n  margin-left: 0.2rem;\n  background-color: #007bff;\n  border: 0;\n  border-radius: 1rem;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n  appearance: none;\n}\n@media (prefers-reduced-motion: reduce) {\n  .custom-range::-ms-thumb {\n    transition: none;\n  }\n}\n.custom-range::-ms-thumb:active {\n  background-color: #b3d7ff;\n}\n.custom-range::-ms-track {\n  width: 100%;\n  height: 0.5rem;\n  color: transparent;\n  cursor: pointer;\n  background-color: transparent;\n  border-color: transparent;\n  border-width: 0.5rem;\n}\n.custom-range::-ms-fill-lower {\n  background-color: #dee2e6;\n  border-radius: 1rem;\n}\n.custom-range::-ms-fill-upper {\n  margin-right: 15px;\n  background-color: #dee2e6;\n  border-radius: 1rem;\n}\n.custom-range:disabled::-webkit-slider-thumb {\n  background-color: #adb5bd;\n}\n.custom-range:disabled::-webkit-slider-runnable-track {\n  cursor: default;\n}\n.custom-range:disabled::-moz-range-thumb {\n  background-color: #adb5bd;\n}\n.custom-range:disabled::-moz-range-track {\n  cursor: default;\n}\n.custom-range:disabled::-ms-thumb {\n  background-color: #adb5bd;\n}\n\n.custom-control-label::before,\n.custom-file-label,\n.custom-select {\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .custom-control-label::before,\n  .custom-file-label,\n  .custom-select {\n    transition: none;\n  }\n}\n\n.nav {\n  display: flex;\n  flex-wrap: wrap;\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none;\n}\n\n.nav-link {\n  display: block;\n  padding: 0.5rem 1rem;\n}\n.nav-link:hover, .nav-link:focus {\n  text-decoration: none;\n}\n.nav-link.disabled {\n  color: #6c757d;\n  pointer-events: none;\n  cursor: default;\n}\n\n.nav-tabs {\n  border-bottom: 1px solid #dee2e6;\n}\n.nav-tabs .nav-link {\n  margin-bottom: -1px;\n  background-color: transparent;\n  border: 1px solid transparent;\n  border-top-left-radius: 0.25rem;\n  border-top-right-radius: 0.25rem;\n}\n.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {\n  isolation: isolate;\n  border-color: #e9ecef #e9ecef #dee2e6;\n}\n.nav-tabs .nav-link.disabled {\n  color: #6c757d;\n  background-color: transparent;\n  border-color: transparent;\n}\n.nav-tabs .nav-link.active,\n.nav-tabs .nav-item.show .nav-link {\n  color: #495057;\n  background-color: #fff;\n  border-color: #dee2e6 #dee2e6 #fff;\n}\n.nav-tabs .dropdown-menu {\n  margin-top: -1px;\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n\n.nav-pills .nav-link {\n  background: none;\n  border: 0;\n  border-radius: 0.25rem;\n}\n.nav-pills .nav-link.active,\n.nav-pills .show > .nav-link {\n  color: #fff;\n  background-color: #007bff;\n}\n\n.nav-fill > .nav-link,\n.nav-fill .nav-item {\n  flex: 1 1 auto;\n  text-align: center;\n}\n\n.nav-justified > .nav-link,\n.nav-justified .nav-item {\n  flex-basis: 0;\n  flex-grow: 1;\n  text-align: center;\n}\n\n.tab-content > .tab-pane {\n  display: none;\n}\n.tab-content > .active {\n  display: block;\n}\n\n.navbar {\n  position: relative;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0.5rem 1rem;\n}\n.navbar .container,\n.navbar .container-fluid,\n.navbar .container-sm,\n.navbar .container-md,\n.navbar .container-lg,\n.navbar .container-xl {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n}\n.navbar-brand {\n  display: inline-block;\n  padding-top: 0.3125rem;\n  padding-bottom: 0.3125rem;\n  margin-right: 1rem;\n  font-size: 1.25rem;\n  line-height: inherit;\n  white-space: nowrap;\n}\n.navbar-brand:hover, .navbar-brand:focus {\n  text-decoration: none;\n}\n\n.navbar-nav {\n  display: flex;\n  flex-direction: column;\n  padding-left: 0;\n  margin-bottom: 0;\n  list-style: none;\n}\n.navbar-nav .nav-link {\n  padding-right: 0;\n  padding-left: 0;\n}\n.navbar-nav .dropdown-menu {\n  position: static;\n  float: none;\n}\n\n.navbar-text {\n  display: inline-block;\n  padding-top: 0.5rem;\n  padding-bottom: 0.5rem;\n}\n\n.navbar-collapse {\n  flex-basis: 100%;\n  flex-grow: 1;\n  align-items: center;\n}\n\n.navbar-toggler {\n  padding: 0.25rem 0.75rem;\n  font-size: 1.25rem;\n  line-height: 1;\n  background-color: transparent;\n  border: 1px solid transparent;\n  border-radius: 0.25rem;\n}\n.navbar-toggler:hover, .navbar-toggler:focus {\n  text-decoration: none;\n}\n\n.navbar-toggler-icon {\n  display: inline-block;\n  width: 1.5em;\n  height: 1.5em;\n  vertical-align: middle;\n  content: \"\";\n  background: 50%/100% 100% no-repeat;\n}\n\n.navbar-nav-scroll {\n  max-height: 75vh;\n  overflow-y: auto;\n}\n\n@media (max-width: 575.98px) {\n  .navbar-expand-sm > .container,\n  .navbar-expand-sm > .container-fluid,\n  .navbar-expand-sm > .container-sm,\n  .navbar-expand-sm > .container-md,\n  .navbar-expand-sm > .container-lg,\n  .navbar-expand-sm > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n@media (min-width: 576px) {\n  .navbar-expand-sm {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n  .navbar-expand-sm .navbar-nav {\n    flex-direction: row;\n  }\n  .navbar-expand-sm .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n  .navbar-expand-sm .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n  .navbar-expand-sm > .container,\n  .navbar-expand-sm > .container-fluid,\n  .navbar-expand-sm > .container-sm,\n  .navbar-expand-sm > .container-md,\n  .navbar-expand-sm > .container-lg,\n  .navbar-expand-sm > .container-xl {\n    flex-wrap: nowrap;\n  }\n  .navbar-expand-sm .navbar-nav-scroll {\n    overflow: visible;\n  }\n  .navbar-expand-sm .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n  .navbar-expand-sm .navbar-toggler {\n    display: none;\n  }\n}\n@media (max-width: 767.98px) {\n  .navbar-expand-md > .container,\n  .navbar-expand-md > .container-fluid,\n  .navbar-expand-md > .container-sm,\n  .navbar-expand-md > .container-md,\n  .navbar-expand-md > .container-lg,\n  .navbar-expand-md > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n@media (min-width: 768px) {\n  .navbar-expand-md {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n  .navbar-expand-md .navbar-nav {\n    flex-direction: row;\n  }\n  .navbar-expand-md .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n  .navbar-expand-md .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n  .navbar-expand-md > .container,\n  .navbar-expand-md > .container-fluid,\n  .navbar-expand-md > .container-sm,\n  .navbar-expand-md > .container-md,\n  .navbar-expand-md > .container-lg,\n  .navbar-expand-md > .container-xl {\n    flex-wrap: nowrap;\n  }\n  .navbar-expand-md .navbar-nav-scroll {\n    overflow: visible;\n  }\n  .navbar-expand-md .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n  .navbar-expand-md .navbar-toggler {\n    display: none;\n  }\n}\n@media (max-width: 991.98px) {\n  .navbar-expand-lg > .container,\n  .navbar-expand-lg > .container-fluid,\n  .navbar-expand-lg > .container-sm,\n  .navbar-expand-lg > .container-md,\n  .navbar-expand-lg > .container-lg,\n  .navbar-expand-lg > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n@media (min-width: 992px) {\n  .navbar-expand-lg {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n  .navbar-expand-lg .navbar-nav {\n    flex-direction: row;\n  }\n  .navbar-expand-lg .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n  .navbar-expand-lg .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n  .navbar-expand-lg > .container,\n  .navbar-expand-lg > .container-fluid,\n  .navbar-expand-lg > .container-sm,\n  .navbar-expand-lg > .container-md,\n  .navbar-expand-lg > .container-lg,\n  .navbar-expand-lg > .container-xl {\n    flex-wrap: nowrap;\n  }\n  .navbar-expand-lg .navbar-nav-scroll {\n    overflow: visible;\n  }\n  .navbar-expand-lg .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n  .navbar-expand-lg .navbar-toggler {\n    display: none;\n  }\n}\n@media (max-width: 1199.98px) {\n  .navbar-expand-xl > .container,\n  .navbar-expand-xl > .container-fluid,\n  .navbar-expand-xl > .container-sm,\n  .navbar-expand-xl > .container-md,\n  .navbar-expand-xl > .container-lg,\n  .navbar-expand-xl > .container-xl {\n    padding-right: 0;\n    padding-left: 0;\n  }\n}\n@media (min-width: 1200px) {\n  .navbar-expand-xl {\n    flex-flow: row nowrap;\n    justify-content: flex-start;\n  }\n  .navbar-expand-xl .navbar-nav {\n    flex-direction: row;\n  }\n  .navbar-expand-xl .navbar-nav .dropdown-menu {\n    position: absolute;\n  }\n  .navbar-expand-xl .navbar-nav .nav-link {\n    padding-right: 0.5rem;\n    padding-left: 0.5rem;\n  }\n  .navbar-expand-xl > .container,\n  .navbar-expand-xl > .container-fluid,\n  .navbar-expand-xl > .container-sm,\n  .navbar-expand-xl > .container-md,\n  .navbar-expand-xl > .container-lg,\n  .navbar-expand-xl > .container-xl {\n    flex-wrap: nowrap;\n  }\n  .navbar-expand-xl .navbar-nav-scroll {\n    overflow: visible;\n  }\n  .navbar-expand-xl .navbar-collapse {\n    display: flex !important;\n    flex-basis: auto;\n  }\n  .navbar-expand-xl .navbar-toggler {\n    display: none;\n  }\n}\n.navbar-expand {\n  flex-flow: row nowrap;\n  justify-content: flex-start;\n}\n.navbar-expand > .container,\n.navbar-expand > .container-fluid,\n.navbar-expand > .container-sm,\n.navbar-expand > .container-md,\n.navbar-expand > .container-lg,\n.navbar-expand > .container-xl {\n  padding-right: 0;\n  padding-left: 0;\n}\n.navbar-expand .navbar-nav {\n  flex-direction: row;\n}\n.navbar-expand .navbar-nav .dropdown-menu {\n  position: absolute;\n}\n.navbar-expand .navbar-nav .nav-link {\n  padding-right: 0.5rem;\n  padding-left: 0.5rem;\n}\n.navbar-expand > .container,\n.navbar-expand > .container-fluid,\n.navbar-expand > .container-sm,\n.navbar-expand > .container-md,\n.navbar-expand > .container-lg,\n.navbar-expand > .container-xl {\n  flex-wrap: nowrap;\n}\n.navbar-expand .navbar-nav-scroll {\n  overflow: visible;\n}\n.navbar-expand .navbar-collapse {\n  display: flex !important;\n  flex-basis: auto;\n}\n.navbar-expand .navbar-toggler {\n  display: none;\n}\n\n.navbar-light .navbar-brand {\n  color: rgba(0, 0, 0, 0.9);\n}\n.navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {\n  color: rgba(0, 0, 0, 0.9);\n}\n.navbar-light .navbar-nav .nav-link {\n  color: rgba(0, 0, 0, 0.5);\n}\n.navbar-light .navbar-nav .nav-link:hover, .navbar-light .navbar-nav .nav-link:focus {\n  color: rgba(0, 0, 0, 0.7);\n}\n.navbar-light .navbar-nav .nav-link.disabled {\n  color: rgba(0, 0, 0, 0.3);\n}\n.navbar-light .navbar-nav .show > .nav-link,\n.navbar-light .navbar-nav .active > .nav-link,\n.navbar-light .navbar-nav .nav-link.show,\n.navbar-light .navbar-nav .nav-link.active {\n  color: rgba(0, 0, 0, 0.9);\n}\n.navbar-light .navbar-toggler {\n  color: rgba(0, 0, 0, 0.5);\n  border-color: rgba(0, 0, 0, 0.1);\n}\n.navbar-light .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 0, 0, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\");\n}\n.navbar-light .navbar-text {\n  color: rgba(0, 0, 0, 0.5);\n}\n.navbar-light .navbar-text a {\n  color: rgba(0, 0, 0, 0.9);\n}\n.navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {\n  color: rgba(0, 0, 0, 0.9);\n}\n\n.navbar-dark .navbar-brand {\n  color: #fff;\n}\n.navbar-dark .navbar-brand:hover, .navbar-dark .navbar-brand:focus {\n  color: #fff;\n}\n.navbar-dark .navbar-nav .nav-link {\n  color: rgba(255, 255, 255, 0.5);\n}\n.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {\n  color: rgba(255, 255, 255, 0.75);\n}\n.navbar-dark .navbar-nav .nav-link.disabled {\n  color: rgba(255, 255, 255, 0.25);\n}\n.navbar-dark .navbar-nav .show > .nav-link,\n.navbar-dark .navbar-nav .active > .nav-link,\n.navbar-dark .navbar-nav .nav-link.show,\n.navbar-dark .navbar-nav .nav-link.active {\n  color: #fff;\n}\n.navbar-dark .navbar-toggler {\n  color: rgba(255, 255, 255, 0.5);\n  border-color: rgba(255, 255, 255, 0.1);\n}\n.navbar-dark .navbar-toggler-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e\");\n}\n.navbar-dark .navbar-text {\n  color: rgba(255, 255, 255, 0.5);\n}\n.navbar-dark .navbar-text a {\n  color: #fff;\n}\n.navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {\n  color: #fff;\n}\n\n.card {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  word-wrap: break-word;\n  background-color: #fff;\n  background-clip: border-box;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n  border-radius: 0.25rem;\n}\n.card > hr {\n  margin-right: 0;\n  margin-left: 0;\n}\n.card > .list-group {\n  border-top: inherit;\n  border-bottom: inherit;\n}\n.card > .list-group:first-child {\n  border-top-width: 0;\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px);\n}\n.card > .list-group:last-child {\n  border-bottom-width: 0;\n  border-bottom-right-radius: calc(0.25rem - 1px);\n  border-bottom-left-radius: calc(0.25rem - 1px);\n}\n.card > .card-header + .list-group,\n.card > .list-group + .card-footer {\n  border-top: 0;\n}\n\n.card-body {\n  flex: 1 1 auto;\n  min-height: 1px;\n  padding: 1.25rem;\n}\n\n.card-title {\n  margin-bottom: 0.75rem;\n}\n\n.card-subtitle {\n  margin-top: -0.375rem;\n  margin-bottom: 0;\n}\n\n.card-text:last-child {\n  margin-bottom: 0;\n}\n\n.card-link:hover {\n  text-decoration: none;\n}\n.card-link + .card-link {\n  margin-left: 1.25rem;\n}\n\n.card-header {\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 0;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-bottom: 1px solid rgba(0, 0, 0, 0.125);\n}\n.card-header:first-child {\n  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;\n}\n\n.card-footer {\n  padding: 0.75rem 1.25rem;\n  background-color: rgba(0, 0, 0, 0.03);\n  border-top: 1px solid rgba(0, 0, 0, 0.125);\n}\n.card-footer:last-child {\n  border-radius: 0 0 calc(0.25rem - 1px) calc(0.25rem - 1px);\n}\n\n.card-header-tabs {\n  margin-right: -0.625rem;\n  margin-bottom: -0.75rem;\n  margin-left: -0.625rem;\n  border-bottom: 0;\n}\n\n.card-header-pills {\n  margin-right: -0.625rem;\n  margin-left: -0.625rem;\n}\n\n.card-img-overlay {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  padding: 1.25rem;\n  border-radius: calc(0.25rem - 1px);\n}\n\n.card-img,\n.card-img-top,\n.card-img-bottom {\n  flex-shrink: 0;\n  width: 100%;\n}\n\n.card-img,\n.card-img-top {\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px);\n}\n\n.card-img,\n.card-img-bottom {\n  border-bottom-right-radius: calc(0.25rem - 1px);\n  border-bottom-left-radius: calc(0.25rem - 1px);\n}\n\n.card-deck .card {\n  margin-bottom: 15px;\n}\n@media (min-width: 576px) {\n  .card-deck {\n    display: flex;\n    flex-flow: row wrap;\n    margin-right: -15px;\n    margin-left: -15px;\n  }\n  .card-deck .card {\n    flex: 1 0 0%;\n    margin-right: 15px;\n    margin-bottom: 0;\n    margin-left: 15px;\n  }\n}\n\n.card-group > .card {\n  margin-bottom: 15px;\n}\n@media (min-width: 576px) {\n  .card-group {\n    display: flex;\n    flex-flow: row wrap;\n  }\n  .card-group > .card {\n    flex: 1 0 0%;\n    margin-bottom: 0;\n  }\n  .card-group > .card + .card {\n    margin-left: 0;\n    border-left: 0;\n  }\n  .card-group > .card:not(:last-child) {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n  }\n  .card-group > .card:not(:last-child) .card-img-top,\n  .card-group > .card:not(:last-child) .card-header {\n    border-top-right-radius: 0;\n  }\n  .card-group > .card:not(:last-child) .card-img-bottom,\n  .card-group > .card:not(:last-child) .card-footer {\n    border-bottom-right-radius: 0;\n  }\n  .card-group > .card:not(:first-child) {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n  }\n  .card-group > .card:not(:first-child) .card-img-top,\n  .card-group > .card:not(:first-child) .card-header {\n    border-top-left-radius: 0;\n  }\n  .card-group > .card:not(:first-child) .card-img-bottom,\n  .card-group > .card:not(:first-child) .card-footer {\n    border-bottom-left-radius: 0;\n  }\n}\n\n.card-columns .card {\n  margin-bottom: 0.75rem;\n}\n@media (min-width: 576px) {\n  .card-columns {\n    column-count: 3;\n    column-gap: 1.25rem;\n    orphans: 1;\n    widows: 1;\n  }\n  .card-columns .card {\n    display: inline-block;\n    width: 100%;\n  }\n}\n\n.accordion {\n  overflow-anchor: none;\n}\n.accordion > .card {\n  overflow: hidden;\n}\n.accordion > .card:not(:last-of-type) {\n  border-bottom: 0;\n  border-bottom-right-radius: 0;\n  border-bottom-left-radius: 0;\n}\n.accordion > .card:not(:first-of-type) {\n  border-top-left-radius: 0;\n  border-top-right-radius: 0;\n}\n.accordion > .card > .card-header {\n  border-radius: 0;\n  margin-bottom: -1px;\n}\n\n.breadcrumb {\n  display: flex;\n  flex-wrap: wrap;\n  padding: 0.75rem 1rem;\n  margin-bottom: 1rem;\n  list-style: none;\n  background-color: #e9ecef;\n  border-radius: 0.25rem;\n}\n\n.breadcrumb-item + .breadcrumb-item {\n  padding-left: 0.5rem;\n}\n.breadcrumb-item + .breadcrumb-item::before {\n  float: left;\n  padding-right: 0.5rem;\n  color: #6c757d;\n  content: \"/\";\n}\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: underline;\n}\n.breadcrumb-item + .breadcrumb-item:hover::before {\n  text-decoration: none;\n}\n.breadcrumb-item.active {\n  color: #6c757d;\n}\n\n.pagination {\n  display: flex;\n  padding-left: 0;\n  list-style: none;\n  border-radius: 0.25rem;\n}\n\n.page-link {\n  position: relative;\n  display: block;\n  padding: 0.5rem 0.75rem;\n  margin-left: -1px;\n  line-height: 1.25;\n  color: #007bff;\n  background-color: #fff;\n  border: 1px solid #dee2e6;\n}\n.page-link:hover {\n  z-index: 2;\n  color: #0056b3;\n  text-decoration: none;\n  background-color: #e9ecef;\n  border-color: #dee2e6;\n}\n.page-link:focus {\n  z-index: 3;\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);\n}\n\n.page-item:first-child .page-link {\n  margin-left: 0;\n  border-top-left-radius: 0.25rem;\n  border-bottom-left-radius: 0.25rem;\n}\n.page-item:last-child .page-link {\n  border-top-right-radius: 0.25rem;\n  border-bottom-right-radius: 0.25rem;\n}\n.page-item.active .page-link {\n  z-index: 3;\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.page-item.disabled .page-link {\n  color: #6c757d;\n  pointer-events: none;\n  cursor: auto;\n  background-color: #fff;\n  border-color: #dee2e6;\n}\n\n.pagination-lg .page-link {\n  padding: 0.75rem 1.5rem;\n  font-size: 1.25rem;\n  line-height: 1.5;\n}\n.pagination-lg .page-item:first-child .page-link {\n  border-top-left-radius: 0.3rem;\n  border-bottom-left-radius: 0.3rem;\n}\n.pagination-lg .page-item:last-child .page-link {\n  border-top-right-radius: 0.3rem;\n  border-bottom-right-radius: 0.3rem;\n}\n\n.pagination-sm .page-link {\n  padding: 0.25rem 0.5rem;\n  font-size: 0.875rem;\n  line-height: 1.5;\n}\n.pagination-sm .page-item:first-child .page-link {\n  border-top-left-radius: 0.2rem;\n  border-bottom-left-radius: 0.2rem;\n}\n.pagination-sm .page-item:last-child .page-link {\n  border-top-right-radius: 0.2rem;\n  border-bottom-right-radius: 0.2rem;\n}\n\n.badge {\n  display: inline-block;\n  padding: 0.25em 0.4em;\n  font-size: 75%;\n  font-weight: 700;\n  line-height: 1;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: baseline;\n  border-radius: 0.25rem;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .badge {\n    transition: none;\n  }\n}\na.badge:hover, a.badge:focus {\n  text-decoration: none;\n}\n\n.badge:empty {\n  display: none;\n}\n\n.btn .badge {\n  position: relative;\n  top: -1px;\n}\n\n.badge-pill {\n  padding-right: 0.6em;\n  padding-left: 0.6em;\n  border-radius: 10rem;\n}\n\n.badge-primary {\n  color: #fff;\n  background-color: #007bff;\n}\na.badge-primary:hover, a.badge-primary:focus {\n  color: #fff;\n  background-color: #0062cc;\n}\na.badge-primary:focus, a.badge-primary.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);\n}\n\n.badge-secondary {\n  color: #fff;\n  background-color: #6c757d;\n}\na.badge-secondary:hover, a.badge-secondary:focus {\n  color: #fff;\n  background-color: #545b62;\n}\na.badge-secondary:focus, a.badge-secondary.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.5);\n}\n\n.badge-success {\n  color: #fff;\n  background-color: #28a745;\n}\na.badge-success:hover, a.badge-success:focus {\n  color: #fff;\n  background-color: #1e7e34;\n}\na.badge-success:focus, a.badge-success.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);\n}\n\n.badge-info {\n  color: #fff;\n  background-color: #17a2b8;\n}\na.badge-info:hover, a.badge-info:focus {\n  color: #fff;\n  background-color: #117a8b;\n}\na.badge-info:focus, a.badge-info.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.5);\n}\n\n.badge-warning {\n  color: #212529;\n  background-color: #ffc107;\n}\na.badge-warning:hover, a.badge-warning:focus {\n  color: #212529;\n  background-color: #d39e00;\n}\na.badge-warning:focus, a.badge-warning.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);\n}\n\n.badge-danger {\n  color: #fff;\n  background-color: #dc3545;\n}\na.badge-danger:hover, a.badge-danger:focus {\n  color: #fff;\n  background-color: #bd2130;\n}\na.badge-danger:focus, a.badge-danger.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.5);\n}\n\n.badge-light {\n  color: #212529;\n  background-color: #f8f9fa;\n}\na.badge-light:hover, a.badge-light:focus {\n  color: #212529;\n  background-color: #dae0e5;\n}\na.badge-light:focus, a.badge-light.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(248, 249, 250, 0.5);\n}\n\n.badge-dark {\n  color: #fff;\n  background-color: #343a40;\n}\na.badge-dark:hover, a.badge-dark:focus {\n  color: #fff;\n  background-color: #1d2124;\n}\na.badge-dark:focus, a.badge-dark.focus {\n  outline: 0;\n  box-shadow: 0 0 0 0.2rem rgba(52, 58, 64, 0.5);\n}\n\n.jumbotron {\n  padding: 2rem 1rem;\n  margin-bottom: 2rem;\n  background-color: #e9ecef;\n  border-radius: 0.3rem;\n}\n@media (min-width: 576px) {\n  .jumbotron {\n    padding: 4rem 2rem;\n  }\n}\n\n.jumbotron-fluid {\n  padding-right: 0;\n  padding-left: 0;\n  border-radius: 0;\n}\n\n.alert {\n  position: relative;\n  padding: 0.75rem 1.25rem;\n  margin-bottom: 1rem;\n  border: 1px solid transparent;\n  border-radius: 0.25rem;\n}\n\n.alert-heading {\n  color: inherit;\n}\n\n.alert-link {\n  font-weight: 700;\n}\n\n.alert-dismissible {\n  padding-right: 4rem;\n}\n.alert-dismissible .close {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 2;\n  padding: 0.75rem 1.25rem;\n  color: inherit;\n}\n\n.alert-primary {\n  color: #004085;\n  background-color: #cce5ff;\n  border-color: #b8daff;\n}\n.alert-primary hr {\n  border-top-color: #9fcdff;\n}\n.alert-primary .alert-link {\n  color: #002752;\n}\n\n.alert-secondary {\n  color: #383d41;\n  background-color: #e2e3e5;\n  border-color: #d6d8db;\n}\n.alert-secondary hr {\n  border-top-color: #c8cbcf;\n}\n.alert-secondary .alert-link {\n  color: #202326;\n}\n\n.alert-success {\n  color: #155724;\n  background-color: #d4edda;\n  border-color: #c3e6cb;\n}\n.alert-success hr {\n  border-top-color: #b1dfbb;\n}\n.alert-success .alert-link {\n  color: #0b2e13;\n}\n\n.alert-info {\n  color: #0c5460;\n  background-color: #d1ecf1;\n  border-color: #bee5eb;\n}\n.alert-info hr {\n  border-top-color: #abdde5;\n}\n.alert-info .alert-link {\n  color: #062c33;\n}\n\n.alert-warning {\n  color: #856404;\n  background-color: #fff3cd;\n  border-color: #ffeeba;\n}\n.alert-warning hr {\n  border-top-color: #ffe8a1;\n}\n.alert-warning .alert-link {\n  color: #533f03;\n}\n\n.alert-danger {\n  color: #721c24;\n  background-color: #f8d7da;\n  border-color: #f5c6cb;\n}\n.alert-danger hr {\n  border-top-color: #f1b0b7;\n}\n.alert-danger .alert-link {\n  color: #491217;\n}\n\n.alert-light {\n  color: #818182;\n  background-color: #fefefe;\n  border-color: #fdfdfe;\n}\n.alert-light hr {\n  border-top-color: #ececf6;\n}\n.alert-light .alert-link {\n  color: #686868;\n}\n\n.alert-dark {\n  color: #1b1e21;\n  background-color: #d6d8d9;\n  border-color: #c6c8ca;\n}\n.alert-dark hr {\n  border-top-color: #b9bbbe;\n}\n.alert-dark .alert-link {\n  color: #040505;\n}\n\n@keyframes progress-bar-stripes {\n  from {\n    background-position: 1rem 0;\n  }\n  to {\n    background-position: 0 0;\n  }\n}\n.progress {\n  display: flex;\n  height: 1rem;\n  overflow: hidden;\n  line-height: 0;\n  font-size: 0.75rem;\n  background-color: #e9ecef;\n  border-radius: 0.25rem;\n}\n\n.progress-bar {\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  overflow: hidden;\n  color: #fff;\n  text-align: center;\n  white-space: nowrap;\n  background-color: #007bff;\n  transition: width 0.6s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .progress-bar {\n    transition: none;\n  }\n}\n\n.progress-bar-striped {\n  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);\n  background-size: 1rem 1rem;\n}\n\n.progress-bar-animated {\n  animation: 1s linear infinite progress-bar-stripes;\n}\n@media (prefers-reduced-motion: reduce) {\n  .progress-bar-animated {\n    animation: none;\n  }\n}\n\n.media {\n  display: flex;\n  align-items: flex-start;\n}\n\n.media-body {\n  flex: 1;\n}\n\n.list-group {\n  display: flex;\n  flex-direction: column;\n  padding-left: 0;\n  margin-bottom: 0;\n  border-radius: 0.25rem;\n}\n\n.list-group-item-action {\n  width: 100%;\n  color: #495057;\n  text-align: inherit;\n}\n.list-group-item-action:hover, .list-group-item-action:focus {\n  z-index: 1;\n  color: #495057;\n  text-decoration: none;\n  background-color: #f8f9fa;\n}\n.list-group-item-action:active {\n  color: #212529;\n  background-color: #e9ecef;\n}\n\n.list-group-item {\n  position: relative;\n  display: block;\n  padding: 0.75rem 1.25rem;\n  background-color: #fff;\n  border: 1px solid rgba(0, 0, 0, 0.125);\n}\n.list-group-item:first-child {\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n}\n.list-group-item:last-child {\n  border-bottom-right-radius: inherit;\n  border-bottom-left-radius: inherit;\n}\n.list-group-item.disabled, .list-group-item:disabled {\n  color: #6c757d;\n  pointer-events: none;\n  background-color: #fff;\n}\n.list-group-item.active {\n  z-index: 2;\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n.list-group-item + .list-group-item {\n  border-top-width: 0;\n}\n.list-group-item + .list-group-item.active {\n  margin-top: -1px;\n  border-top-width: 1px;\n}\n\n.list-group-horizontal {\n  flex-direction: row;\n}\n.list-group-horizontal > .list-group-item:first-child {\n  border-bottom-left-radius: 0.25rem;\n  border-top-right-radius: 0;\n}\n.list-group-horizontal > .list-group-item:last-child {\n  border-top-right-radius: 0.25rem;\n  border-bottom-left-radius: 0;\n}\n.list-group-horizontal > .list-group-item.active {\n  margin-top: 0;\n}\n.list-group-horizontal > .list-group-item + .list-group-item {\n  border-top-width: 1px;\n  border-left-width: 0;\n}\n.list-group-horizontal > .list-group-item + .list-group-item.active {\n  margin-left: -1px;\n  border-left-width: 1px;\n}\n\n@media (min-width: 576px) {\n  .list-group-horizontal-sm {\n    flex-direction: row;\n  }\n  .list-group-horizontal-sm > .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n  .list-group-horizontal-sm > .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n  .list-group-horizontal-sm > .list-group-item.active {\n    margin-top: 0;\n  }\n  .list-group-horizontal-sm > .list-group-item + .list-group-item {\n    border-top-width: 1px;\n    border-left-width: 0;\n  }\n  .list-group-horizontal-sm > .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n}\n@media (min-width: 768px) {\n  .list-group-horizontal-md {\n    flex-direction: row;\n  }\n  .list-group-horizontal-md > .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n  .list-group-horizontal-md > .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n  .list-group-horizontal-md > .list-group-item.active {\n    margin-top: 0;\n  }\n  .list-group-horizontal-md > .list-group-item + .list-group-item {\n    border-top-width: 1px;\n    border-left-width: 0;\n  }\n  .list-group-horizontal-md > .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n}\n@media (min-width: 992px) {\n  .list-group-horizontal-lg {\n    flex-direction: row;\n  }\n  .list-group-horizontal-lg > .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n  .list-group-horizontal-lg > .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n  .list-group-horizontal-lg > .list-group-item.active {\n    margin-top: 0;\n  }\n  .list-group-horizontal-lg > .list-group-item + .list-group-item {\n    border-top-width: 1px;\n    border-left-width: 0;\n  }\n  .list-group-horizontal-lg > .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n}\n@media (min-width: 1200px) {\n  .list-group-horizontal-xl {\n    flex-direction: row;\n  }\n  .list-group-horizontal-xl > .list-group-item:first-child {\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: 0;\n  }\n  .list-group-horizontal-xl > .list-group-item:last-child {\n    border-top-right-radius: 0.25rem;\n    border-bottom-left-radius: 0;\n  }\n  .list-group-horizontal-xl > .list-group-item.active {\n    margin-top: 0;\n  }\n  .list-group-horizontal-xl > .list-group-item + .list-group-item {\n    border-top-width: 1px;\n    border-left-width: 0;\n  }\n  .list-group-horizontal-xl > .list-group-item + .list-group-item.active {\n    margin-left: -1px;\n    border-left-width: 1px;\n  }\n}\n.list-group-flush {\n  border-radius: 0;\n}\n.list-group-flush > .list-group-item {\n  border-width: 0 0 1px;\n}\n.list-group-flush > .list-group-item:last-child {\n  border-bottom-width: 0;\n}\n\n.list-group-item-primary {\n  color: #004085;\n  background-color: #b8daff;\n}\n.list-group-item-primary.list-group-item-action:hover, .list-group-item-primary.list-group-item-action:focus {\n  color: #004085;\n  background-color: #9fcdff;\n}\n.list-group-item-primary.list-group-item-action.active {\n  color: #fff;\n  background-color: #004085;\n  border-color: #004085;\n}\n\n.list-group-item-secondary {\n  color: #383d41;\n  background-color: #d6d8db;\n}\n.list-group-item-secondary.list-group-item-action:hover, .list-group-item-secondary.list-group-item-action:focus {\n  color: #383d41;\n  background-color: #c8cbcf;\n}\n.list-group-item-secondary.list-group-item-action.active {\n  color: #fff;\n  background-color: #383d41;\n  border-color: #383d41;\n}\n\n.list-group-item-success {\n  color: #155724;\n  background-color: #c3e6cb;\n}\n.list-group-item-success.list-group-item-action:hover, .list-group-item-success.list-group-item-action:focus {\n  color: #155724;\n  background-color: #b1dfbb;\n}\n.list-group-item-success.list-group-item-action.active {\n  color: #fff;\n  background-color: #155724;\n  border-color: #155724;\n}\n\n.list-group-item-info {\n  color: #0c5460;\n  background-color: #bee5eb;\n}\n.list-group-item-info.list-group-item-action:hover, .list-group-item-info.list-group-item-action:focus {\n  color: #0c5460;\n  background-color: #abdde5;\n}\n.list-group-item-info.list-group-item-action.active {\n  color: #fff;\n  background-color: #0c5460;\n  border-color: #0c5460;\n}\n\n.list-group-item-warning {\n  color: #856404;\n  background-color: #ffeeba;\n}\n.list-group-item-warning.list-group-item-action:hover, .list-group-item-warning.list-group-item-action:focus {\n  color: #856404;\n  background-color: #ffe8a1;\n}\n.list-group-item-warning.list-group-item-action.active {\n  color: #fff;\n  background-color: #856404;\n  border-color: #856404;\n}\n\n.list-group-item-danger {\n  color: #721c24;\n  background-color: #f5c6cb;\n}\n.list-group-item-danger.list-group-item-action:hover, .list-group-item-danger.list-group-item-action:focus {\n  color: #721c24;\n  background-color: #f1b0b7;\n}\n.list-group-item-danger.list-group-item-action.active {\n  color: #fff;\n  background-color: #721c24;\n  border-color: #721c24;\n}\n\n.list-group-item-light {\n  color: #818182;\n  background-color: #fdfdfe;\n}\n.list-group-item-light.list-group-item-action:hover, .list-group-item-light.list-group-item-action:focus {\n  color: #818182;\n  background-color: #ececf6;\n}\n.list-group-item-light.list-group-item-action.active {\n  color: #fff;\n  background-color: #818182;\n  border-color: #818182;\n}\n\n.list-group-item-dark {\n  color: #1b1e21;\n  background-color: #c6c8ca;\n}\n.list-group-item-dark.list-group-item-action:hover, .list-group-item-dark.list-group-item-action:focus {\n  color: #1b1e21;\n  background-color: #b9bbbe;\n}\n.list-group-item-dark.list-group-item-action.active {\n  color: #fff;\n  background-color: #1b1e21;\n  border-color: #1b1e21;\n}\n\n.close {\n  float: right;\n  font-size: 1.5rem;\n  font-weight: 700;\n  line-height: 1;\n  color: #000;\n  text-shadow: 0 1px 0 #fff;\n  opacity: 0.5;\n}\n.close:hover {\n  color: #000;\n  text-decoration: none;\n}\n.close:not(:disabled):not(.disabled):hover, .close:not(:disabled):not(.disabled):focus {\n  opacity: 0.75;\n}\n\nbutton.close {\n  padding: 0;\n  background-color: transparent;\n  border: 0;\n}\n\na.close.disabled {\n  pointer-events: none;\n}\n\n.toast {\n  flex-basis: 350px;\n  max-width: 350px;\n  font-size: 0.875rem;\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);\n  opacity: 0;\n  border-radius: 0.25rem;\n}\n.toast:not(:last-child) {\n  margin-bottom: 0.75rem;\n}\n.toast.showing {\n  opacity: 1;\n}\n.toast.show {\n  display: block;\n  opacity: 1;\n}\n.toast.hide {\n  display: none;\n}\n\n.toast-header {\n  display: flex;\n  align-items: center;\n  padding: 0.25rem 0.75rem;\n  color: #6c757d;\n  background-color: rgba(255, 255, 255, 0.85);\n  background-clip: padding-box;\n  border-bottom: 1px solid rgba(0, 0, 0, 0.05);\n  border-top-left-radius: calc(0.25rem - 1px);\n  border-top-right-radius: calc(0.25rem - 1px);\n}\n\n.toast-body {\n  padding: 0.75rem;\n}\n\n.modal-open {\n  overflow: hidden;\n}\n.modal-open .modal {\n  overflow-x: hidden;\n  overflow-y: auto;\n}\n\n.modal {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 1050;\n  display: none;\n  width: 100%;\n  height: 100%;\n  overflow: hidden;\n  outline: 0;\n}\n\n.modal-dialog {\n  position: relative;\n  width: auto;\n  margin: 0.5rem;\n  pointer-events: none;\n}\n.modal.fade .modal-dialog {\n  transition: transform 0.3s ease-out;\n  transform: translate(0, -50px);\n}\n@media (prefers-reduced-motion: reduce) {\n  .modal.fade .modal-dialog {\n    transition: none;\n  }\n}\n.modal.show .modal-dialog {\n  transform: none;\n}\n.modal.modal-static .modal-dialog {\n  transform: scale(1.02);\n}\n\n.modal-dialog-scrollable {\n  display: flex;\n  max-height: calc(100% - 1rem);\n}\n.modal-dialog-scrollable .modal-content {\n  max-height: calc(100vh - 1rem);\n  overflow: hidden;\n}\n.modal-dialog-scrollable .modal-header,\n.modal-dialog-scrollable .modal-footer {\n  flex-shrink: 0;\n}\n.modal-dialog-scrollable .modal-body {\n  overflow-y: auto;\n}\n\n.modal-dialog-centered {\n  display: flex;\n  align-items: center;\n  min-height: calc(100% - 1rem);\n}\n.modal-dialog-centered::before {\n  display: block;\n  height: calc(100vh - 1rem);\n  height: min-content;\n  content: \"\";\n}\n.modal-dialog-centered.modal-dialog-scrollable {\n  flex-direction: column;\n  justify-content: center;\n  height: 100%;\n}\n.modal-dialog-centered.modal-dialog-scrollable .modal-content {\n  max-height: none;\n}\n.modal-dialog-centered.modal-dialog-scrollable::before {\n  content: none;\n}\n\n.modal-content {\n  position: relative;\n  display: flex;\n  flex-direction: column;\n  width: 100%;\n  pointer-events: auto;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem;\n  outline: 0;\n}\n\n.modal-backdrop {\n  position: fixed;\n  top: 0;\n  left: 0;\n  z-index: 1040;\n  width: 100vw;\n  height: 100vh;\n  background-color: #000;\n}\n.modal-backdrop.fade {\n  opacity: 0;\n}\n.modal-backdrop.show {\n  opacity: 0.5;\n}\n\n.modal-header {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  padding: 1rem 1rem;\n  border-bottom: 1px solid #dee2e6;\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px);\n}\n.modal-header .close {\n  padding: 1rem 1rem;\n  margin: -1rem -1rem -1rem auto;\n}\n\n.modal-title {\n  margin-bottom: 0;\n  line-height: 1.5;\n}\n\n.modal-body {\n  position: relative;\n  flex: 1 1 auto;\n  padding: 1rem;\n}\n\n.modal-footer {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: flex-end;\n  padding: 0.75rem;\n  border-top: 1px solid #dee2e6;\n  border-bottom-right-radius: calc(0.3rem - 1px);\n  border-bottom-left-radius: calc(0.3rem - 1px);\n}\n.modal-footer > * {\n  margin: 0.25rem;\n}\n\n.modal-scrollbar-measure {\n  position: absolute;\n  top: -9999px;\n  width: 50px;\n  height: 50px;\n  overflow: scroll;\n}\n\n@media (min-width: 576px) {\n  .modal-dialog {\n    max-width: 500px;\n    margin: 1.75rem auto;\n  }\n  .modal-dialog-scrollable {\n    max-height: calc(100% - 3.5rem);\n  }\n  .modal-dialog-scrollable .modal-content {\n    max-height: calc(100vh - 3.5rem);\n  }\n  .modal-dialog-centered {\n    min-height: calc(100% - 3.5rem);\n  }\n  .modal-dialog-centered::before {\n    height: calc(100vh - 3.5rem);\n    height: min-content;\n  }\n  .modal-sm {\n    max-width: 300px;\n  }\n}\n@media (min-width: 992px) {\n  .modal-lg,\n  .modal-xl {\n    max-width: 800px;\n  }\n}\n@media (min-width: 1200px) {\n  .modal-xl {\n    max-width: 1140px;\n  }\n}\n.tooltip {\n  position: absolute;\n  z-index: 1070;\n  display: block;\n  margin: 0;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  white-space: normal;\n  word-spacing: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n  opacity: 0;\n}\n.tooltip.show {\n  opacity: 0.9;\n}\n.tooltip .arrow {\n  position: absolute;\n  display: block;\n  width: 0.8rem;\n  height: 0.4rem;\n}\n.tooltip .arrow::before {\n  position: absolute;\n  content: \"\";\n  border-color: transparent;\n  border-style: solid;\n}\n\n.bs-tooltip-top, .bs-tooltip-auto[x-placement^=top] {\n  padding: 0.4rem 0;\n}\n.bs-tooltip-top .arrow, .bs-tooltip-auto[x-placement^=top] .arrow {\n  bottom: 0;\n}\n.bs-tooltip-top .arrow::before, .bs-tooltip-auto[x-placement^=top] .arrow::before {\n  top: 0;\n  border-width: 0.4rem 0.4rem 0;\n  border-top-color: #000;\n}\n\n.bs-tooltip-right, .bs-tooltip-auto[x-placement^=right] {\n  padding: 0 0.4rem;\n}\n.bs-tooltip-right .arrow, .bs-tooltip-auto[x-placement^=right] .arrow {\n  left: 0;\n  width: 0.4rem;\n  height: 0.8rem;\n}\n.bs-tooltip-right .arrow::before, .bs-tooltip-auto[x-placement^=right] .arrow::before {\n  right: 0;\n  border-width: 0.4rem 0.4rem 0.4rem 0;\n  border-right-color: #000;\n}\n\n.bs-tooltip-bottom, .bs-tooltip-auto[x-placement^=bottom] {\n  padding: 0.4rem 0;\n}\n.bs-tooltip-bottom .arrow, .bs-tooltip-auto[x-placement^=bottom] .arrow {\n  top: 0;\n}\n.bs-tooltip-bottom .arrow::before, .bs-tooltip-auto[x-placement^=bottom] .arrow::before {\n  bottom: 0;\n  border-width: 0 0.4rem 0.4rem;\n  border-bottom-color: #000;\n}\n\n.bs-tooltip-left, .bs-tooltip-auto[x-placement^=left] {\n  padding: 0 0.4rem;\n}\n.bs-tooltip-left .arrow, .bs-tooltip-auto[x-placement^=left] .arrow {\n  right: 0;\n  width: 0.4rem;\n  height: 0.8rem;\n}\n.bs-tooltip-left .arrow::before, .bs-tooltip-auto[x-placement^=left] .arrow::before {\n  left: 0;\n  border-width: 0.4rem 0 0.4rem 0.4rem;\n  border-left-color: #000;\n}\n\n.tooltip-inner {\n  max-width: 200px;\n  padding: 0.25rem 0.5rem;\n  color: #fff;\n  text-align: center;\n  background-color: #000;\n  border-radius: 0.25rem;\n}\n\n.popover {\n  position: absolute;\n  top: 0;\n  left: 0;\n  z-index: 1060;\n  display: block;\n  max-width: 276px;\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", \"Liberation Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\";\n  font-style: normal;\n  font-weight: 400;\n  line-height: 1.5;\n  text-align: left;\n  text-align: start;\n  text-decoration: none;\n  text-shadow: none;\n  text-transform: none;\n  letter-spacing: normal;\n  word-break: normal;\n  white-space: normal;\n  word-spacing: normal;\n  line-break: auto;\n  font-size: 0.875rem;\n  word-wrap: break-word;\n  background-color: #fff;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.2);\n  border-radius: 0.3rem;\n}\n.popover .arrow {\n  position: absolute;\n  display: block;\n  width: 1rem;\n  height: 0.5rem;\n  margin: 0 0.3rem;\n}\n.popover .arrow::before, .popover .arrow::after {\n  position: absolute;\n  display: block;\n  content: \"\";\n  border-color: transparent;\n  border-style: solid;\n}\n\n.bs-popover-top, .bs-popover-auto[x-placement^=top] {\n  margin-bottom: 0.5rem;\n}\n.bs-popover-top > .arrow, .bs-popover-auto[x-placement^=top] > .arrow {\n  bottom: calc(-0.5rem - 1px);\n}\n.bs-popover-top > .arrow::before, .bs-popover-auto[x-placement^=top] > .arrow::before {\n  bottom: 0;\n  border-width: 0.5rem 0.5rem 0;\n  border-top-color: rgba(0, 0, 0, 0.25);\n}\n.bs-popover-top > .arrow::after, .bs-popover-auto[x-placement^=top] > .arrow::after {\n  bottom: 1px;\n  border-width: 0.5rem 0.5rem 0;\n  border-top-color: #fff;\n}\n\n.bs-popover-right, .bs-popover-auto[x-placement^=right] {\n  margin-left: 0.5rem;\n}\n.bs-popover-right > .arrow, .bs-popover-auto[x-placement^=right] > .arrow {\n  left: calc(-0.5rem - 1px);\n  width: 0.5rem;\n  height: 1rem;\n  margin: 0.3rem 0;\n}\n.bs-popover-right > .arrow::before, .bs-popover-auto[x-placement^=right] > .arrow::before {\n  left: 0;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: rgba(0, 0, 0, 0.25);\n}\n.bs-popover-right > .arrow::after, .bs-popover-auto[x-placement^=right] > .arrow::after {\n  left: 1px;\n  border-width: 0.5rem 0.5rem 0.5rem 0;\n  border-right-color: #fff;\n}\n\n.bs-popover-bottom, .bs-popover-auto[x-placement^=bottom] {\n  margin-top: 0.5rem;\n}\n.bs-popover-bottom > .arrow, .bs-popover-auto[x-placement^=bottom] > .arrow {\n  top: calc(-0.5rem - 1px);\n}\n.bs-popover-bottom > .arrow::before, .bs-popover-auto[x-placement^=bottom] > .arrow::before {\n  top: 0;\n  border-width: 0 0.5rem 0.5rem 0.5rem;\n  border-bottom-color: rgba(0, 0, 0, 0.25);\n}\n.bs-popover-bottom > .arrow::after, .bs-popover-auto[x-placement^=bottom] > .arrow::after {\n  top: 1px;\n  border-width: 0 0.5rem 0.5rem 0.5rem;\n  border-bottom-color: #fff;\n}\n.bs-popover-bottom .popover-header::before, .bs-popover-auto[x-placement^=bottom] .popover-header::before {\n  position: absolute;\n  top: 0;\n  left: 50%;\n  display: block;\n  width: 1rem;\n  margin-left: -0.5rem;\n  content: \"\";\n  border-bottom: 1px solid #f7f7f7;\n}\n\n.bs-popover-left, .bs-popover-auto[x-placement^=left] {\n  margin-right: 0.5rem;\n}\n.bs-popover-left > .arrow, .bs-popover-auto[x-placement^=left] > .arrow {\n  right: calc(-0.5rem - 1px);\n  width: 0.5rem;\n  height: 1rem;\n  margin: 0.3rem 0;\n}\n.bs-popover-left > .arrow::before, .bs-popover-auto[x-placement^=left] > .arrow::before {\n  right: 0;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: rgba(0, 0, 0, 0.25);\n}\n.bs-popover-left > .arrow::after, .bs-popover-auto[x-placement^=left] > .arrow::after {\n  right: 1px;\n  border-width: 0.5rem 0 0.5rem 0.5rem;\n  border-left-color: #fff;\n}\n\n.popover-header {\n  padding: 0.5rem 0.75rem;\n  margin-bottom: 0;\n  font-size: 1rem;\n  background-color: #f7f7f7;\n  border-bottom: 1px solid #ebebeb;\n  border-top-left-radius: calc(0.3rem - 1px);\n  border-top-right-radius: calc(0.3rem - 1px);\n}\n.popover-header:empty {\n  display: none;\n}\n\n.popover-body {\n  padding: 0.5rem 0.75rem;\n  color: #212529;\n}\n\n.carousel {\n  position: relative;\n}\n\n.carousel.pointer-event {\n  touch-action: pan-y;\n}\n\n.carousel-inner {\n  position: relative;\n  width: 100%;\n  overflow: hidden;\n}\n.carousel-inner::after {\n  display: block;\n  clear: both;\n  content: \"\";\n}\n\n.carousel-item {\n  position: relative;\n  display: none;\n  float: left;\n  width: 100%;\n  margin-right: -100%;\n  backface-visibility: hidden;\n  transition: transform 0.6s ease-in-out;\n}\n@media (prefers-reduced-motion: reduce) {\n  .carousel-item {\n    transition: none;\n  }\n}\n\n.carousel-item.active,\n.carousel-item-next,\n.carousel-item-prev {\n  display: block;\n}\n\n.carousel-item-next:not(.carousel-item-left),\n.active.carousel-item-right {\n  transform: translateX(100%);\n}\n\n.carousel-item-prev:not(.carousel-item-right),\n.active.carousel-item-left {\n  transform: translateX(-100%);\n}\n\n.carousel-fade .carousel-item {\n  opacity: 0;\n  transition-property: opacity;\n  transform: none;\n}\n.carousel-fade .carousel-item.active,\n.carousel-fade .carousel-item-next.carousel-item-left,\n.carousel-fade .carousel-item-prev.carousel-item-right {\n  z-index: 1;\n  opacity: 1;\n}\n.carousel-fade .active.carousel-item-left,\n.carousel-fade .active.carousel-item-right {\n  z-index: 0;\n  opacity: 0;\n  transition: opacity 0s 0.6s;\n}\n@media (prefers-reduced-motion: reduce) {\n  .carousel-fade .active.carousel-item-left,\n  .carousel-fade .active.carousel-item-right {\n    transition: none;\n  }\n}\n\n.carousel-control-prev,\n.carousel-control-next {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  z-index: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 15%;\n  padding: 0;\n  color: #fff;\n  text-align: center;\n  background: none;\n  border: 0;\n  opacity: 0.5;\n  transition: opacity 0.15s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .carousel-control-prev,\n  .carousel-control-next {\n    transition: none;\n  }\n}\n.carousel-control-prev:hover, .carousel-control-prev:focus,\n.carousel-control-next:hover,\n.carousel-control-next:focus {\n  color: #fff;\n  text-decoration: none;\n  outline: 0;\n  opacity: 0.9;\n}\n\n.carousel-control-prev {\n  left: 0;\n}\n\n.carousel-control-next {\n  right: 0;\n}\n\n.carousel-control-prev-icon,\n.carousel-control-next-icon {\n  display: inline-block;\n  width: 20px;\n  height: 20px;\n  background: 50%/100% 100% no-repeat;\n}\n\n.carousel-control-prev-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z'/%3e%3c/svg%3e\");\n}\n\n.carousel-control-next-icon {\n  background-image: url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath d='M2.75 0l-1.5 1.5L3.75 4l-2.5 2.5L2.75 8l4-4-4-4z'/%3e%3c/svg%3e\");\n}\n\n.carousel-indicators {\n  position: absolute;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 15;\n  display: flex;\n  justify-content: center;\n  padding-left: 0;\n  margin-right: 15%;\n  margin-left: 15%;\n  list-style: none;\n}\n.carousel-indicators li {\n  box-sizing: content-box;\n  flex: 0 1 auto;\n  width: 30px;\n  height: 3px;\n  margin-right: 3px;\n  margin-left: 3px;\n  text-indent: -999px;\n  cursor: pointer;\n  background-color: #fff;\n  background-clip: padding-box;\n  border-top: 10px solid transparent;\n  border-bottom: 10px solid transparent;\n  opacity: 0.5;\n  transition: opacity 0.6s ease;\n}\n@media (prefers-reduced-motion: reduce) {\n  .carousel-indicators li {\n    transition: none;\n  }\n}\n.carousel-indicators .active {\n  opacity: 1;\n}\n\n.carousel-caption {\n  position: absolute;\n  right: 15%;\n  bottom: 20px;\n  left: 15%;\n  z-index: 10;\n  padding-top: 20px;\n  padding-bottom: 20px;\n  color: #fff;\n  text-align: center;\n}\n\n@keyframes spinner-border {\n  to {\n    transform: rotate(360deg);\n  }\n}\n.spinner-border {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: -0.125em;\n  border: 0.25em solid currentcolor;\n  border-right-color: transparent;\n  border-radius: 50%;\n  animation: 0.75s linear infinite spinner-border;\n}\n\n.spinner-border-sm {\n  width: 1rem;\n  height: 1rem;\n  border-width: 0.2em;\n}\n\n@keyframes spinner-grow {\n  0% {\n    transform: scale(0);\n  }\n  50% {\n    opacity: 1;\n    transform: none;\n  }\n}\n.spinner-grow {\n  display: inline-block;\n  width: 2rem;\n  height: 2rem;\n  vertical-align: -0.125em;\n  background-color: currentcolor;\n  border-radius: 50%;\n  opacity: 0;\n  animation: 0.75s linear infinite spinner-grow;\n}\n\n.spinner-grow-sm {\n  width: 1rem;\n  height: 1rem;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .spinner-border,\n  .spinner-grow {\n    animation-duration: 1.5s;\n  }\n}\n.align-baseline {\n  vertical-align: baseline !important;\n}\n\n.align-top {\n  vertical-align: top !important;\n}\n\n.align-middle {\n  vertical-align: middle !important;\n}\n\n.align-bottom {\n  vertical-align: bottom !important;\n}\n\n.align-text-bottom {\n  vertical-align: text-bottom !important;\n}\n\n.align-text-top {\n  vertical-align: text-top !important;\n}\n\n.bg-primary {\n  background-color: #007bff !important;\n}\n\na.bg-primary:hover, a.bg-primary:focus,\nbutton.bg-primary:hover,\nbutton.bg-primary:focus {\n  background-color: #0062cc !important;\n}\n\n.bg-secondary {\n  background-color: #6c757d !important;\n}\n\na.bg-secondary:hover, a.bg-secondary:focus,\nbutton.bg-secondary:hover,\nbutton.bg-secondary:focus {\n  background-color: #545b62 !important;\n}\n\n.bg-success {\n  background-color: #28a745 !important;\n}\n\na.bg-success:hover, a.bg-success:focus,\nbutton.bg-success:hover,\nbutton.bg-success:focus {\n  background-color: #1e7e34 !important;\n}\n\n.bg-info {\n  background-color: #17a2b8 !important;\n}\n\na.bg-info:hover, a.bg-info:focus,\nbutton.bg-info:hover,\nbutton.bg-info:focus {\n  background-color: #117a8b !important;\n}\n\n.bg-warning {\n  background-color: #ffc107 !important;\n}\n\na.bg-warning:hover, a.bg-warning:focus,\nbutton.bg-warning:hover,\nbutton.bg-warning:focus {\n  background-color: #d39e00 !important;\n}\n\n.bg-danger {\n  background-color: #dc3545 !important;\n}\n\na.bg-danger:hover, a.bg-danger:focus,\nbutton.bg-danger:hover,\nbutton.bg-danger:focus {\n  background-color: #bd2130 !important;\n}\n\n.bg-light {\n  background-color: #f8f9fa !important;\n}\n\na.bg-light:hover, a.bg-light:focus,\nbutton.bg-light:hover,\nbutton.bg-light:focus {\n  background-color: #dae0e5 !important;\n}\n\n.bg-dark {\n  background-color: #343a40 !important;\n}\n\na.bg-dark:hover, a.bg-dark:focus,\nbutton.bg-dark:hover,\nbutton.bg-dark:focus {\n  background-color: #1d2124 !important;\n}\n\n.bg-white {\n  background-color: #fff !important;\n}\n\n.bg-transparent {\n  background-color: transparent !important;\n}\n\n.border {\n  border: 1px solid #dee2e6 !important;\n}\n\n.border-top {\n  border-top: 1px solid #dee2e6 !important;\n}\n\n.border-right {\n  border-right: 1px solid #dee2e6 !important;\n}\n\n.border-bottom {\n  border-bottom: 1px solid #dee2e6 !important;\n}\n\n.border-left {\n  border-left: 1px solid #dee2e6 !important;\n}\n\n.border-0 {\n  border: 0 !important;\n}\n\n.border-top-0 {\n  border-top: 0 !important;\n}\n\n.border-right-0 {\n  border-right: 0 !important;\n}\n\n.border-bottom-0 {\n  border-bottom: 0 !important;\n}\n\n.border-left-0 {\n  border-left: 0 !important;\n}\n\n.border-primary {\n  border-color: #007bff !important;\n}\n\n.border-secondary {\n  border-color: #6c757d !important;\n}\n\n.border-success {\n  border-color: #28a745 !important;\n}\n\n.border-info {\n  border-color: #17a2b8 !important;\n}\n\n.border-warning {\n  border-color: #ffc107 !important;\n}\n\n.border-danger {\n  border-color: #dc3545 !important;\n}\n\n.border-light {\n  border-color: #f8f9fa !important;\n}\n\n.border-dark {\n  border-color: #343a40 !important;\n}\n\n.border-white {\n  border-color: #fff !important;\n}\n\n.rounded-sm {\n  border-radius: 0.2rem !important;\n}\n\n.rounded {\n  border-radius: 0.25rem !important;\n}\n\n.rounded-top {\n  border-top-left-radius: 0.25rem !important;\n  border-top-right-radius: 0.25rem !important;\n}\n\n.rounded-right {\n  border-top-right-radius: 0.25rem !important;\n  border-bottom-right-radius: 0.25rem !important;\n}\n\n.rounded-bottom {\n  border-bottom-right-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important;\n}\n\n.rounded-left {\n  border-top-left-radius: 0.25rem !important;\n  border-bottom-left-radius: 0.25rem !important;\n}\n\n.rounded-lg {\n  border-radius: 0.3rem !important;\n}\n\n.rounded-circle {\n  border-radius: 50% !important;\n}\n\n.rounded-pill {\n  border-radius: 50rem !important;\n}\n\n.rounded-0 {\n  border-radius: 0 !important;\n}\n\n.clearfix::after {\n  display: block;\n  clear: both;\n  content: \"\";\n}\n\n.d-none {\n  display: none !important;\n}\n\n.d-inline {\n  display: inline !important;\n}\n\n.d-inline-block {\n  display: inline-block !important;\n}\n\n.d-block {\n  display: block !important;\n}\n\n.d-table {\n  display: table !important;\n}\n\n.d-table-row {\n  display: table-row !important;\n}\n\n.d-table-cell {\n  display: table-cell !important;\n}\n\n.d-flex {\n  display: flex !important;\n}\n\n.d-inline-flex {\n  display: inline-flex !important;\n}\n\n@media (min-width: 576px) {\n  .d-sm-none {\n    display: none !important;\n  }\n  .d-sm-inline {\n    display: inline !important;\n  }\n  .d-sm-inline-block {\n    display: inline-block !important;\n  }\n  .d-sm-block {\n    display: block !important;\n  }\n  .d-sm-table {\n    display: table !important;\n  }\n  .d-sm-table-row {\n    display: table-row !important;\n  }\n  .d-sm-table-cell {\n    display: table-cell !important;\n  }\n  .d-sm-flex {\n    display: flex !important;\n  }\n  .d-sm-inline-flex {\n    display: inline-flex !important;\n  }\n}\n@media (min-width: 768px) {\n  .d-md-none {\n    display: none !important;\n  }\n  .d-md-inline {\n    display: inline !important;\n  }\n  .d-md-inline-block {\n    display: inline-block !important;\n  }\n  .d-md-block {\n    display: block !important;\n  }\n  .d-md-table {\n    display: table !important;\n  }\n  .d-md-table-row {\n    display: table-row !important;\n  }\n  .d-md-table-cell {\n    display: table-cell !important;\n  }\n  .d-md-flex {\n    display: flex !important;\n  }\n  .d-md-inline-flex {\n    display: inline-flex !important;\n  }\n}\n@media (min-width: 992px) {\n  .d-lg-none {\n    display: none !important;\n  }\n  .d-lg-inline {\n    display: inline !important;\n  }\n  .d-lg-inline-block {\n    display: inline-block !important;\n  }\n  .d-lg-block {\n    display: block !important;\n  }\n  .d-lg-table {\n    display: table !important;\n  }\n  .d-lg-table-row {\n    display: table-row !important;\n  }\n  .d-lg-table-cell {\n    display: table-cell !important;\n  }\n  .d-lg-flex {\n    display: flex !important;\n  }\n  .d-lg-inline-flex {\n    display: inline-flex !important;\n  }\n}\n@media (min-width: 1200px) {\n  .d-xl-none {\n    display: none !important;\n  }\n  .d-xl-inline {\n    display: inline !important;\n  }\n  .d-xl-inline-block {\n    display: inline-block !important;\n  }\n  .d-xl-block {\n    display: block !important;\n  }\n  .d-xl-table {\n    display: table !important;\n  }\n  .d-xl-table-row {\n    display: table-row !important;\n  }\n  .d-xl-table-cell {\n    display: table-cell !important;\n  }\n  .d-xl-flex {\n    display: flex !important;\n  }\n  .d-xl-inline-flex {\n    display: inline-flex !important;\n  }\n}\n@media print {\n  .d-print-none {\n    display: none !important;\n  }\n  .d-print-inline {\n    display: inline !important;\n  }\n  .d-print-inline-block {\n    display: inline-block !important;\n  }\n  .d-print-block {\n    display: block !important;\n  }\n  .d-print-table {\n    display: table !important;\n  }\n  .d-print-table-row {\n    display: table-row !important;\n  }\n  .d-print-table-cell {\n    display: table-cell !important;\n  }\n  .d-print-flex {\n    display: flex !important;\n  }\n  .d-print-inline-flex {\n    display: inline-flex !important;\n  }\n}\n.embed-responsive {\n  position: relative;\n  display: block;\n  width: 100%;\n  padding: 0;\n  overflow: hidden;\n}\n.embed-responsive::before {\n  display: block;\n  content: \"\";\n}\n.embed-responsive .embed-responsive-item,\n.embed-responsive iframe,\n.embed-responsive embed,\n.embed-responsive object,\n.embed-responsive video {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  border: 0;\n}\n\n.embed-responsive-21by9::before {\n  padding-top: 42.85714286%;\n}\n\n.embed-responsive-16by9::before {\n  padding-top: 56.25%;\n}\n\n.embed-responsive-4by3::before {\n  padding-top: 75%;\n}\n\n.embed-responsive-1by1::before {\n  padding-top: 100%;\n}\n\n.flex-row {\n  flex-direction: row !important;\n}\n\n.flex-column {\n  flex-direction: column !important;\n}\n\n.flex-row-reverse {\n  flex-direction: row-reverse !important;\n}\n\n.flex-column-reverse {\n  flex-direction: column-reverse !important;\n}\n\n.flex-wrap {\n  flex-wrap: wrap !important;\n}\n\n.flex-nowrap {\n  flex-wrap: nowrap !important;\n}\n\n.flex-wrap-reverse {\n  flex-wrap: wrap-reverse !important;\n}\n\n.flex-fill {\n  flex: 1 1 auto !important;\n}\n\n.flex-grow-0 {\n  flex-grow: 0 !important;\n}\n\n.flex-grow-1 {\n  flex-grow: 1 !important;\n}\n\n.flex-shrink-0 {\n  flex-shrink: 0 !important;\n}\n\n.flex-shrink-1 {\n  flex-shrink: 1 !important;\n}\n\n.justify-content-start {\n  justify-content: flex-start !important;\n}\n\n.justify-content-end {\n  justify-content: flex-end !important;\n}\n\n.justify-content-center {\n  justify-content: center !important;\n}\n\n.justify-content-between {\n  justify-content: space-between !important;\n}\n\n.justify-content-around {\n  justify-content: space-around !important;\n}\n\n.align-items-start {\n  align-items: flex-start !important;\n}\n\n.align-items-end {\n  align-items: flex-end !important;\n}\n\n.align-items-center {\n  align-items: center !important;\n}\n\n.align-items-baseline {\n  align-items: baseline !important;\n}\n\n.align-items-stretch {\n  align-items: stretch !important;\n}\n\n.align-content-start {\n  align-content: flex-start !important;\n}\n\n.align-content-end {\n  align-content: flex-end !important;\n}\n\n.align-content-center {\n  align-content: center !important;\n}\n\n.align-content-between {\n  align-content: space-between !important;\n}\n\n.align-content-around {\n  align-content: space-around !important;\n}\n\n.align-content-stretch {\n  align-content: stretch !important;\n}\n\n.align-self-auto {\n  align-self: auto !important;\n}\n\n.align-self-start {\n  align-self: flex-start !important;\n}\n\n.align-self-end {\n  align-self: flex-end !important;\n}\n\n.align-self-center {\n  align-self: center !important;\n}\n\n.align-self-baseline {\n  align-self: baseline !important;\n}\n\n.align-self-stretch {\n  align-self: stretch !important;\n}\n\n@media (min-width: 576px) {\n  .flex-sm-row {\n    flex-direction: row !important;\n  }\n  .flex-sm-column {\n    flex-direction: column !important;\n  }\n  .flex-sm-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n  .flex-sm-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n  .flex-sm-wrap {\n    flex-wrap: wrap !important;\n  }\n  .flex-sm-nowrap {\n    flex-wrap: nowrap !important;\n  }\n  .flex-sm-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n  .flex-sm-fill {\n    flex: 1 1 auto !important;\n  }\n  .flex-sm-grow-0 {\n    flex-grow: 0 !important;\n  }\n  .flex-sm-grow-1 {\n    flex-grow: 1 !important;\n  }\n  .flex-sm-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n  .flex-sm-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n  .justify-content-sm-start {\n    justify-content: flex-start !important;\n  }\n  .justify-content-sm-end {\n    justify-content: flex-end !important;\n  }\n  .justify-content-sm-center {\n    justify-content: center !important;\n  }\n  .justify-content-sm-between {\n    justify-content: space-between !important;\n  }\n  .justify-content-sm-around {\n    justify-content: space-around !important;\n  }\n  .align-items-sm-start {\n    align-items: flex-start !important;\n  }\n  .align-items-sm-end {\n    align-items: flex-end !important;\n  }\n  .align-items-sm-center {\n    align-items: center !important;\n  }\n  .align-items-sm-baseline {\n    align-items: baseline !important;\n  }\n  .align-items-sm-stretch {\n    align-items: stretch !important;\n  }\n  .align-content-sm-start {\n    align-content: flex-start !important;\n  }\n  .align-content-sm-end {\n    align-content: flex-end !important;\n  }\n  .align-content-sm-center {\n    align-content: center !important;\n  }\n  .align-content-sm-between {\n    align-content: space-between !important;\n  }\n  .align-content-sm-around {\n    align-content: space-around !important;\n  }\n  .align-content-sm-stretch {\n    align-content: stretch !important;\n  }\n  .align-self-sm-auto {\n    align-self: auto !important;\n  }\n  .align-self-sm-start {\n    align-self: flex-start !important;\n  }\n  .align-self-sm-end {\n    align-self: flex-end !important;\n  }\n  .align-self-sm-center {\n    align-self: center !important;\n  }\n  .align-self-sm-baseline {\n    align-self: baseline !important;\n  }\n  .align-self-sm-stretch {\n    align-self: stretch !important;\n  }\n}\n@media (min-width: 768px) {\n  .flex-md-row {\n    flex-direction: row !important;\n  }\n  .flex-md-column {\n    flex-direction: column !important;\n  }\n  .flex-md-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n  .flex-md-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n  .flex-md-wrap {\n    flex-wrap: wrap !important;\n  }\n  .flex-md-nowrap {\n    flex-wrap: nowrap !important;\n  }\n  .flex-md-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n  .flex-md-fill {\n    flex: 1 1 auto !important;\n  }\n  .flex-md-grow-0 {\n    flex-grow: 0 !important;\n  }\n  .flex-md-grow-1 {\n    flex-grow: 1 !important;\n  }\n  .flex-md-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n  .flex-md-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n  .justify-content-md-start {\n    justify-content: flex-start !important;\n  }\n  .justify-content-md-end {\n    justify-content: flex-end !important;\n  }\n  .justify-content-md-center {\n    justify-content: center !important;\n  }\n  .justify-content-md-between {\n    justify-content: space-between !important;\n  }\n  .justify-content-md-around {\n    justify-content: space-around !important;\n  }\n  .align-items-md-start {\n    align-items: flex-start !important;\n  }\n  .align-items-md-end {\n    align-items: flex-end !important;\n  }\n  .align-items-md-center {\n    align-items: center !important;\n  }\n  .align-items-md-baseline {\n    align-items: baseline !important;\n  }\n  .align-items-md-stretch {\n    align-items: stretch !important;\n  }\n  .align-content-md-start {\n    align-content: flex-start !important;\n  }\n  .align-content-md-end {\n    align-content: flex-end !important;\n  }\n  .align-content-md-center {\n    align-content: center !important;\n  }\n  .align-content-md-between {\n    align-content: space-between !important;\n  }\n  .align-content-md-around {\n    align-content: space-around !important;\n  }\n  .align-content-md-stretch {\n    align-content: stretch !important;\n  }\n  .align-self-md-auto {\n    align-self: auto !important;\n  }\n  .align-self-md-start {\n    align-self: flex-start !important;\n  }\n  .align-self-md-end {\n    align-self: flex-end !important;\n  }\n  .align-self-md-center {\n    align-self: center !important;\n  }\n  .align-self-md-baseline {\n    align-self: baseline !important;\n  }\n  .align-self-md-stretch {\n    align-self: stretch !important;\n  }\n}\n@media (min-width: 992px) {\n  .flex-lg-row {\n    flex-direction: row !important;\n  }\n  .flex-lg-column {\n    flex-direction: column !important;\n  }\n  .flex-lg-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n  .flex-lg-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n  .flex-lg-wrap {\n    flex-wrap: wrap !important;\n  }\n  .flex-lg-nowrap {\n    flex-wrap: nowrap !important;\n  }\n  .flex-lg-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n  .flex-lg-fill {\n    flex: 1 1 auto !important;\n  }\n  .flex-lg-grow-0 {\n    flex-grow: 0 !important;\n  }\n  .flex-lg-grow-1 {\n    flex-grow: 1 !important;\n  }\n  .flex-lg-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n  .flex-lg-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n  .justify-content-lg-start {\n    justify-content: flex-start !important;\n  }\n  .justify-content-lg-end {\n    justify-content: flex-end !important;\n  }\n  .justify-content-lg-center {\n    justify-content: center !important;\n  }\n  .justify-content-lg-between {\n    justify-content: space-between !important;\n  }\n  .justify-content-lg-around {\n    justify-content: space-around !important;\n  }\n  .align-items-lg-start {\n    align-items: flex-start !important;\n  }\n  .align-items-lg-end {\n    align-items: flex-end !important;\n  }\n  .align-items-lg-center {\n    align-items: center !important;\n  }\n  .align-items-lg-baseline {\n    align-items: baseline !important;\n  }\n  .align-items-lg-stretch {\n    align-items: stretch !important;\n  }\n  .align-content-lg-start {\n    align-content: flex-start !important;\n  }\n  .align-content-lg-end {\n    align-content: flex-end !important;\n  }\n  .align-content-lg-center {\n    align-content: center !important;\n  }\n  .align-content-lg-between {\n    align-content: space-between !important;\n  }\n  .align-content-lg-around {\n    align-content: space-around !important;\n  }\n  .align-content-lg-stretch {\n    align-content: stretch !important;\n  }\n  .align-self-lg-auto {\n    align-self: auto !important;\n  }\n  .align-self-lg-start {\n    align-self: flex-start !important;\n  }\n  .align-self-lg-end {\n    align-self: flex-end !important;\n  }\n  .align-self-lg-center {\n    align-self: center !important;\n  }\n  .align-self-lg-baseline {\n    align-self: baseline !important;\n  }\n  .align-self-lg-stretch {\n    align-self: stretch !important;\n  }\n}\n@media (min-width: 1200px) {\n  .flex-xl-row {\n    flex-direction: row !important;\n  }\n  .flex-xl-column {\n    flex-direction: column !important;\n  }\n  .flex-xl-row-reverse {\n    flex-direction: row-reverse !important;\n  }\n  .flex-xl-column-reverse {\n    flex-direction: column-reverse !important;\n  }\n  .flex-xl-wrap {\n    flex-wrap: wrap !important;\n  }\n  .flex-xl-nowrap {\n    flex-wrap: nowrap !important;\n  }\n  .flex-xl-wrap-reverse {\n    flex-wrap: wrap-reverse !important;\n  }\n  .flex-xl-fill {\n    flex: 1 1 auto !important;\n  }\n  .flex-xl-grow-0 {\n    flex-grow: 0 !important;\n  }\n  .flex-xl-grow-1 {\n    flex-grow: 1 !important;\n  }\n  .flex-xl-shrink-0 {\n    flex-shrink: 0 !important;\n  }\n  .flex-xl-shrink-1 {\n    flex-shrink: 1 !important;\n  }\n  .justify-content-xl-start {\n    justify-content: flex-start !important;\n  }\n  .justify-content-xl-end {\n    justify-content: flex-end !important;\n  }\n  .justify-content-xl-center {\n    justify-content: center !important;\n  }\n  .justify-content-xl-between {\n    justify-content: space-between !important;\n  }\n  .justify-content-xl-around {\n    justify-content: space-around !important;\n  }\n  .align-items-xl-start {\n    align-items: flex-start !important;\n  }\n  .align-items-xl-end {\n    align-items: flex-end !important;\n  }\n  .align-items-xl-center {\n    align-items: center !important;\n  }\n  .align-items-xl-baseline {\n    align-items: baseline !important;\n  }\n  .align-items-xl-stretch {\n    align-items: stretch !important;\n  }\n  .align-content-xl-start {\n    align-content: flex-start !important;\n  }\n  .align-content-xl-end {\n    align-content: flex-end !important;\n  }\n  .align-content-xl-center {\n    align-content: center !important;\n  }\n  .align-content-xl-between {\n    align-content: space-between !important;\n  }\n  .align-content-xl-around {\n    align-content: space-around !important;\n  }\n  .align-content-xl-stretch {\n    align-content: stretch !important;\n  }\n  .align-self-xl-auto {\n    align-self: auto !important;\n  }\n  .align-self-xl-start {\n    align-self: flex-start !important;\n  }\n  .align-self-xl-end {\n    align-self: flex-end !important;\n  }\n  .align-self-xl-center {\n    align-self: center !important;\n  }\n  .align-self-xl-baseline {\n    align-self: baseline !important;\n  }\n  .align-self-xl-stretch {\n    align-self: stretch !important;\n  }\n}\n.float-left {\n  float: left !important;\n}\n\n.float-right {\n  float: right !important;\n}\n\n.float-none {\n  float: none !important;\n}\n\n@media (min-width: 576px) {\n  .float-sm-left {\n    float: left !important;\n  }\n  .float-sm-right {\n    float: right !important;\n  }\n  .float-sm-none {\n    float: none !important;\n  }\n}\n@media (min-width: 768px) {\n  .float-md-left {\n    float: left !important;\n  }\n  .float-md-right {\n    float: right !important;\n  }\n  .float-md-none {\n    float: none !important;\n  }\n}\n@media (min-width: 992px) {\n  .float-lg-left {\n    float: left !important;\n  }\n  .float-lg-right {\n    float: right !important;\n  }\n  .float-lg-none {\n    float: none !important;\n  }\n}\n@media (min-width: 1200px) {\n  .float-xl-left {\n    float: left !important;\n  }\n  .float-xl-right {\n    float: right !important;\n  }\n  .float-xl-none {\n    float: none !important;\n  }\n}\n.user-select-all {\n  user-select: all !important;\n}\n\n.user-select-auto {\n  user-select: auto !important;\n}\n\n.user-select-none {\n  user-select: none !important;\n}\n\n.overflow-auto {\n  overflow: auto !important;\n}\n\n.overflow-hidden {\n  overflow: hidden !important;\n}\n\n.position-static {\n  position: static !important;\n}\n\n.position-relative {\n  position: relative !important;\n}\n\n.position-absolute {\n  position: absolute !important;\n}\n\n.position-fixed {\n  position: fixed !important;\n}\n\n.position-sticky {\n  position: sticky !important;\n}\n\n.fixed-top {\n  position: fixed;\n  top: 0;\n  right: 0;\n  left: 0;\n  z-index: 1030;\n}\n\n.fixed-bottom {\n  position: fixed;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1030;\n}\n\n@supports (position: sticky) {\n  .sticky-top {\n    position: sticky;\n    top: 0;\n    z-index: 1020;\n  }\n}\n\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0, 0, 0, 0);\n  white-space: nowrap;\n  border: 0;\n}\n\n.sr-only-focusable:active, .sr-only-focusable:focus {\n  position: static;\n  width: auto;\n  height: auto;\n  overflow: visible;\n  clip: auto;\n  white-space: normal;\n}\n\n.shadow-sm {\n  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;\n}\n\n.shadow {\n  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;\n}\n\n.shadow-lg {\n  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;\n}\n\n.shadow-none {\n  box-shadow: none !important;\n}\n\n.w-25 {\n  width: 25% !important;\n}\n\n.w-50 {\n  width: 50% !important;\n}\n\n.w-75 {\n  width: 75% !important;\n}\n\n.w-100 {\n  width: 100% !important;\n}\n\n.w-auto {\n  width: auto !important;\n}\n\n.h-25 {\n  height: 25% !important;\n}\n\n.h-50 {\n  height: 50% !important;\n}\n\n.h-75 {\n  height: 75% !important;\n}\n\n.h-100 {\n  height: 100% !important;\n}\n\n.h-auto {\n  height: auto !important;\n}\n\n.mw-100 {\n  max-width: 100% !important;\n}\n\n.mh-100 {\n  max-height: 100% !important;\n}\n\n.min-vw-100 {\n  min-width: 100vw !important;\n}\n\n.min-vh-100 {\n  min-height: 100vh !important;\n}\n\n.vw-100 {\n  width: 100vw !important;\n}\n\n.vh-100 {\n  height: 100vh !important;\n}\n\n.m-0 {\n  margin: 0 !important;\n}\n\n.mt-0,\n.my-0 {\n  margin-top: 0 !important;\n}\n\n.mr-0,\n.mx-0 {\n  margin-right: 0 !important;\n}\n\n.mb-0,\n.my-0 {\n  margin-bottom: 0 !important;\n}\n\n.ml-0,\n.mx-0 {\n  margin-left: 0 !important;\n}\n\n.m-1 {\n  margin: 0.25rem !important;\n}\n\n.mt-1,\n.my-1 {\n  margin-top: 0.25rem !important;\n}\n\n.mr-1,\n.mx-1 {\n  margin-right: 0.25rem !important;\n}\n\n.mb-1,\n.my-1 {\n  margin-bottom: 0.25rem !important;\n}\n\n.ml-1,\n.mx-1 {\n  margin-left: 0.25rem !important;\n}\n\n.m-2 {\n  margin: 0.5rem !important;\n}\n\n.mt-2,\n.my-2 {\n  margin-top: 0.5rem !important;\n}\n\n.mr-2,\n.mx-2 {\n  margin-right: 0.5rem !important;\n}\n\n.mb-2,\n.my-2 {\n  margin-bottom: 0.5rem !important;\n}\n\n.ml-2,\n.mx-2 {\n  margin-left: 0.5rem !important;\n}\n\n.m-3 {\n  margin: 1rem !important;\n}\n\n.mt-3,\n.my-3 {\n  margin-top: 1rem !important;\n}\n\n.mr-3,\n.mx-3 {\n  margin-right: 1rem !important;\n}\n\n.mb-3,\n.my-3 {\n  margin-bottom: 1rem !important;\n}\n\n.ml-3,\n.mx-3 {\n  margin-left: 1rem !important;\n}\n\n.m-4 {\n  margin: 1.5rem !important;\n}\n\n.mt-4,\n.my-4 {\n  margin-top: 1.5rem !important;\n}\n\n.mr-4,\n.mx-4 {\n  margin-right: 1.5rem !important;\n}\n\n.mb-4,\n.my-4 {\n  margin-bottom: 1.5rem !important;\n}\n\n.ml-4,\n.mx-4 {\n  margin-left: 1.5rem !important;\n}\n\n.m-5 {\n  margin: 3rem !important;\n}\n\n.mt-5,\n.my-5 {\n  margin-top: 3rem !important;\n}\n\n.mr-5,\n.mx-5 {\n  margin-right: 3rem !important;\n}\n\n.mb-5,\n.my-5 {\n  margin-bottom: 3rem !important;\n}\n\n.ml-5,\n.mx-5 {\n  margin-left: 3rem !important;\n}\n\n.p-0 {\n  padding: 0 !important;\n}\n\n.pt-0,\n.py-0 {\n  padding-top: 0 !important;\n}\n\n.pr-0,\n.px-0 {\n  padding-right: 0 !important;\n}\n\n.pb-0,\n.py-0 {\n  padding-bottom: 0 !important;\n}\n\n.pl-0,\n.px-0 {\n  padding-left: 0 !important;\n}\n\n.p-1 {\n  padding: 0.25rem !important;\n}\n\n.pt-1,\n.py-1 {\n  padding-top: 0.25rem !important;\n}\n\n.pr-1,\n.px-1 {\n  padding-right: 0.25rem !important;\n}\n\n.pb-1,\n.py-1 {\n  padding-bottom: 0.25rem !important;\n}\n\n.pl-1,\n.px-1 {\n  padding-left: 0.25rem !important;\n}\n\n.p-2 {\n  padding: 0.5rem !important;\n}\n\n.pt-2,\n.py-2 {\n  padding-top: 0.5rem !important;\n}\n\n.pr-2,\n.px-2 {\n  padding-right: 0.5rem !important;\n}\n\n.pb-2,\n.py-2 {\n  padding-bottom: 0.5rem !important;\n}\n\n.pl-2,\n.px-2 {\n  padding-left: 0.5rem !important;\n}\n\n.p-3 {\n  padding: 1rem !important;\n}\n\n.pt-3,\n.py-3 {\n  padding-top: 1rem !important;\n}\n\n.pr-3,\n.px-3 {\n  padding-right: 1rem !important;\n}\n\n.pb-3,\n.py-3 {\n  padding-bottom: 1rem !important;\n}\n\n.pl-3,\n.px-3 {\n  padding-left: 1rem !important;\n}\n\n.p-4 {\n  padding: 1.5rem !important;\n}\n\n.pt-4,\n.py-4 {\n  padding-top: 1.5rem !important;\n}\n\n.pr-4,\n.px-4 {\n  padding-right: 1.5rem !important;\n}\n\n.pb-4,\n.py-4 {\n  padding-bottom: 1.5rem !important;\n}\n\n.pl-4,\n.px-4 {\n  padding-left: 1.5rem !important;\n}\n\n.p-5 {\n  padding: 3rem !important;\n}\n\n.pt-5,\n.py-5 {\n  padding-top: 3rem !important;\n}\n\n.pr-5,\n.px-5 {\n  padding-right: 3rem !important;\n}\n\n.pb-5,\n.py-5 {\n  padding-bottom: 3rem !important;\n}\n\n.pl-5,\n.px-5 {\n  padding-left: 3rem !important;\n}\n\n.m-n1 {\n  margin: -0.25rem !important;\n}\n\n.mt-n1,\n.my-n1 {\n  margin-top: -0.25rem !important;\n}\n\n.mr-n1,\n.mx-n1 {\n  margin-right: -0.25rem !important;\n}\n\n.mb-n1,\n.my-n1 {\n  margin-bottom: -0.25rem !important;\n}\n\n.ml-n1,\n.mx-n1 {\n  margin-left: -0.25rem !important;\n}\n\n.m-n2 {\n  margin: -0.5rem !important;\n}\n\n.mt-n2,\n.my-n2 {\n  margin-top: -0.5rem !important;\n}\n\n.mr-n2,\n.mx-n2 {\n  margin-right: -0.5rem !important;\n}\n\n.mb-n2,\n.my-n2 {\n  margin-bottom: -0.5rem !important;\n}\n\n.ml-n2,\n.mx-n2 {\n  margin-left: -0.5rem !important;\n}\n\n.m-n3 {\n  margin: -1rem !important;\n}\n\n.mt-n3,\n.my-n3 {\n  margin-top: -1rem !important;\n}\n\n.mr-n3,\n.mx-n3 {\n  margin-right: -1rem !important;\n}\n\n.mb-n3,\n.my-n3 {\n  margin-bottom: -1rem !important;\n}\n\n.ml-n3,\n.mx-n3 {\n  margin-left: -1rem !important;\n}\n\n.m-n4 {\n  margin: -1.5rem !important;\n}\n\n.mt-n4,\n.my-n4 {\n  margin-top: -1.5rem !important;\n}\n\n.mr-n4,\n.mx-n4 {\n  margin-right: -1.5rem !important;\n}\n\n.mb-n4,\n.my-n4 {\n  margin-bottom: -1.5rem !important;\n}\n\n.ml-n4,\n.mx-n4 {\n  margin-left: -1.5rem !important;\n}\n\n.m-n5 {\n  margin: -3rem !important;\n}\n\n.mt-n5,\n.my-n5 {\n  margin-top: -3rem !important;\n}\n\n.mr-n5,\n.mx-n5 {\n  margin-right: -3rem !important;\n}\n\n.mb-n5,\n.my-n5 {\n  margin-bottom: -3rem !important;\n}\n\n.ml-n5,\n.mx-n5 {\n  margin-left: -3rem !important;\n}\n\n.m-auto {\n  margin: auto !important;\n}\n\n.mt-auto,\n.my-auto {\n  margin-top: auto !important;\n}\n\n.mr-auto,\n.mx-auto {\n  margin-right: auto !important;\n}\n\n.mb-auto,\n.my-auto {\n  margin-bottom: auto !important;\n}\n\n.ml-auto,\n.mx-auto {\n  margin-left: auto !important;\n}\n\n@media (min-width: 576px) {\n  .m-sm-0 {\n    margin: 0 !important;\n  }\n  .mt-sm-0,\n  .my-sm-0 {\n    margin-top: 0 !important;\n  }\n  .mr-sm-0,\n  .mx-sm-0 {\n    margin-right: 0 !important;\n  }\n  .mb-sm-0,\n  .my-sm-0 {\n    margin-bottom: 0 !important;\n  }\n  .ml-sm-0,\n  .mx-sm-0 {\n    margin-left: 0 !important;\n  }\n  .m-sm-1 {\n    margin: 0.25rem !important;\n  }\n  .mt-sm-1,\n  .my-sm-1 {\n    margin-top: 0.25rem !important;\n  }\n  .mr-sm-1,\n  .mx-sm-1 {\n    margin-right: 0.25rem !important;\n  }\n  .mb-sm-1,\n  .my-sm-1 {\n    margin-bottom: 0.25rem !important;\n  }\n  .ml-sm-1,\n  .mx-sm-1 {\n    margin-left: 0.25rem !important;\n  }\n  .m-sm-2 {\n    margin: 0.5rem !important;\n  }\n  .mt-sm-2,\n  .my-sm-2 {\n    margin-top: 0.5rem !important;\n  }\n  .mr-sm-2,\n  .mx-sm-2 {\n    margin-right: 0.5rem !important;\n  }\n  .mb-sm-2,\n  .my-sm-2 {\n    margin-bottom: 0.5rem !important;\n  }\n  .ml-sm-2,\n  .mx-sm-2 {\n    margin-left: 0.5rem !important;\n  }\n  .m-sm-3 {\n    margin: 1rem !important;\n  }\n  .mt-sm-3,\n  .my-sm-3 {\n    margin-top: 1rem !important;\n  }\n  .mr-sm-3,\n  .mx-sm-3 {\n    margin-right: 1rem !important;\n  }\n  .mb-sm-3,\n  .my-sm-3 {\n    margin-bottom: 1rem !important;\n  }\n  .ml-sm-3,\n  .mx-sm-3 {\n    margin-left: 1rem !important;\n  }\n  .m-sm-4 {\n    margin: 1.5rem !important;\n  }\n  .mt-sm-4,\n  .my-sm-4 {\n    margin-top: 1.5rem !important;\n  }\n  .mr-sm-4,\n  .mx-sm-4 {\n    margin-right: 1.5rem !important;\n  }\n  .mb-sm-4,\n  .my-sm-4 {\n    margin-bottom: 1.5rem !important;\n  }\n  .ml-sm-4,\n  .mx-sm-4 {\n    margin-left: 1.5rem !important;\n  }\n  .m-sm-5 {\n    margin: 3rem !important;\n  }\n  .mt-sm-5,\n  .my-sm-5 {\n    margin-top: 3rem !important;\n  }\n  .mr-sm-5,\n  .mx-sm-5 {\n    margin-right: 3rem !important;\n  }\n  .mb-sm-5,\n  .my-sm-5 {\n    margin-bottom: 3rem !important;\n  }\n  .ml-sm-5,\n  .mx-sm-5 {\n    margin-left: 3rem !important;\n  }\n  .p-sm-0 {\n    padding: 0 !important;\n  }\n  .pt-sm-0,\n  .py-sm-0 {\n    padding-top: 0 !important;\n  }\n  .pr-sm-0,\n  .px-sm-0 {\n    padding-right: 0 !important;\n  }\n  .pb-sm-0,\n  .py-sm-0 {\n    padding-bottom: 0 !important;\n  }\n  .pl-sm-0,\n  .px-sm-0 {\n    padding-left: 0 !important;\n  }\n  .p-sm-1 {\n    padding: 0.25rem !important;\n  }\n  .pt-sm-1,\n  .py-sm-1 {\n    padding-top: 0.25rem !important;\n  }\n  .pr-sm-1,\n  .px-sm-1 {\n    padding-right: 0.25rem !important;\n  }\n  .pb-sm-1,\n  .py-sm-1 {\n    padding-bottom: 0.25rem !important;\n  }\n  .pl-sm-1,\n  .px-sm-1 {\n    padding-left: 0.25rem !important;\n  }\n  .p-sm-2 {\n    padding: 0.5rem !important;\n  }\n  .pt-sm-2,\n  .py-sm-2 {\n    padding-top: 0.5rem !important;\n  }\n  .pr-sm-2,\n  .px-sm-2 {\n    padding-right: 0.5rem !important;\n  }\n  .pb-sm-2,\n  .py-sm-2 {\n    padding-bottom: 0.5rem !important;\n  }\n  .pl-sm-2,\n  .px-sm-2 {\n    padding-left: 0.5rem !important;\n  }\n  .p-sm-3 {\n    padding: 1rem !important;\n  }\n  .pt-sm-3,\n  .py-sm-3 {\n    padding-top: 1rem !important;\n  }\n  .pr-sm-3,\n  .px-sm-3 {\n    padding-right: 1rem !important;\n  }\n  .pb-sm-3,\n  .py-sm-3 {\n    padding-bottom: 1rem !important;\n  }\n  .pl-sm-3,\n  .px-sm-3 {\n    padding-left: 1rem !important;\n  }\n  .p-sm-4 {\n    padding: 1.5rem !important;\n  }\n  .pt-sm-4,\n  .py-sm-4 {\n    padding-top: 1.5rem !important;\n  }\n  .pr-sm-4,\n  .px-sm-4 {\n    padding-right: 1.5rem !important;\n  }\n  .pb-sm-4,\n  .py-sm-4 {\n    padding-bottom: 1.5rem !important;\n  }\n  .pl-sm-4,\n  .px-sm-4 {\n    padding-left: 1.5rem !important;\n  }\n  .p-sm-5 {\n    padding: 3rem !important;\n  }\n  .pt-sm-5,\n  .py-sm-5 {\n    padding-top: 3rem !important;\n  }\n  .pr-sm-5,\n  .px-sm-5 {\n    padding-right: 3rem !important;\n  }\n  .pb-sm-5,\n  .py-sm-5 {\n    padding-bottom: 3rem !important;\n  }\n  .pl-sm-5,\n  .px-sm-5 {\n    padding-left: 3rem !important;\n  }\n  .m-sm-n1 {\n    margin: -0.25rem !important;\n  }\n  .mt-sm-n1,\n  .my-sm-n1 {\n    margin-top: -0.25rem !important;\n  }\n  .mr-sm-n1,\n  .mx-sm-n1 {\n    margin-right: -0.25rem !important;\n  }\n  .mb-sm-n1,\n  .my-sm-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n  .ml-sm-n1,\n  .mx-sm-n1 {\n    margin-left: -0.25rem !important;\n  }\n  .m-sm-n2 {\n    margin: -0.5rem !important;\n  }\n  .mt-sm-n2,\n  .my-sm-n2 {\n    margin-top: -0.5rem !important;\n  }\n  .mr-sm-n2,\n  .mx-sm-n2 {\n    margin-right: -0.5rem !important;\n  }\n  .mb-sm-n2,\n  .my-sm-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n  .ml-sm-n2,\n  .mx-sm-n2 {\n    margin-left: -0.5rem !important;\n  }\n  .m-sm-n3 {\n    margin: -1rem !important;\n  }\n  .mt-sm-n3,\n  .my-sm-n3 {\n    margin-top: -1rem !important;\n  }\n  .mr-sm-n3,\n  .mx-sm-n3 {\n    margin-right: -1rem !important;\n  }\n  .mb-sm-n3,\n  .my-sm-n3 {\n    margin-bottom: -1rem !important;\n  }\n  .ml-sm-n3,\n  .mx-sm-n3 {\n    margin-left: -1rem !important;\n  }\n  .m-sm-n4 {\n    margin: -1.5rem !important;\n  }\n  .mt-sm-n4,\n  .my-sm-n4 {\n    margin-top: -1.5rem !important;\n  }\n  .mr-sm-n4,\n  .mx-sm-n4 {\n    margin-right: -1.5rem !important;\n  }\n  .mb-sm-n4,\n  .my-sm-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n  .ml-sm-n4,\n  .mx-sm-n4 {\n    margin-left: -1.5rem !important;\n  }\n  .m-sm-n5 {\n    margin: -3rem !important;\n  }\n  .mt-sm-n5,\n  .my-sm-n5 {\n    margin-top: -3rem !important;\n  }\n  .mr-sm-n5,\n  .mx-sm-n5 {\n    margin-right: -3rem !important;\n  }\n  .mb-sm-n5,\n  .my-sm-n5 {\n    margin-bottom: -3rem !important;\n  }\n  .ml-sm-n5,\n  .mx-sm-n5 {\n    margin-left: -3rem !important;\n  }\n  .m-sm-auto {\n    margin: auto !important;\n  }\n  .mt-sm-auto,\n  .my-sm-auto {\n    margin-top: auto !important;\n  }\n  .mr-sm-auto,\n  .mx-sm-auto {\n    margin-right: auto !important;\n  }\n  .mb-sm-auto,\n  .my-sm-auto {\n    margin-bottom: auto !important;\n  }\n  .ml-sm-auto,\n  .mx-sm-auto {\n    margin-left: auto !important;\n  }\n}\n@media (min-width: 768px) {\n  .m-md-0 {\n    margin: 0 !important;\n  }\n  .mt-md-0,\n  .my-md-0 {\n    margin-top: 0 !important;\n  }\n  .mr-md-0,\n  .mx-md-0 {\n    margin-right: 0 !important;\n  }\n  .mb-md-0,\n  .my-md-0 {\n    margin-bottom: 0 !important;\n  }\n  .ml-md-0,\n  .mx-md-0 {\n    margin-left: 0 !important;\n  }\n  .m-md-1 {\n    margin: 0.25rem !important;\n  }\n  .mt-md-1,\n  .my-md-1 {\n    margin-top: 0.25rem !important;\n  }\n  .mr-md-1,\n  .mx-md-1 {\n    margin-right: 0.25rem !important;\n  }\n  .mb-md-1,\n  .my-md-1 {\n    margin-bottom: 0.25rem !important;\n  }\n  .ml-md-1,\n  .mx-md-1 {\n    margin-left: 0.25rem !important;\n  }\n  .m-md-2 {\n    margin: 0.5rem !important;\n  }\n  .mt-md-2,\n  .my-md-2 {\n    margin-top: 0.5rem !important;\n  }\n  .mr-md-2,\n  .mx-md-2 {\n    margin-right: 0.5rem !important;\n  }\n  .mb-md-2,\n  .my-md-2 {\n    margin-bottom: 0.5rem !important;\n  }\n  .ml-md-2,\n  .mx-md-2 {\n    margin-left: 0.5rem !important;\n  }\n  .m-md-3 {\n    margin: 1rem !important;\n  }\n  .mt-md-3,\n  .my-md-3 {\n    margin-top: 1rem !important;\n  }\n  .mr-md-3,\n  .mx-md-3 {\n    margin-right: 1rem !important;\n  }\n  .mb-md-3,\n  .my-md-3 {\n    margin-bottom: 1rem !important;\n  }\n  .ml-md-3,\n  .mx-md-3 {\n    margin-left: 1rem !important;\n  }\n  .m-md-4 {\n    margin: 1.5rem !important;\n  }\n  .mt-md-4,\n  .my-md-4 {\n    margin-top: 1.5rem !important;\n  }\n  .mr-md-4,\n  .mx-md-4 {\n    margin-right: 1.5rem !important;\n  }\n  .mb-md-4,\n  .my-md-4 {\n    margin-bottom: 1.5rem !important;\n  }\n  .ml-md-4,\n  .mx-md-4 {\n    margin-left: 1.5rem !important;\n  }\n  .m-md-5 {\n    margin: 3rem !important;\n  }\n  .mt-md-5,\n  .my-md-5 {\n    margin-top: 3rem !important;\n  }\n  .mr-md-5,\n  .mx-md-5 {\n    margin-right: 3rem !important;\n  }\n  .mb-md-5,\n  .my-md-5 {\n    margin-bottom: 3rem !important;\n  }\n  .ml-md-5,\n  .mx-md-5 {\n    margin-left: 3rem !important;\n  }\n  .p-md-0 {\n    padding: 0 !important;\n  }\n  .pt-md-0,\n  .py-md-0 {\n    padding-top: 0 !important;\n  }\n  .pr-md-0,\n  .px-md-0 {\n    padding-right: 0 !important;\n  }\n  .pb-md-0,\n  .py-md-0 {\n    padding-bottom: 0 !important;\n  }\n  .pl-md-0,\n  .px-md-0 {\n    padding-left: 0 !important;\n  }\n  .p-md-1 {\n    padding: 0.25rem !important;\n  }\n  .pt-md-1,\n  .py-md-1 {\n    padding-top: 0.25rem !important;\n  }\n  .pr-md-1,\n  .px-md-1 {\n    padding-right: 0.25rem !important;\n  }\n  .pb-md-1,\n  .py-md-1 {\n    padding-bottom: 0.25rem !important;\n  }\n  .pl-md-1,\n  .px-md-1 {\n    padding-left: 0.25rem !important;\n  }\n  .p-md-2 {\n    padding: 0.5rem !important;\n  }\n  .pt-md-2,\n  .py-md-2 {\n    padding-top: 0.5rem !important;\n  }\n  .pr-md-2,\n  .px-md-2 {\n    padding-right: 0.5rem !important;\n  }\n  .pb-md-2,\n  .py-md-2 {\n    padding-bottom: 0.5rem !important;\n  }\n  .pl-md-2,\n  .px-md-2 {\n    padding-left: 0.5rem !important;\n  }\n  .p-md-3 {\n    padding: 1rem !important;\n  }\n  .pt-md-3,\n  .py-md-3 {\n    padding-top: 1rem !important;\n  }\n  .pr-md-3,\n  .px-md-3 {\n    padding-right: 1rem !important;\n  }\n  .pb-md-3,\n  .py-md-3 {\n    padding-bottom: 1rem !important;\n  }\n  .pl-md-3,\n  .px-md-3 {\n    padding-left: 1rem !important;\n  }\n  .p-md-4 {\n    padding: 1.5rem !important;\n  }\n  .pt-md-4,\n  .py-md-4 {\n    padding-top: 1.5rem !important;\n  }\n  .pr-md-4,\n  .px-md-4 {\n    padding-right: 1.5rem !important;\n  }\n  .pb-md-4,\n  .py-md-4 {\n    padding-bottom: 1.5rem !important;\n  }\n  .pl-md-4,\n  .px-md-4 {\n    padding-left: 1.5rem !important;\n  }\n  .p-md-5 {\n    padding: 3rem !important;\n  }\n  .pt-md-5,\n  .py-md-5 {\n    padding-top: 3rem !important;\n  }\n  .pr-md-5,\n  .px-md-5 {\n    padding-right: 3rem !important;\n  }\n  .pb-md-5,\n  .py-md-5 {\n    padding-bottom: 3rem !important;\n  }\n  .pl-md-5,\n  .px-md-5 {\n    padding-left: 3rem !important;\n  }\n  .m-md-n1 {\n    margin: -0.25rem !important;\n  }\n  .mt-md-n1,\n  .my-md-n1 {\n    margin-top: -0.25rem !important;\n  }\n  .mr-md-n1,\n  .mx-md-n1 {\n    margin-right: -0.25rem !important;\n  }\n  .mb-md-n1,\n  .my-md-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n  .ml-md-n1,\n  .mx-md-n1 {\n    margin-left: -0.25rem !important;\n  }\n  .m-md-n2 {\n    margin: -0.5rem !important;\n  }\n  .mt-md-n2,\n  .my-md-n2 {\n    margin-top: -0.5rem !important;\n  }\n  .mr-md-n2,\n  .mx-md-n2 {\n    margin-right: -0.5rem !important;\n  }\n  .mb-md-n2,\n  .my-md-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n  .ml-md-n2,\n  .mx-md-n2 {\n    margin-left: -0.5rem !important;\n  }\n  .m-md-n3 {\n    margin: -1rem !important;\n  }\n  .mt-md-n3,\n  .my-md-n3 {\n    margin-top: -1rem !important;\n  }\n  .mr-md-n3,\n  .mx-md-n3 {\n    margin-right: -1rem !important;\n  }\n  .mb-md-n3,\n  .my-md-n3 {\n    margin-bottom: -1rem !important;\n  }\n  .ml-md-n3,\n  .mx-md-n3 {\n    margin-left: -1rem !important;\n  }\n  .m-md-n4 {\n    margin: -1.5rem !important;\n  }\n  .mt-md-n4,\n  .my-md-n4 {\n    margin-top: -1.5rem !important;\n  }\n  .mr-md-n4,\n  .mx-md-n4 {\n    margin-right: -1.5rem !important;\n  }\n  .mb-md-n4,\n  .my-md-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n  .ml-md-n4,\n  .mx-md-n4 {\n    margin-left: -1.5rem !important;\n  }\n  .m-md-n5 {\n    margin: -3rem !important;\n  }\n  .mt-md-n5,\n  .my-md-n5 {\n    margin-top: -3rem !important;\n  }\n  .mr-md-n5,\n  .mx-md-n5 {\n    margin-right: -3rem !important;\n  }\n  .mb-md-n5,\n  .my-md-n5 {\n    margin-bottom: -3rem !important;\n  }\n  .ml-md-n5,\n  .mx-md-n5 {\n    margin-left: -3rem !important;\n  }\n  .m-md-auto {\n    margin: auto !important;\n  }\n  .mt-md-auto,\n  .my-md-auto {\n    margin-top: auto !important;\n  }\n  .mr-md-auto,\n  .mx-md-auto {\n    margin-right: auto !important;\n  }\n  .mb-md-auto,\n  .my-md-auto {\n    margin-bottom: auto !important;\n  }\n  .ml-md-auto,\n  .mx-md-auto {\n    margin-left: auto !important;\n  }\n}\n@media (min-width: 992px) {\n  .m-lg-0 {\n    margin: 0 !important;\n  }\n  .mt-lg-0,\n  .my-lg-0 {\n    margin-top: 0 !important;\n  }\n  .mr-lg-0,\n  .mx-lg-0 {\n    margin-right: 0 !important;\n  }\n  .mb-lg-0,\n  .my-lg-0 {\n    margin-bottom: 0 !important;\n  }\n  .ml-lg-0,\n  .mx-lg-0 {\n    margin-left: 0 !important;\n  }\n  .m-lg-1 {\n    margin: 0.25rem !important;\n  }\n  .mt-lg-1,\n  .my-lg-1 {\n    margin-top: 0.25rem !important;\n  }\n  .mr-lg-1,\n  .mx-lg-1 {\n    margin-right: 0.25rem !important;\n  }\n  .mb-lg-1,\n  .my-lg-1 {\n    margin-bottom: 0.25rem !important;\n  }\n  .ml-lg-1,\n  .mx-lg-1 {\n    margin-left: 0.25rem !important;\n  }\n  .m-lg-2 {\n    margin: 0.5rem !important;\n  }\n  .mt-lg-2,\n  .my-lg-2 {\n    margin-top: 0.5rem !important;\n  }\n  .mr-lg-2,\n  .mx-lg-2 {\n    margin-right: 0.5rem !important;\n  }\n  .mb-lg-2,\n  .my-lg-2 {\n    margin-bottom: 0.5rem !important;\n  }\n  .ml-lg-2,\n  .mx-lg-2 {\n    margin-left: 0.5rem !important;\n  }\n  .m-lg-3 {\n    margin: 1rem !important;\n  }\n  .mt-lg-3,\n  .my-lg-3 {\n    margin-top: 1rem !important;\n  }\n  .mr-lg-3,\n  .mx-lg-3 {\n    margin-right: 1rem !important;\n  }\n  .mb-lg-3,\n  .my-lg-3 {\n    margin-bottom: 1rem !important;\n  }\n  .ml-lg-3,\n  .mx-lg-3 {\n    margin-left: 1rem !important;\n  }\n  .m-lg-4 {\n    margin: 1.5rem !important;\n  }\n  .mt-lg-4,\n  .my-lg-4 {\n    margin-top: 1.5rem !important;\n  }\n  .mr-lg-4,\n  .mx-lg-4 {\n    margin-right: 1.5rem !important;\n  }\n  .mb-lg-4,\n  .my-lg-4 {\n    margin-bottom: 1.5rem !important;\n  }\n  .ml-lg-4,\n  .mx-lg-4 {\n    margin-left: 1.5rem !important;\n  }\n  .m-lg-5 {\n    margin: 3rem !important;\n  }\n  .mt-lg-5,\n  .my-lg-5 {\n    margin-top: 3rem !important;\n  }\n  .mr-lg-5,\n  .mx-lg-5 {\n    margin-right: 3rem !important;\n  }\n  .mb-lg-5,\n  .my-lg-5 {\n    margin-bottom: 3rem !important;\n  }\n  .ml-lg-5,\n  .mx-lg-5 {\n    margin-left: 3rem !important;\n  }\n  .p-lg-0 {\n    padding: 0 !important;\n  }\n  .pt-lg-0,\n  .py-lg-0 {\n    padding-top: 0 !important;\n  }\n  .pr-lg-0,\n  .px-lg-0 {\n    padding-right: 0 !important;\n  }\n  .pb-lg-0,\n  .py-lg-0 {\n    padding-bottom: 0 !important;\n  }\n  .pl-lg-0,\n  .px-lg-0 {\n    padding-left: 0 !important;\n  }\n  .p-lg-1 {\n    padding: 0.25rem !important;\n  }\n  .pt-lg-1,\n  .py-lg-1 {\n    padding-top: 0.25rem !important;\n  }\n  .pr-lg-1,\n  .px-lg-1 {\n    padding-right: 0.25rem !important;\n  }\n  .pb-lg-1,\n  .py-lg-1 {\n    padding-bottom: 0.25rem !important;\n  }\n  .pl-lg-1,\n  .px-lg-1 {\n    padding-left: 0.25rem !important;\n  }\n  .p-lg-2 {\n    padding: 0.5rem !important;\n  }\n  .pt-lg-2,\n  .py-lg-2 {\n    padding-top: 0.5rem !important;\n  }\n  .pr-lg-2,\n  .px-lg-2 {\n    padding-right: 0.5rem !important;\n  }\n  .pb-lg-2,\n  .py-lg-2 {\n    padding-bottom: 0.5rem !important;\n  }\n  .pl-lg-2,\n  .px-lg-2 {\n    padding-left: 0.5rem !important;\n  }\n  .p-lg-3 {\n    padding: 1rem !important;\n  }\n  .pt-lg-3,\n  .py-lg-3 {\n    padding-top: 1rem !important;\n  }\n  .pr-lg-3,\n  .px-lg-3 {\n    padding-right: 1rem !important;\n  }\n  .pb-lg-3,\n  .py-lg-3 {\n    padding-bottom: 1rem !important;\n  }\n  .pl-lg-3,\n  .px-lg-3 {\n    padding-left: 1rem !important;\n  }\n  .p-lg-4 {\n    padding: 1.5rem !important;\n  }\n  .pt-lg-4,\n  .py-lg-4 {\n    padding-top: 1.5rem !important;\n  }\n  .pr-lg-4,\n  .px-lg-4 {\n    padding-right: 1.5rem !important;\n  }\n  .pb-lg-4,\n  .py-lg-4 {\n    padding-bottom: 1.5rem !important;\n  }\n  .pl-lg-4,\n  .px-lg-4 {\n    padding-left: 1.5rem !important;\n  }\n  .p-lg-5 {\n    padding: 3rem !important;\n  }\n  .pt-lg-5,\n  .py-lg-5 {\n    padding-top: 3rem !important;\n  }\n  .pr-lg-5,\n  .px-lg-5 {\n    padding-right: 3rem !important;\n  }\n  .pb-lg-5,\n  .py-lg-5 {\n    padding-bottom: 3rem !important;\n  }\n  .pl-lg-5,\n  .px-lg-5 {\n    padding-left: 3rem !important;\n  }\n  .m-lg-n1 {\n    margin: -0.25rem !important;\n  }\n  .mt-lg-n1,\n  .my-lg-n1 {\n    margin-top: -0.25rem !important;\n  }\n  .mr-lg-n1,\n  .mx-lg-n1 {\n    margin-right: -0.25rem !important;\n  }\n  .mb-lg-n1,\n  .my-lg-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n  .ml-lg-n1,\n  .mx-lg-n1 {\n    margin-left: -0.25rem !important;\n  }\n  .m-lg-n2 {\n    margin: -0.5rem !important;\n  }\n  .mt-lg-n2,\n  .my-lg-n2 {\n    margin-top: -0.5rem !important;\n  }\n  .mr-lg-n2,\n  .mx-lg-n2 {\n    margin-right: -0.5rem !important;\n  }\n  .mb-lg-n2,\n  .my-lg-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n  .ml-lg-n2,\n  .mx-lg-n2 {\n    margin-left: -0.5rem !important;\n  }\n  .m-lg-n3 {\n    margin: -1rem !important;\n  }\n  .mt-lg-n3,\n  .my-lg-n3 {\n    margin-top: -1rem !important;\n  }\n  .mr-lg-n3,\n  .mx-lg-n3 {\n    margin-right: -1rem !important;\n  }\n  .mb-lg-n3,\n  .my-lg-n3 {\n    margin-bottom: -1rem !important;\n  }\n  .ml-lg-n3,\n  .mx-lg-n3 {\n    margin-left: -1rem !important;\n  }\n  .m-lg-n4 {\n    margin: -1.5rem !important;\n  }\n  .mt-lg-n4,\n  .my-lg-n4 {\n    margin-top: -1.5rem !important;\n  }\n  .mr-lg-n4,\n  .mx-lg-n4 {\n    margin-right: -1.5rem !important;\n  }\n  .mb-lg-n4,\n  .my-lg-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n  .ml-lg-n4,\n  .mx-lg-n4 {\n    margin-left: -1.5rem !important;\n  }\n  .m-lg-n5 {\n    margin: -3rem !important;\n  }\n  .mt-lg-n5,\n  .my-lg-n5 {\n    margin-top: -3rem !important;\n  }\n  .mr-lg-n5,\n  .mx-lg-n5 {\n    margin-right: -3rem !important;\n  }\n  .mb-lg-n5,\n  .my-lg-n5 {\n    margin-bottom: -3rem !important;\n  }\n  .ml-lg-n5,\n  .mx-lg-n5 {\n    margin-left: -3rem !important;\n  }\n  .m-lg-auto {\n    margin: auto !important;\n  }\n  .mt-lg-auto,\n  .my-lg-auto {\n    margin-top: auto !important;\n  }\n  .mr-lg-auto,\n  .mx-lg-auto {\n    margin-right: auto !important;\n  }\n  .mb-lg-auto,\n  .my-lg-auto {\n    margin-bottom: auto !important;\n  }\n  .ml-lg-auto,\n  .mx-lg-auto {\n    margin-left: auto !important;\n  }\n}\n@media (min-width: 1200px) {\n  .m-xl-0 {\n    margin: 0 !important;\n  }\n  .mt-xl-0,\n  .my-xl-0 {\n    margin-top: 0 !important;\n  }\n  .mr-xl-0,\n  .mx-xl-0 {\n    margin-right: 0 !important;\n  }\n  .mb-xl-0,\n  .my-xl-0 {\n    margin-bottom: 0 !important;\n  }\n  .ml-xl-0,\n  .mx-xl-0 {\n    margin-left: 0 !important;\n  }\n  .m-xl-1 {\n    margin: 0.25rem !important;\n  }\n  .mt-xl-1,\n  .my-xl-1 {\n    margin-top: 0.25rem !important;\n  }\n  .mr-xl-1,\n  .mx-xl-1 {\n    margin-right: 0.25rem !important;\n  }\n  .mb-xl-1,\n  .my-xl-1 {\n    margin-bottom: 0.25rem !important;\n  }\n  .ml-xl-1,\n  .mx-xl-1 {\n    margin-left: 0.25rem !important;\n  }\n  .m-xl-2 {\n    margin: 0.5rem !important;\n  }\n  .mt-xl-2,\n  .my-xl-2 {\n    margin-top: 0.5rem !important;\n  }\n  .mr-xl-2,\n  .mx-xl-2 {\n    margin-right: 0.5rem !important;\n  }\n  .mb-xl-2,\n  .my-xl-2 {\n    margin-bottom: 0.5rem !important;\n  }\n  .ml-xl-2,\n  .mx-xl-2 {\n    margin-left: 0.5rem !important;\n  }\n  .m-xl-3 {\n    margin: 1rem !important;\n  }\n  .mt-xl-3,\n  .my-xl-3 {\n    margin-top: 1rem !important;\n  }\n  .mr-xl-3,\n  .mx-xl-3 {\n    margin-right: 1rem !important;\n  }\n  .mb-xl-3,\n  .my-xl-3 {\n    margin-bottom: 1rem !important;\n  }\n  .ml-xl-3,\n  .mx-xl-3 {\n    margin-left: 1rem !important;\n  }\n  .m-xl-4 {\n    margin: 1.5rem !important;\n  }\n  .mt-xl-4,\n  .my-xl-4 {\n    margin-top: 1.5rem !important;\n  }\n  .mr-xl-4,\n  .mx-xl-4 {\n    margin-right: 1.5rem !important;\n  }\n  .mb-xl-4,\n  .my-xl-4 {\n    margin-bottom: 1.5rem !important;\n  }\n  .ml-xl-4,\n  .mx-xl-4 {\n    margin-left: 1.5rem !important;\n  }\n  .m-xl-5 {\n    margin: 3rem !important;\n  }\n  .mt-xl-5,\n  .my-xl-5 {\n    margin-top: 3rem !important;\n  }\n  .mr-xl-5,\n  .mx-xl-5 {\n    margin-right: 3rem !important;\n  }\n  .mb-xl-5,\n  .my-xl-5 {\n    margin-bottom: 3rem !important;\n  }\n  .ml-xl-5,\n  .mx-xl-5 {\n    margin-left: 3rem !important;\n  }\n  .p-xl-0 {\n    padding: 0 !important;\n  }\n  .pt-xl-0,\n  .py-xl-0 {\n    padding-top: 0 !important;\n  }\n  .pr-xl-0,\n  .px-xl-0 {\n    padding-right: 0 !important;\n  }\n  .pb-xl-0,\n  .py-xl-0 {\n    padding-bottom: 0 !important;\n  }\n  .pl-xl-0,\n  .px-xl-0 {\n    padding-left: 0 !important;\n  }\n  .p-xl-1 {\n    padding: 0.25rem !important;\n  }\n  .pt-xl-1,\n  .py-xl-1 {\n    padding-top: 0.25rem !important;\n  }\n  .pr-xl-1,\n  .px-xl-1 {\n    padding-right: 0.25rem !important;\n  }\n  .pb-xl-1,\n  .py-xl-1 {\n    padding-bottom: 0.25rem !important;\n  }\n  .pl-xl-1,\n  .px-xl-1 {\n    padding-left: 0.25rem !important;\n  }\n  .p-xl-2 {\n    padding: 0.5rem !important;\n  }\n  .pt-xl-2,\n  .py-xl-2 {\n    padding-top: 0.5rem !important;\n  }\n  .pr-xl-2,\n  .px-xl-2 {\n    padding-right: 0.5rem !important;\n  }\n  .pb-xl-2,\n  .py-xl-2 {\n    padding-bottom: 0.5rem !important;\n  }\n  .pl-xl-2,\n  .px-xl-2 {\n    padding-left: 0.5rem !important;\n  }\n  .p-xl-3 {\n    padding: 1rem !important;\n  }\n  .pt-xl-3,\n  .py-xl-3 {\n    padding-top: 1rem !important;\n  }\n  .pr-xl-3,\n  .px-xl-3 {\n    padding-right: 1rem !important;\n  }\n  .pb-xl-3,\n  .py-xl-3 {\n    padding-bottom: 1rem !important;\n  }\n  .pl-xl-3,\n  .px-xl-3 {\n    padding-left: 1rem !important;\n  }\n  .p-xl-4 {\n    padding: 1.5rem !important;\n  }\n  .pt-xl-4,\n  .py-xl-4 {\n    padding-top: 1.5rem !important;\n  }\n  .pr-xl-4,\n  .px-xl-4 {\n    padding-right: 1.5rem !important;\n  }\n  .pb-xl-4,\n  .py-xl-4 {\n    padding-bottom: 1.5rem !important;\n  }\n  .pl-xl-4,\n  .px-xl-4 {\n    padding-left: 1.5rem !important;\n  }\n  .p-xl-5 {\n    padding: 3rem !important;\n  }\n  .pt-xl-5,\n  .py-xl-5 {\n    padding-top: 3rem !important;\n  }\n  .pr-xl-5,\n  .px-xl-5 {\n    padding-right: 3rem !important;\n  }\n  .pb-xl-5,\n  .py-xl-5 {\n    padding-bottom: 3rem !important;\n  }\n  .pl-xl-5,\n  .px-xl-5 {\n    padding-left: 3rem !important;\n  }\n  .m-xl-n1 {\n    margin: -0.25rem !important;\n  }\n  .mt-xl-n1,\n  .my-xl-n1 {\n    margin-top: -0.25rem !important;\n  }\n  .mr-xl-n1,\n  .mx-xl-n1 {\n    margin-right: -0.25rem !important;\n  }\n  .mb-xl-n1,\n  .my-xl-n1 {\n    margin-bottom: -0.25rem !important;\n  }\n  .ml-xl-n1,\n  .mx-xl-n1 {\n    margin-left: -0.25rem !important;\n  }\n  .m-xl-n2 {\n    margin: -0.5rem !important;\n  }\n  .mt-xl-n2,\n  .my-xl-n2 {\n    margin-top: -0.5rem !important;\n  }\n  .mr-xl-n2,\n  .mx-xl-n2 {\n    margin-right: -0.5rem !important;\n  }\n  .mb-xl-n2,\n  .my-xl-n2 {\n    margin-bottom: -0.5rem !important;\n  }\n  .ml-xl-n2,\n  .mx-xl-n2 {\n    margin-left: -0.5rem !important;\n  }\n  .m-xl-n3 {\n    margin: -1rem !important;\n  }\n  .mt-xl-n3,\n  .my-xl-n3 {\n    margin-top: -1rem !important;\n  }\n  .mr-xl-n3,\n  .mx-xl-n3 {\n    margin-right: -1rem !important;\n  }\n  .mb-xl-n3,\n  .my-xl-n3 {\n    margin-bottom: -1rem !important;\n  }\n  .ml-xl-n3,\n  .mx-xl-n3 {\n    margin-left: -1rem !important;\n  }\n  .m-xl-n4 {\n    margin: -1.5rem !important;\n  }\n  .mt-xl-n4,\n  .my-xl-n4 {\n    margin-top: -1.5rem !important;\n  }\n  .mr-xl-n4,\n  .mx-xl-n4 {\n    margin-right: -1.5rem !important;\n  }\n  .mb-xl-n4,\n  .my-xl-n4 {\n    margin-bottom: -1.5rem !important;\n  }\n  .ml-xl-n4,\n  .mx-xl-n4 {\n    margin-left: -1.5rem !important;\n  }\n  .m-xl-n5 {\n    margin: -3rem !important;\n  }\n  .mt-xl-n5,\n  .my-xl-n5 {\n    margin-top: -3rem !important;\n  }\n  .mr-xl-n5,\n  .mx-xl-n5 {\n    margin-right: -3rem !important;\n  }\n  .mb-xl-n5,\n  .my-xl-n5 {\n    margin-bottom: -3rem !important;\n  }\n  .ml-xl-n5,\n  .mx-xl-n5 {\n    margin-left: -3rem !important;\n  }\n  .m-xl-auto {\n    margin: auto !important;\n  }\n  .mt-xl-auto,\n  .my-xl-auto {\n    margin-top: auto !important;\n  }\n  .mr-xl-auto,\n  .mx-xl-auto {\n    margin-right: auto !important;\n  }\n  .mb-xl-auto,\n  .my-xl-auto {\n    margin-bottom: auto !important;\n  }\n  .ml-xl-auto,\n  .mx-xl-auto {\n    margin-left: auto !important;\n  }\n}\n.stretched-link::after {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 1;\n  pointer-events: auto;\n  content: \"\";\n  background-color: rgba(0, 0, 0, 0);\n}\n\n.text-monospace {\n  font-family: SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace !important;\n}\n\n.text-justify {\n  text-align: justify !important;\n}\n\n.text-wrap {\n  white-space: normal !important;\n}\n\n.text-nowrap {\n  white-space: nowrap !important;\n}\n\n.text-truncate {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n.text-left {\n  text-align: left !important;\n}\n\n.text-right {\n  text-align: right !important;\n}\n\n.text-center {\n  text-align: center !important;\n}\n\n@media (min-width: 576px) {\n  .text-sm-left {\n    text-align: left !important;\n  }\n  .text-sm-right {\n    text-align: right !important;\n  }\n  .text-sm-center {\n    text-align: center !important;\n  }\n}\n@media (min-width: 768px) {\n  .text-md-left {\n    text-align: left !important;\n  }\n  .text-md-right {\n    text-align: right !important;\n  }\n  .text-md-center {\n    text-align: center !important;\n  }\n}\n@media (min-width: 992px) {\n  .text-lg-left {\n    text-align: left !important;\n  }\n  .text-lg-right {\n    text-align: right !important;\n  }\n  .text-lg-center {\n    text-align: center !important;\n  }\n}\n@media (min-width: 1200px) {\n  .text-xl-left {\n    text-align: left !important;\n  }\n  .text-xl-right {\n    text-align: right !important;\n  }\n  .text-xl-center {\n    text-align: center !important;\n  }\n}\n.text-lowercase {\n  text-transform: lowercase !important;\n}\n\n.text-uppercase {\n  text-transform: uppercase !important;\n}\n\n.text-capitalize {\n  text-transform: capitalize !important;\n}\n\n.font-weight-light {\n  font-weight: 300 !important;\n}\n\n.font-weight-lighter {\n  font-weight: lighter !important;\n}\n\n.font-weight-normal {\n  font-weight: 400 !important;\n}\n\n.font-weight-bold {\n  font-weight: 700 !important;\n}\n\n.font-weight-bolder {\n  font-weight: bolder !important;\n}\n\n.font-italic {\n  font-style: italic !important;\n}\n\n.text-white {\n  color: #fff !important;\n}\n\n.text-primary {\n  color: #007bff !important;\n}\n\na.text-primary:hover, a.text-primary:focus {\n  color: #0056b3 !important;\n}\n\n.text-secondary {\n  color: #6c757d !important;\n}\n\na.text-secondary:hover, a.text-secondary:focus {\n  color: #494f54 !important;\n}\n\n.text-success {\n  color: #28a745 !important;\n}\n\na.text-success:hover, a.text-success:focus {\n  color: #19692c !important;\n}\n\n.text-info {\n  color: #17a2b8 !important;\n}\n\na.text-info:hover, a.text-info:focus {\n  color: #0f6674 !important;\n}\n\n.text-warning {\n  color: #ffc107 !important;\n}\n\na.text-warning:hover, a.text-warning:focus {\n  color: #ba8b00 !important;\n}\n\n.text-danger {\n  color: #dc3545 !important;\n}\n\na.text-danger:hover, a.text-danger:focus {\n  color: #a71d2a !important;\n}\n\n.text-light {\n  color: #f8f9fa !important;\n}\n\na.text-light:hover, a.text-light:focus {\n  color: #cbd3da !important;\n}\n\n.text-dark {\n  color: #343a40 !important;\n}\n\na.text-dark:hover, a.text-dark:focus {\n  color: #121416 !important;\n}\n\n.text-body {\n  color: #212529 !important;\n}\n\n.text-muted {\n  color: #6c757d !important;\n}\n\n.text-black-50 {\n  color: rgba(0, 0, 0, 0.5) !important;\n}\n\n.text-white-50 {\n  color: rgba(255, 255, 255, 0.5) !important;\n}\n\n.text-hide {\n  font: 0/0 a;\n  color: transparent;\n  text-shadow: none;\n  background-color: transparent;\n  border: 0;\n}\n\n.text-decoration-none {\n  text-decoration: none !important;\n}\n\n.text-break {\n  word-break: break-word !important;\n  word-wrap: break-word !important;\n}\n\n.text-reset {\n  color: inherit !important;\n}\n\n.visible {\n  visibility: visible !important;\n}\n\n.invisible {\n  visibility: hidden !important;\n}\n\n@media print {\n  *,\n  *::before,\n  *::after {\n    text-shadow: none !important;\n    box-shadow: none !important;\n  }\n  a:not(.btn) {\n    text-decoration: underline;\n  }\n  abbr[title]::after {\n    content: \" (\" attr(title) \")\";\n  }\n  pre {\n    white-space: pre-wrap !important;\n  }\n  pre,\n  blockquote {\n    border: 1px solid #adb5bd;\n    page-break-inside: avoid;\n  }\n  tr,\n  img {\n    page-break-inside: avoid;\n  }\n  p,\n  h2,\n  h3 {\n    orphans: 3;\n    widows: 3;\n  }\n  h2,\n  h3 {\n    page-break-after: avoid;\n  }\n  @page {\n    size: a3;\n  }\n  body {\n    min-width: 992px !important;\n  }\n  .container {\n    min-width: 992px !important;\n  }\n  .navbar {\n    display: none;\n  }\n  .badge {\n    border: 1px solid #000;\n  }\n  .table {\n    border-collapse: collapse !important;\n  }\n  .table td,\n  .table th {\n    background-color: #fff !important;\n  }\n  .table-bordered th,\n  .table-bordered td {\n    border: 1px solid #dee2e6 !important;\n  }\n  .table-dark {\n    color: inherit;\n  }\n  .table-dark th,\n  .table-dark td,\n  .table-dark thead th,\n  .table-dark tbody + tbody {\n    border-color: #dee2e6;\n  }\n  .table .thead-dark th {\n    color: inherit;\n    border-color: #dee2e6;\n  }\n}\n.axustable {\n  padding: 1em 0.5em 0.5em 0.5em;\n}\n.axustable.bordered {\n  border: 1px solid rgba(0, 0, 0, 0.1019607843);\n}\n.axustable:not(.transparent) {\n  background-color: #fff;\n}\n.axustable .axustable-actions {\n  width: 100%;\n  padding: 0em 1em;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: flex-start;\n  flex-direction: row;\n  align-items: center;\n}\n.axustable .axustable-actions .axustable-actions-left {\n  flex-grow: 1;\n  width: 30%;\n  display: flex;\n}\n.axustable .axustable-actions .axustable-actions-left .axustable-clear-filter {\n  user-select: none;\n}\n.axustable .axustable-actions .axustable-actions-left .axustable-clear-filter.active {\n  cursor: pointer;\n}\n.axustable .axustable-actions .axustable-actions-left .axustable-export {\n  user-select: none;\n  cursor: pointer;\n}\n.axustable .axustable-actions .axustable-actions-left .axustable-search-input {\n  text-align: center;\n}\n.axustable .axustable-actions .axustable-actions-left .axustable-search-input input {\n  border-style: solid;\n  border-width: 1px;\n  line-height: 2em;\n}\n.axustable .axustable-actions .axustable-actions-right {\n  flex-grow: 1;\n  width: 70%;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination {\n  text-align: right;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .ellipsis,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .select,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .total {\n  display: inline-block;\n  min-width: 1.25em;\n  font-size: 1em;\n  padding-right: 0.5em;\n  text-align: center;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num {\n  cursor: pointer;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .ellipsis,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .total {\n  opacity: 0.4;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow {\n  opacity: 0.4;\n  border-radius: 0.25em;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num.active,\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow.active {\n  opacity: 1;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num:hover:not(.active),\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow:hover:not(.active) {\n  background-color: #ddd;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .arrow {\n  font-size: 1.5em;\n}\n.axustable .axustable-actions .axustable-actions-right .axustable-pagination .page-num.active {\n  font-size: 1.5em;\n}\n.axustable .axustable-table-wrap {\n  display: block;\n  overflow-x: auto;\n  white-space: nowrap;\n}\n.axustable .axustable-table-wrap .axustable-table {\n  display: table;\n  border-collapse: separate;\n  border-spacing: 0.5em 0;\n  width: 100%;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header {\n  display: table-row;\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-header {\n    display: none !important;\n  }\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field {\n  display: table-cell;\n  font-style: italic;\n  font-weight: bold;\n  color: #969696;\n  border-bottom: 1px solid rgba(0, 0, 0, 0.7490196078);\n  padding: 0.25em 0em;\n  vertical-align: middle;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner {\n  display: flex;\n  align-items: baseline;\n  justify-content: left;\n  user-select: none;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions {\n  white-space: nowrap;\n  /*a:not(:first-child) {\n    padding-left: 0.25em;\n  }*/\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions a {\n  opacity: 0.3;\n  font-size: 1.5em;\n  cursor: pointer;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-actions a.active {\n  opacity: 1;\n  color: #229e09;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-label {\n  cursor: pointer;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field .axustable-header-field-inner .axustable-header-field-label.active {\n  color: #229e09;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-right {\n  text-align: right;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-right .axustable-header-field-inner {\n  justify-content: right;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-center {\n  text-align: center;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-header .axustable-header-field.axustable-header-field-center .axustable-header-field-inner {\n  justify-content: center;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row:not(:last-child) .axustable-item {\n  border-bottom: 1px solid rgba(0, 0, 0, 0.1254901961);\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row {\n  display: table-row;\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-row {\n    display: block !important;\n    border: 1px solid rgba(0, 0, 0, 0.1254901961);\n    margin-bottom: 1em;\n  }\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item {\n  display: table-cell;\n  padding: 0.25em 0em;\n  vertical-align: middle;\n  min-height: 35px;\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item {\n    display: block;\n    position: relative;\n    padding: 1em;\n    min-height: 2em;\n  }\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-main {\n    text-align: center;\n  }\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item:not(.axustable-item-main):not(.axustable-item-right)::after {\n    content: attr(data-name);\n    color: #ddd9d9;\n    font-size: 0.9em;\n    font-style: italic;\n    position: absolute;\n    top: 0.15em;\n    right: 1em;\n  }\n}\n@media screen and (max-width: 768px) {\n  .axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-empty {\n    display: none;\n  }\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-textual {\n  color: gray;\n  font-style: italic;\n  font-size: 0.9em;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-right {\n  text-align: right;\n  white-space: nowrap;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-price {\n  text-align: right;\n  color: green;\n}\n.axustable .axustable-table-wrap .axustable-table .axustable-row .axustable-item.axustable-item-cut_200 .axustable-item-inner {\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  max-width: 200px;\n}\n\n.axustable-filter-modal {\n  max-width: 250px;\n}\n.axustable-filter-modal .modal-header h5.modal-title {\n  width: 100%;\n}\n.axustable-filter-modal .modal-header button.close {\n  padding: 0;\n  margin: unset;\n  position: absolute;\n  right: 1em;\n  top: 1em;\n}\n.axustable-filter-modal .axustable-filter-search {\n  margin-top: 1em;\n  margin-bottom: -0.5em;\n}\n.axustable-filter-modal .axustable-filter-search .input-group-text {\n  transform: rotate(180deg);\n}\n.axustable-filter-modal .axustable-filter-list {\n  max-height: 200px;\n  overflow-y: auto;\n}\n.axustable-filter-modal .axustable-filter-list .axustable-filter-val {\n  cursor: pointer;\n  padding: 0.25em 0;\n  user-select: none;\n}\n.axustable-filter-modal .axustable-filter-list .axustable-filter-val.active {\n  opacity: 1;\n}\n.axustable-filter-modal .axustable-filter-list .axustable-filter-val.inactive {\n  opacity: 0.8;\n}\n.axustable-filter-modal .modal-footer {\n  display: block;\n}\n.axustable-filter-modal .modal-footer button {\n  text-align: center;\n  margin-top: 1em;\n}";
+	styleInject(css_248z$1);
+
+	var css_248z = "h1 {\n  text-align: center;\n}\n\nbody {\n  background-color: #f4f4f4;\n}";
 	styleInject(css_248z);
 
 	ReactDOM.render( /*#__PURE__*/React.createElement(Demo, null), document.getElementById('demo-container'));

@@ -1,14 +1,15 @@
 import React, {useState, useEffect, useCallback} from 'react'
-import AxustableActions from './AxustableActions.mjs'
-import AxustableHeader from './AxustableHeader.mjs'
-import AxustableRow from './AxustableRow.mjs'
-import AxustableItem from './AxustableItem.mjs'
-import AxustableFilterModal from './AxustableFilterModal.mjs'
-
-import {slugify} from 'farrapa-strings'
-import { collSort } from 'farrapa-collections'
-import { useStoragedState } from './storage/useStoragedState.mjs'
 import {utils as xlsx_utils, writeFile as xlsx_write} from 'xlsx'
+import {slugify} from 'farrapa/strings'
+import { collSort } from 'farrapa/collections'
+import { useStoragedState } from '~storage/useStoragedState.mjs'
+import AxustableActions from '~table/actions/AxustableActions.mjs'
+import AxustableHeader from '~table/header/AxustableHeader.mjs'
+import AxustableRow from '~table/body/AxustableRow.mjs'
+import AxustableItem from '~table/body/AxustableItem.mjs'
+import AxustableFilterModal from '~table/AxustableFilterModal.mjs'
+
+
 
 const AXUSTABLE_DEFAULTS= {
   pageRows: 15

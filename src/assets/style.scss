@@ -1,3 +1,5 @@
+@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+
 // Adapt bootstrap
 $screen-xs: 480px;
 $screen-sm: 768px;
@@ -30,7 +32,7 @@ $screen-md: 992px;
 
     .axustable-actions-left {
       flex-grow: 1;
-      width: 33%;
+      width: 30%;
       display: flex;
 
       .axustable-clear-filter {
@@ -44,25 +46,21 @@ $screen-md: 992px;
         cursor: pointer;
       }
 
-    }
-
-    .axustable-actions-middle {
-      flex-grow: 1;
-      width: 33%;
-      
-      .axustable-search {
+      .axustable-search-input {
         text-align: center;
         input {
           border-style: solid;
           border-width: 1px;
           line-height: 2em;
         }
-      }
+      }      
+
     }
+
 
     .axustable-actions-right {
       flex-grow: 1;
-      width: 33%;
+      width: 70%;
 
       .axustable-pagination{
         text-align: right;
@@ -148,9 +146,10 @@ $screen-md: 992px;
 
           .axustable-header-field-inner {
             display: flex;
-            align-items: center;
-            justify-content: left;
+            align-items: baseline;
+            justify-content: left; // space-between; // left;
             user-select: none;
+            //border-bottom: 1px solid gray;
 
             .axustable-header-field-actions {
               white-space: nowrap;
@@ -175,7 +174,7 @@ $screen-md: 992px;
               cursor: pointer;
 
               &.filterable {
-                text-decoration: underline;
+                //text-decoration: underline;
               }
               &.active {
                 color: #229e09;
