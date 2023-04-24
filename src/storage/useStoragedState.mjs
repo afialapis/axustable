@@ -66,4 +66,4 @@ const useStoragedState = (defValue, key) => {
   return [value, setValue]
 }
 
-export {useStoragedState}
+export default useStoragedState

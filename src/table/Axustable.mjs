@@ -1,50 +1,32 @@
 import React, {useState, useEffect, useCallback} from 'react'
-import {utils as xlsx_utils, writeFile as xlsx_write} from 'xlsx'
 import {slugify} from 'farrapa/strings'
 import { collSort } from 'farrapa/collections'
-import { useStoragedState } from '~storage/useStoragedState.mjs'
+import useConfig from '~config/useConfig.mjs'
+import { getStorageKey, useStoragedState } from '~storage/index.mjs'
 import AxustableActions from '~table/actions/AxustableActions.mjs'
 import AxustableHeader from '~table/header/AxustableHeader.mjs'
 import AxustableRow from '~table/body/AxustableRow.mjs'
 import AxustableItem from '~table/body/AxustableItem.mjs'
 import AxustableFilterModal from '~table/AxustableFilterModal.mjs'
-
-
-
-const AXUSTABLE_DEFAULTS= {
-  pageRows: 15
-}
-
-const getAxustableKey = (fields) => {
-  const flds= fields.map((f) => f.label).join('_').toLowerCase()
-  let num=0
-  flds.split('').map((c) => {num+= c.charCodeAt()})
-  return `axustable_rows_${num}`
-}
-
+import useSort from 'src/state/useSort.mjs'
+import useExport from 'src/state/useExport.mjs'
 
 
 const Axustable = (
   { fields, 
     data, 
-    sortable= true, 
-    filterable= true, 
-    paginable= true, 
-    searchable= true, 
-    exportable= false, 
-    transparent = false, 
-    bordered = true,
-    initialSort, 
+    config,
     makeKey, 
     makeClassName, 
     onEvent, 
-    className, 
-    exportFields,
-    exportName= 'document'
-     }) => {
+    className
+  }) => {
+
+
+  const conf = useConfig(config)
+  const [sortable, sortIdx, sortOrder, handleSortChange] = useSort(config, fields)
 
   const [parsedData, setParsedData]= useState(data!=undefined ? data : [])
-  const [sort, setSort]= useState(initialSort)
   
   const [filteringField, setFilteringField]= useState(undefined)
   const [filterData, setFilterData]= useState([])
@@ -52,10 +34,12 @@ const Axustable = (
 
   const [search, setSearch]= useState('')
 
-  const [pageRows, setPageRows]= useStoragedState(AXUSTABLE_DEFAULTS.pageRows, getAxustableKey(fields))
+  const [pageRows, setPageRows]= useStoragedState(conf.pages.rows, getStorageKey(fields))
   const [pageCurrent, setPageCurrent]= useState(1)
   const [pageSubset, setPageSubset]= useState(undefined)
   const [pageCount, setPageCount]= useState(1)
+
+  const [exportable, handleExportFile] = useExport(config, fields)
 
 
   // On filter or sort change, reorder data
@@ -102,12 +86,10 @@ const Axustable = (
       }
               
 
-      const fieldIdx= sort[0]
-      const way= sort[1]      
-      setParsedData(collSort(nParsedData, fields[fieldIdx].value, way))
+      setParsedData(collSort(nParsedData, fields[sortIdx].value, sortOrder))
     }
 
-  }, [data, fields, sort, filterData, search])
+  }, [data, fields, sortIdx, sortOrder, filterData, search])
 
 
   // When data changes, recalc page count
@@ -136,7 +118,7 @@ const Axustable = (
 
   // When data or current page changes, move data subset
   useEffect(()=> {
-    if (paginable!==false) {
+    if (conf.pages.enabled!==false) {
       const nFrom= (pageCurrent-1)*pageRows
       const nTo= Math.min(pageCurrent*pageRows, parsedData.length)
       setPageSubset([nFrom, nTo])
@@ -144,7 +126,7 @@ const Axustable = (
       setPageSubset([0, parsedData.length])
     }
 
-  }, [paginable, parsedData, pageCurrent, pageRows])
+  }, [conf.pages.enabled, parsedData, pageCurrent, pageRows])
 
 
   useEffect(() => {
@@ -178,18 +160,6 @@ const Axustable = (
     }
   }, [pageCount])
 
-  const handleSortChange= useCallback((fieldIdx) => {
-    if (fields[fieldIdx].value!=undefined) {
-      let way= 'asc'
-      if (sort[0]==fieldIdx) {
-        if (sort[1]=='asc') {
-          way= 'desc'
-        }
-      }
-      setSort([fieldIdx, way])
-    }
-  }, [fields, sort])
-
   const handleFilterOpen= useCallback((fieldIdx) => {
     if (fields[fieldIdx].value!=undefined) {
     
@@ -214,57 +184,26 @@ const Axustable = (
     setFilterData(nFilterData)
     setFilteringField(undefined)
   }, [filterData])
-
-  const handleExportFile = useCallback(() => {
-   if (exportFields==undefined) return
-   if (exportFields.length==0) return
-    
-    const fieldLabelsList = exportFields.map(f => f.label)
-
-    const arrayOfArrays= [
-      fieldLabelsList
-    ]
-
-    parsedData.map(record => {
-      let row= []
-      for (const f of exportFields) {
-        
-        let value= f.value!=undefined
-          ? f.value(record)
-          : record[f.name]
-
-        row.push(value)
-      }
-      arrayOfArrays.push(row)
-    })
-
-    let workbook = xlsx_utils.book_new()
-    let worksheet = xlsx_utils.aoa_to_sheet(arrayOfArrays, {})
-    xlsx_utils.book_append_sheet(workbook, worksheet, exportName)
-    xlsx_write(workbook, exportName + '.xlsx')
-
-  }, [parsedData, exportName, exportFields])
-
-
+  
   return (
-    <div className={`axustable ${className || ''} ${transparent ? 'transparent' : ''} ${bordered===false ? '' : 'bordered'}`}>
-      {paginable===true || filterable===true || searchable===true
+    <div className={`axustable ${className || ''} ${conf.style.transparent ? 'transparent' : ''} ${conf.style.bordered===false ? '' : 'bordered'}`}>
+      {conf.pages.enabled===true || conf.filterable===true || conf.searchable===true
        ? 
         <AxustableActions  pageCurrent = {pageCurrent}
                           pageCount   = {pageCount}
                           pageRows    = {pageRows}
                           dataLength  = {parsedData.length}
-                          onChangePage= {(p) => handlePageChange(p)}
+                          onChangePage = {(p) => handlePageChange(p)}
                           onChangePageRows={(r) => setPageRows(r)}
-                          filterable   ={filterable}
+                          filterable   ={conf.filterable}
                           hasSomeFilter={filteredIndexes.length > 0}
                           onClearFilter={() => handleClearFilter()}
-                          search   = {search}
+                          search       = {search}
                           onChangeSearch= {(v) => setSearch(v)}
-                          paginable    = {paginable}
-                          searchable   = {searchable}
-                          exportable   = {exportable}
-                          onExportFile = {() => handleExportFile()}
+                          paginable    = {conf.pages.enabled}
+                          searchable   = {conf.searchable}
+                          exportable    = {exportable}
+                          onExportFile = {() => handleExportFile(parsedData)}
 
 
                             />
@@ -272,9 +211,10 @@ const Axustable = (
       <div className={'axustable-table-wrap'}>
         <div className={'axustable-table'}>
           <AxustableHeader fields      = {fields}
-                          sort        = {sort}
+                          sortIdx     = {sortIdx}
+                          sortOrder   = {sortOrder}
                           sortable    = {sortable}
-                          filterable    = {filterable}
+                          filterable    = {conf.filterable}
                           filteredIndexes={filteredIndexes}
                           onChangeSort= {(sby) => handleSortChange(sby)}
                           onOpenFilter= {(fby) => handleFilterOpen(fby)}/>           

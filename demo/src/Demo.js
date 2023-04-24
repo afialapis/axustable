@@ -4,37 +4,37 @@ import data from '../../test/data.cjs'
 
 const fields = [
   {
+    name: "id",
     label: "Id",
-    className: "main", 
-    value: (p) => p.id
+    className: "main"
   }, 
   {
-    label: "First Name", 
-    value: (p) => p.first_name
+    name: "first_name",
+    label: "First Name"
   }, 
   {
-    label: "Last Name", 
-    value: (p) => p.last_name
+    name: "last_name",
+    label: "Last Name"
   },
   {
-    label: "Email", 
-    value: (p) => p.email
+    name: "email",
+    label: "Email"
   },
   {
-    label: "Phone", 
-    value: (p) => p.phone
+    name: "phone",
+    label: "Phone"
   },  
   {
-    label: "NHS Number", 
-    value: (p) => p.nhs
+    name: "nhs",
+    label: "NHS Number"
   },   
   {
-    label: "City", 
-    value: (p) => p.city
+    name: "city",
+    label: "City"
   },   
   {
-    label: "Country", 
-    value: (p) => p.country
+    name: "country",
+    label: "Country"
   },     
   {
     label: "Avatar", 
@@ -52,9 +52,11 @@ const Demo = ( )=> {
       <Axustable
         data= {data}
         fields= {fields}
-        initialSort= {[0, "asc"]}
-        makeKey    = {(p) => `person_${p.id}`}
-        exportable={true }/>
+        config     = {{
+          sort: [0, "asc"],
+          export: true
+        }}
+        makeKey    = {(p) => `person_${p.id}`}/>
     </div>
   )
 }
