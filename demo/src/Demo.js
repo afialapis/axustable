@@ -41,7 +41,8 @@ const fields = [
     render: (p, onEvent) => 
       <div style={{textAlign: "center"}}>
         <img src={p.avatar} width="25"></img>
-      </div>
+      </div>,
+    sortable: false
   } 
 ]
 const Demo = ( )=> {

@@ -2,7 +2,7 @@ import React from 'react'
 import AxustableHeaderField from './AxustableHeaderField.mjs'
 
 
-const AxustableHeader = ({ fields, sortIdx, sortOrder, sortable, filterable, filteredIndexes, onChangeSort, onOpenFilter }) =>
+const AxustableHeader = ({ fields, sortIdx, sortOrder, filterable, filteredIndexes, onChangeSort, onOpenFilter }) =>
   <div className="axustable-header">
     {fields.map((f, i) => 
       <AxustableHeaderField
@@ -10,13 +10,12 @@ const AxustableHeader = ({ fields, sortIdx, sortOrder, sortable, filterable, fil
         field      = {f}
         filterable = {filterable}
         is_filtered= {filteredIndexes.indexOf(i)>=0}
-        sortable   = {sortable}
         is_sorted  = {i!=sortIdx
                       ? undefined
                       : sortOrder
                      }
-        onChangeSort= {() => onChangeSort(i)}
-        onOpenFilter= {() => onOpenFilter(i)}/>
+        onChangeSort= {() => onChangeSort(i, f)}
+        onOpenFilter= {() => onOpenFilter(i, f)}/>
     )}
   </div>
 

@@ -28,18 +28,18 @@ function useSort(config, fields) {
     setSortOrder(order)
   }, [config, fields])
 
-  const handleSortChange= useCallback((fieldIdx) => {
-    if (fields[fieldIdx].value!=undefined) {
+  const handleSortChange= useCallback((fieldIdx, field) => {
+    if (field.sortable) {
       if (sortIdx==fieldIdx) {
         setSortOrder(sortOrder=='asc' ? 'desc' : 'asc')
       } else {
         setSortIdx(fieldIdx)
       }
     }
-  }, [fields, sortIdx, sortOrder])
+  }, [/*fields,*/ sortIdx, sortOrder])
 
 
-  return [config.sort.enabled!==false, sortIdx, sortOrder, handleSortChange]
+  return [sortIdx, sortOrder, handleSortChange]
 }
 
 export default useSort

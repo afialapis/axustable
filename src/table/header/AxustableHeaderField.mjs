@@ -2,7 +2,7 @@ import React from 'react'
 
 //⊶⊡
 
-const AxustableHeaderField = ({ field,  filterable, is_filtered, sortable, is_sorted, onChangeSort, onOpenFilter }) => {
+const AxustableHeaderField = ({ field,  filterable, is_filtered, is_sorted, onChangeSort, onOpenFilter }) => {
 
   const fieldClassName= ! field.className
     ? ''
@@ -17,10 +17,10 @@ const AxustableHeaderField = ({ field,  filterable, is_filtered, sortable, is_so
  
 
 
-        { (field.value==undefined || !sortable)
+        { ( (field.sortable==false) && (field.filterable==false))
           ? null
           : <div className={`axustable-header-field-actions`}>
-            {is_sorted===undefined
+            {field.sortable==false
              ? null
              :
               <a onClick={onChangeSort}
@@ -33,10 +33,14 @@ const AxustableHeaderField = ({ field,  filterable, is_filtered, sortable, is_so
                     }
               </a>
              }
-              <a onClick={onOpenFilter}
-                  className={``}>
-                  ⊡ 
-              </a>
+            {field.filterable==false
+             ? null
+             :            
+                <a onClick={onOpenFilter}
+                    className={``}>
+                    ⊡ 
+                </a>
+            }
 
             </div>
         }

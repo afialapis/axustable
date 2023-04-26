@@ -28417,6 +28417,15 @@
 	      .toLowerCase();
 	}
 
+	function toTitleCase(str) {
+	  return str.replace(
+	    /\w*/g,
+	    function(txt) {
+	      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+	    }
+	  );
+	}
+
 	function _deepGet(obj, path) {
 	  return path.split('.').reduce(function (prev, curr) {
 	    return prev ? prev[curr] : undefined
@@ -28624,75 +28633,6 @@
 	  return innerConfig;
 	}
 
-	var getStorageKey$1 = fields => {
-	  var flds = fields.map(f => f.label).join('_').toLowerCase();
-	  var num = 0;
-	  flds.split('').map(c => {
-	    num += c.charCodeAt();
-	  });
-	  return "axustable_rows_".concat(num);
-	};
-
-	var _isBrowser = false;
-	try {
-	  var _process, _process$env;
-	  _isBrowser = ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.BROWSER) != undefined;
-	} catch (_) {}
-	var getStorageKey = key => {
-	  if (_isBrowser) {
-	    return "".concat(encodeURIComponent(window.location.pathname), "_").concat(key || '');
-	  }
-	  return undefined;
-	};
-	var getPersisted = (key, defValue) => {
-	  if (_isBrowser) {
-	    var k = getStorageKey(key);
-	    var v = localStorage.getItem(k);
-	    try {
-	      var p = JSON.parse(v);
-	      if (p != undefined && p != null) {
-	        return p;
-	      }
-	    } catch (e) {}
-	  }
-	  return defValue;
-	};
-	var setPersisted = (key, value) => {
-	  if (_isBrowser) {
-	    var k = getStorageKey(key);
-	    localStorage.setItem(k, JSON.stringify(value));
-	  }
-	};
-	var useStoragedState = (defValue, key) => {
-	  var [value, setValue] = reactExports.useState(getPersisted(key, defValue));
-
-	  /*
-	    const setStoragedValue = useCallback((newValue) => {
-	      setPersisted(key, newValue)
-	      setValue(newValue)
-	    }, [key])
-	    return [value, setStoragedValue]
-	  
-	  */
-
-	  //
-	  // Returning and exposing setValue, we allow
-	  // to use functional setValue() too!
-	  //
-
-	  reactExports.useEffect(() => {
-	    setPersisted(key, value);
-	  }, [key, value]);
-
-	  /*
-	  const wrapSetValue = useCallback((nValue) => {
-	    setPersisted(key, typeof nValue =='function' ? nValue(value) : nValue)
-	    setValue(nValue)
-	  }, [key, value])*/
-
-	  return [value, setValue];
-	};
-
 	var ButtonBase = _ref => {
 	  var {
 	    color = 'black',
@@ -28894,7 +28834,6 @@
 	    field,
 	    filterable,
 	    is_filtered,
-	    sortable,
 	    is_sorted,
 	    onChangeSort,
 	    onOpenFilter
@@ -28905,12 +28844,12 @@
 	    className: "axustable-header-field ".concat(fieldClassName)
 	  }, /*#__PURE__*/React.createElement("div", {
 	    className: "axustable-header-field-inner"
-	  }, field.value == undefined || !sortable ? null : /*#__PURE__*/React.createElement("div", {
+	  }, field.sortable == false && field.filterable == false ? null : /*#__PURE__*/React.createElement("div", {
 	    className: "axustable-header-field-actions"
-	  }, is_sorted === undefined ? null : /*#__PURE__*/React.createElement("a", {
+	  }, field.sortable == false ? null : /*#__PURE__*/React.createElement("a", {
 	    onClick: onChangeSort,
 	    className: "".concat(is_sorted != undefined ? 'active' : '')
-	  }, is_sorted === undefined ? "⇳" : is_sorted == 'asc' ? "⇧" : "⇩"), /*#__PURE__*/React.createElement("a", {
+	  }, is_sorted === undefined ? "⇳" : is_sorted == 'asc' ? "⇧" : "⇩"), field.filterable == false ? null : /*#__PURE__*/React.createElement("a", {
 	    onClick: onOpenFilter,
 	    className: ""
 	  }, "\u22A1")), /*#__PURE__*/React.createElement("div", {
@@ -28924,7 +28863,6 @@
 	    fields,
 	    sortIdx,
 	    sortOrder,
-	    sortable,
 	    filterable,
 	    filteredIndexes,
 	    onChangeSort: _onChangeSort,
@@ -28937,10 +28875,9 @@
 	    field: f,
 	    filterable: filterable,
 	    is_filtered: filteredIndexes.indexOf(i) >= 0,
-	    sortable: sortable,
 	    is_sorted: i != sortIdx ? undefined : sortOrder,
-	    onChangeSort: () => _onChangeSort(i),
-	    onOpenFilter: () => _onOpenFilter(i)
+	    onChangeSort: () => _onChangeSort(i, f),
+	    onOpenFilter: () => _onOpenFilter(i, f)
 	  })));
 	};
 
@@ -32985,16 +32922,16 @@
 	    setSortIdx(fieldIdx);
 	    setSortOrder(order);
 	  }, [config, fields]);
-	  var handleSortChange = reactExports.useCallback(fieldIdx => {
-	    if (fields[fieldIdx].value != undefined) {
+	  var handleSortChange = reactExports.useCallback((fieldIdx, field) => {
+	    if (field.sortable) {
 	      if (sortIdx == fieldIdx) {
 	        setSortOrder(sortOrder == 'asc' ? 'desc' : 'asc');
 	      } else {
 	        setSortIdx(fieldIdx);
 	      }
 	    }
-	  }, [fields, sortIdx, sortOrder]);
-	  return [config.sort.enabled !== false, sortIdx, sortOrder, handleSortChange];
+	  }, [/*fields,*/sortIdx, sortOrder]);
+	  return [sortIdx, sortOrder, handleSortChange];
 	}
 
 	/*! xlsx.js (C) 2013-present SheetJS -- http://sheetjs.com */
@@ -48947,6 +48884,169 @@
 	  return [config.export.enabled !== false, handleExportFile];
 	}
 
+	function _getClassNames(className, config) {
+	  var cnames = [];
+	  if (className) {
+	    cnames.push(className);
+	  }
+	  if (config.style.transparent !== false) {
+	    cnames.push('transparent');
+	  }
+	  if (config.style.bordered !== false) {
+	    cnames.push('bordered');
+	  }
+	  return cnames.join(' ');
+	}
+	var AxustableWrapper = _ref => {
+	  var {
+	    className,
+	    config,
+	    children
+	  } = _ref;
+	  return /*#__PURE__*/React.createElement("div", {
+	    className: "axustable ".concat(_getClassNames(className, config))
+	  }, children);
+	};
+
+	function _getFields(fields, config) {
+	  return fields.map(f => {
+	    var _def_value = record => record[f.name];
+	    var _def_render = (record, onEvent) => record[f.name];
+	    var sortable = (f === null || f === void 0 ? void 0 : f.sortable) === false ? false : config.sort.enabled;
+	    var sort_value = typeof (f === null || f === void 0 ? void 0 : f.sort_value) == 'function' ? f.sort_value : _def_value;
+	    return {
+	      name: f.name,
+	      label: (f === null || f === void 0 ? void 0 : f.label) || toTitleCase(f.name),
+	      className: f === null || f === void 0 ? void 0 : f.className,
+	      value: (f === null || f === void 0 ? void 0 : f.value) || _def_value,
+	      render: (f === null || f === void 0 ? void 0 : f.render) || _def_render,
+	      sortable,
+	      sort_value
+	    };
+	  });
+	}
+	function useFields(fields, config) {
+	  var [innerFields, setInnerFields] = reactExports.useState(_getFields(fields, config));
+	  reactExports.useEffect(() => {
+	    setInnerFields(_getFields(fields, config));
+	  }, [fields, config]);
+	  return innerFields;
+	}
+
+	var getStorageKey$1 = fields => {
+	  var flds = fields.map(f => f.label).join('_').toLowerCase();
+	  var num = 0;
+	  flds.split('').map(c => {
+	    num += c.charCodeAt();
+	  });
+	  return "axustable_rows_".concat(num);
+	};
+
+	var _isBrowser = false;
+	try {
+	  var _process, _process$env;
+	  _isBrowser = ((_process = process) === null || _process === void 0 ? void 0 : (_process$env = _process.env) === null || _process$env === void 0 ? void 0 : _process$env.BROWSER) != undefined;
+	} catch (_) {}
+	var getStorageKey = key => {
+	  if (_isBrowser) {
+	    return "".concat(encodeURIComponent(window.location.pathname), "_").concat(key || '');
+	  }
+	  return undefined;
+	};
+	var getPersisted = (key, defValue) => {
+	  if (_isBrowser) {
+	    var k = getStorageKey(key);
+	    var v = localStorage.getItem(k);
+	    try {
+	      var p = JSON.parse(v);
+	      if (p != undefined && p != null) {
+	        return p;
+	      }
+	    } catch (e) {}
+	  }
+	  return defValue;
+	};
+	var setPersisted = (key, value) => {
+	  if (_isBrowser) {
+	    var k = getStorageKey(key);
+	    localStorage.setItem(k, JSON.stringify(value));
+	  }
+	};
+	var useStoragedState = (defValue, key) => {
+	  var [value, setValue] = reactExports.useState(getPersisted(key, defValue));
+
+	  /*
+	    const setStoragedValue = useCallback((newValue) => {
+	      setPersisted(key, newValue)
+	      setValue(newValue)
+	    }, [key])
+	    return [value, setStoragedValue]
+	  
+	  */
+
+	  //
+	  // Returning and exposing setValue, we allow
+	  // to use functional setValue() too!
+	  //
+
+	  reactExports.useEffect(() => {
+	    setPersisted(key, value);
+	  }, [key, value]);
+
+	  /*
+	  const wrapSetValue = useCallback((nValue) => {
+	    setPersisted(key, typeof nValue =='function' ? nValue(value) : nValue)
+	    setValue(nValue)
+	  }, [key, value])*/
+
+	  return [value, setValue];
+	};
+
+	function usePagination(config, fields, dataLength) {
+	  var [pageRows, setPageRows] = useStoragedState(config.pages.rows, getStorageKey$1(fields));
+	  var [pageCurrent, setPageCurrent] = reactExports.useState(1);
+	  var [pageSubset, setPageSubset] = reactExports.useState(undefined);
+	  var [pageCount, setPageCount] = reactExports.useState(1);
+
+	  // When data changes, recalc page count
+	  reactExports.useEffect(() => {
+	    var nPageCount = 1;
+	    if (dataLength > 0) {
+	      var div = dataLength / pageRows;
+	      var mod = dataLength % pageRows;
+	      nPageCount = parseInt(div) + (mod > 0 ? 1 : 0);
+	    }
+	    setPageCount(nPageCount);
+	  }, [dataLength, pageRows]);
+
+	  // When data or current page changes, move data subset
+	  reactExports.useEffect(() => {
+	    if (pageCurrent > pageCount) {
+	      setPageCurrent(pageCount);
+	    }
+	  }, [pageCurrent, pageCount]);
+
+	  // When data or current page changes, move data subset
+	  reactExports.useEffect(() => {
+	    if (config.pages.enabled !== false) {
+	      var nFrom = (pageCurrent - 1) * pageRows;
+	      var nTo = Math.min(pageCurrent * pageRows, dataLength);
+	      setPageSubset([nFrom, nTo]);
+	    } else {
+	      setPageSubset([0, dataLength]);
+	    }
+	  }, [config.pages.enabled, dataLength, pageCurrent, pageRows]);
+	  var handleChangePageRows = reactExports.useCallback(v => {
+	    setPageRows(v);
+	  }, [setPageRows]);
+	  var handlePageChange = reactExports.useCallback(page => {
+	    if (page >= 1 && page <= pageCount) {
+	      setPageCurrent(page);
+	    }
+	  }, [pageCount]);
+	  return [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange];
+	}
+
 	var Axustable = _ref => {
 	  var {
 	    fields,
@@ -48958,17 +49058,21 @@
 	    className
 	  } = _ref;
 	  var conf = useConfig(config);
-	  var [sortable, sortIdx, sortOrder, handleSortChange] = useSort(config, fields);
+	  var flds = useFields(fields, conf);
+	  var [sortIdx, sortOrder, handleSortChange] = useSort(conf, flds);
 	  var [parsedData, setParsedData] = reactExports.useState(data != undefined ? data : []);
 	  var [filteringField, setFilteringField] = reactExports.useState(undefined);
 	  var [filterData, setFilterData] = reactExports.useState([]);
 	  var [filteredIndexes, setFilteredIndexes] = reactExports.useState([]);
 	  var [search, setSearch] = reactExports.useState('');
-	  var [pageRows, setPageRows] = useStoragedState(conf.pages.rows, getStorageKey$1(fields));
-	  var [pageCurrent, setPageCurrent] = reactExports.useState(1);
-	  var [pageSubset, setPageSubset] = reactExports.useState(undefined);
-	  var [pageCount, setPageCount] = reactExports.useState(1);
-	  var [exportable, handleExportFile] = useExport(config, fields);
+	  var [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange] = usePagination(conf, flds, parsedData.length);
+
+	  // const [pageRows, setPageRows]= useStoragedState(conf.pages.rows, getStorageKey(flds))
+	  // const [pageCurrent, setPageCurrent]= useState(1)
+	  // const [pageSubset, setPageSubset]= useState(undefined)
+	  // const [pageCount, setPageCount]= useState(1)
+
+	  var [exportable, handleExportFile] = useExport(conf, flds);
 
 	  // On filter or sort change, reorder data
 	  reactExports.useEffect(() => {
@@ -48977,7 +49081,7 @@
 	    } else {
 	      var filteredData = data.filter(rec => {
 	        var hide = 0;
-	        fields.map((f, fidx) => {
+	        flds.map((f, fidx) => {
 	          if (f.value != undefined) {
 	            if (filterData[fidx] != undefined) {
 	              var hidden = filterData[fidx].filter(f => f[1] == false).map(f => f[0]);
@@ -48994,7 +49098,7 @@
 	      if (search != undefined && search != '') {
 	        nParsedData = filteredData.filter(rec => {
 	          var show = 0;
-	          fields.map(f => {
+	          flds.map(f => {
 	            if (f.value != undefined) {
 	              var v = f.value(rec);
 	              if (v != undefined && v != '') {
@@ -49011,40 +49115,46 @@
 	      } else {
 	        nParsedData = filteredData;
 	      }
-	      setParsedData(collSort(nParsedData, fields[sortIdx].value, sortOrder));
+	      setParsedData(collSort(nParsedData, flds[sortIdx].sort_value, sortOrder));
 	    }
-	  }, [data, fields, sortIdx, sortOrder, filterData, search]);
+	  }, [data, flds, sortIdx, sortOrder, filterData, search]);
 
-	  // When data changes, recalc page count
-	  reactExports.useEffect(() => {
-	    var nPageCount = 1;
-	    if (parsedData != undefined) {
-	      if (parsedData.length > 0) {
-	        var div = parsedData.length / pageRows;
-	        var mod = parsedData.length % pageRows;
-	        nPageCount = parseInt(div) + (mod > 0 ? 1 : 0);
-	      }
-	    }
-	    setPageCount(nPageCount);
-	  }, [parsedData, pageRows]);
+	  //  // When data changes, recalc page count
+	  //  useEffect(( )=> {
+	  //
+	  //    let nPageCount= 1
+	  //    if (parsedData!=undefined) {
+	  //      if (parsedData.length>0) {
+	  //        const div= parsedData.length / pageRows
+	  //        const mod= parsedData.length % pageRows
+	  //      
+	  //        nPageCount= parseInt(div) + (mod>0 ? 1 : 0)
+	  //      }
+	  //    }
+	  //    setPageCount(nPageCount)
+	  //  }, [parsedData, pageRows])
+	  //  
+	  //
+	  //  // When data or current page changes, move data subset
+	  //  useEffect(()=> {
+	  //    if (pageCurrent>pageCount) {
+	  //      setPageCurrent(pageCount)
+	  //    }   
+	  //  }, [pageCurrent, pageCount])
+	  //
+	  //
+	  //  // When data or current page changes, move data subset
+	  //  useEffect(()=> {
+	  //    if (conf.pages.enabled!==false) {
+	  //      const nFrom= (pageCurrent-1)*pageRows
+	  //      const nTo= Math.min(pageCurrent*pageRows, parsedData.length)
+	  //      setPageSubset([nFrom, nTo])
+	  //    } else {
+	  //      setPageSubset([0, parsedData.length])
+	  //    }
+	  //
+	  //  }, [conf.pages.enabled, parsedData, pageCurrent, pageRows])
 
-	  // When data or current page changes, move data subset
-	  reactExports.useEffect(() => {
-	    if (pageCurrent > pageCount) {
-	      setPageCurrent(pageCount);
-	    }
-	  }, [pageCurrent, pageCount]);
-
-	  // When data or current page changes, move data subset
-	  reactExports.useEffect(() => {
-	    if (conf.pages.enabled !== false) {
-	      var nFrom = (pageCurrent - 1) * pageRows;
-	      var nTo = Math.min(pageCurrent * pageRows, parsedData.length);
-	      setPageSubset([nFrom, nTo]);
-	    } else {
-	      setPageSubset([0, parsedData.length]);
-	    }
-	  }, [conf.pages.enabled, parsedData, pageCurrent, pageRows]);
 	  reactExports.useEffect(() => {
 	    var fIndexes = [];
 	    filterData.map((col, idx) => {
@@ -49061,26 +49171,29 @@
 	    setFilteredIndexes(fIndexes);
 	  }, [filterData]);
 	  var handleClearFilter = reactExports.useCallback(() => {
-	    var zeroFilter = fields.map(_ => undefined);
+	    var zeroFilter = flds.map(_ => undefined);
 	    setFilterData(zeroFilter);
-	  }, [fields]);
-	  var handlePageChange = reactExports.useCallback(page => {
-	    if (page >= 1 && page <= pageCount) {
-	      setPageCurrent(page);
-	    }
-	  }, [pageCount]);
-	  var handleFilterOpen = reactExports.useCallback(fieldIdx => {
-	    if (fields[fieldIdx].value != undefined) {
+	  }, [flds]);
+
+	  //  const handlePageChange = useCallback((page) => {
+	  //    if (page>=1 && page<=pageCount) {
+	  //      setPageCurrent(page)
+	  //    }
+	  //  }, [pageCount])
+	  //
+	  var handleFilterOpen = reactExports.useCallback((fieldIdx, field) => {
+	    if (field.filterable) {
 	      if (filterData[fieldIdx] == undefined) {
 	        var nFilterData = [...filterData];
-	        var distincts = new Set(parsedData.map(rec => fields[fieldIdx].value(rec)));
+	        var distincts = new Set(parsedData.map(rec => field.value(rec)));
+	        console.log(distincts);
 	        var fdata = Array.from(distincts).map(e => [e, true]);
 	        nFilterData[fieldIdx] = fdata;
 	        setFilterData(nFilterData);
 	      }
 	      setFilteringField(fieldIdx);
 	    }
-	  }, [fields, filterData, parsedData]);
+	  }, [filterData, parsedData]);
 	  var handleFilterClose = reactExports.useCallback(() => {
 	    setFilteringField(undefined);
 	  }, []);
@@ -49090,15 +49203,16 @@
 	    setFilterData(nFilterData);
 	    setFilteringField(undefined);
 	  }, [filterData]);
-	  return /*#__PURE__*/React.createElement("div", {
-	    className: "axustable ".concat(className || '', " ").concat(conf.style.transparent ? 'transparent' : '', " ").concat(conf.style.bordered === false ? '' : 'bordered')
+	  return /*#__PURE__*/React.createElement(AxustableWrapper, {
+	    config: conf,
+	    className: className
 	  }, conf.pages.enabled === true || conf.filterable === true || conf.searchable === true ? /*#__PURE__*/React.createElement(AxustableActions, {
 	    pageCurrent: pageCurrent,
 	    pageCount: pageCount,
 	    pageRows: pageRows,
 	    dataLength: parsedData.length,
 	    onChangePage: p => handlePageChange(p),
-	    onChangePageRows: r => setPageRows(r),
+	    onChangePageRows: r => handleChangePageRows(r),
 	    filterable: conf.filterable,
 	    hasSomeFilter: filteredIndexes.length > 0,
 	    onClearFilter: () => handleClearFilter(),
@@ -49113,25 +49227,24 @@
 	  }, /*#__PURE__*/React.createElement("div", {
 	    className: 'axustable-table'
 	  }, /*#__PURE__*/React.createElement(AxustableHeader, {
-	    fields: fields,
+	    fields: flds,
 	    sortIdx: sortIdx,
 	    sortOrder: sortOrder,
-	    sortable: sortable,
 	    filterable: conf.filterable,
 	    filteredIndexes: filteredIndexes,
-	    onChangeSort: sby => handleSortChange(sby),
-	    onOpenFilter: fby => handleFilterOpen(fby)
+	    onChangeSort: (sby, field) => handleSortChange(sby, field),
+	    onOpenFilter: (fby, field) => handleFilterOpen(fby, field)
 	  }), pageSubset == undefined ? null : parsedData.slice(pageSubset[0], pageSubset[1]).map((record, didx) => /*#__PURE__*/React.createElement(AxustableRow, {
 	    key: makeKey(record),
 	    className: makeClassName ? makeClassName(record) : ''
-	  }, fields.map((field, fidx) => /*#__PURE__*/React.createElement(AxustableItem, {
+	  }, flds.map((field, fidx) => /*#__PURE__*/React.createElement(AxustableItem, {
 	    key: "".concat(makeKey(record), "_").concat(didx, "_").concat(fidx, "_").concat(slugify(field.label)),
 	    name: field.label,
 	    empty: field.empty != undefined ? field.empty(record) : false,
 	    className: field.className
 	  }, field.render != undefined ? field.render(record, onEvent) : field.value != undefined ? field.value(record) : record[field.name])))))), /*#__PURE__*/React.createElement(AxustableFilterModal, {
 	    show: filteringField != undefined,
-	    title: filteringField != undefined ? "Filtro por ".concat(fields[filteringField].label) : '',
+	    title: filteringField != undefined ? "Filtro por ".concat(flds[filteringField].label) : '',
 	    filterData: filterData[filteringField] || [],
 	    onClose: () => handleFilterClose(),
 	    onSubmit: values => {
@@ -59178,7 +59291,8 @@
 	  }, /*#__PURE__*/React.createElement("img", {
 	    src: p.avatar,
 	    width: "25"
-	  }))
+	  })),
+	  sortable: false
 	}];
 	var Demo = () => {
 	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Welcome to axustable demo"), /*#__PURE__*/React.createElement(Axustable, {
