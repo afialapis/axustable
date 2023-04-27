@@ -15,6 +15,10 @@ function _getFields (fields, config) {
       ? f.sort_value
       : _def_value
 
+    const filterable = f?.filterable===false
+      ? false
+      : config.filterable      
+
     return {
       name: f.name,
       label: f?.label || toTitleCase(f.name),
@@ -22,7 +26,8 @@ function _getFields (fields, config) {
       value: f?.value || _def_value,
       render: f?.render || _def_render,
       sortable,
-      sort_value
+      sort_value,
+      filterable
     }
   })
 }

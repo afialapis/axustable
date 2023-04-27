@@ -22,6 +22,7 @@ const AxustableFilterModal = ({title, show, filterData, onClose, onSubmit}) => {
   const toggleAll = (to) => {
     const nValues= [...values]
     nValues.map((v) => v[1]=to)
+    
     setValues(nValues)    
   }
 

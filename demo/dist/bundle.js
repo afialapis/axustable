@@ -28426,56 +28426,6 @@
 	  );
 	}
 
-	function _deepGet(obj, path) {
-	  return path.split('.').reduce(function (prev, curr) {
-	    return prev ? prev[curr] : undefined
-	  }, obj || self)
-	}
-
-
-	function collSort(coll, by, order) {
-	  if (by==undefined) {
-	    return coll
-	  }
-	  const ft = order=='desc' ? -1 : 1;
-	  return coll.slice().sort(function (a, b) {
-	    /*
-	    const fa = a[by].toLowerCase(), fb = b[by].toLowerCase()
-	    if (fa < fb) //sort string ascending
-	      return -1 * ft
-	    if (fa > fb)
-	      return 1 * ft
-	    return 0 //default return value (no sorting)
-	    */
-	   //return (a[by]-b[by])*ft
-	   let av,bv;
-
-	   if (typeof by == 'object') {
-	    
-	    av = _deepGet(a, by.field);
-	    bv = _deepGet(b, by.field);
-	    av= by.map[av] || '';
-	    bv= by.map[bv] || '';
-	   } else if (typeof by == 'function') {
-	    av = by(a) || '';
-	    bv = by(b) || '';
-	   } else {
-	    av = _deepGet(a, by);
-	    bv = _deepGet(b, by);
-	   }
-	   if (typeof av == 'string' && typeof bv == 'string') {
-	     av= av.toLowerCase();
-	     bv= bv.toLowerCase();
-	   }
-
-	    if (av < bv) //sort string ascending
-	      return -1 * ft
-	    if (av > bv)
-	      return 1 * ft
-	    return 0
-	  })  
-	}
-
 	function ownKeys(object, enumerableOnly) {
 	  var keys = Object.keys(object);
 	  if (Object.getOwnPropertySymbols) {
@@ -48914,6 +48864,7 @@
 	    var _def_render = (record, onEvent) => record[f.name];
 	    var sortable = (f === null || f === void 0 ? void 0 : f.sortable) === false ? false : config.sort.enabled;
 	    var sort_value = typeof (f === null || f === void 0 ? void 0 : f.sort_value) == 'function' ? f.sort_value : _def_value;
+	    var filterable = (f === null || f === void 0 ? void 0 : f.filterable) === false ? false : config.filterable;
 	    return {
 	      name: f.name,
 	      label: (f === null || f === void 0 ? void 0 : f.label) || toTitleCase(f.name),
@@ -48921,7 +48872,8 @@
 	      value: (f === null || f === void 0 ? void 0 : f.value) || _def_value,
 	      render: (f === null || f === void 0 ? void 0 : f.render) || _def_render,
 	      sortable,
-	      sort_value
+	      sort_value,
+	      filterable
 	    };
 	  });
 	}
@@ -49047,114 +48999,10 @@
 	  return [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange];
 	}
 
-	var Axustable = _ref => {
-	  var {
-	    fields,
-	    data,
-	    config,
-	    makeKey,
-	    makeClassName,
-	    onEvent,
-	    className
-	  } = _ref;
-	  var conf = useConfig(config);
-	  var flds = useFields(fields, conf);
-	  var [sortIdx, sortOrder, handleSortChange] = useSort(conf, flds);
-	  var [parsedData, setParsedData] = reactExports.useState(data != undefined ? data : []);
+	function useFilter(fields, distincts) {
 	  var [filteringField, setFilteringField] = reactExports.useState(undefined);
 	  var [filterData, setFilterData] = reactExports.useState([]);
 	  var [filteredIndexes, setFilteredIndexes] = reactExports.useState([]);
-	  var [search, setSearch] = reactExports.useState('');
-	  var [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange] = usePagination(conf, flds, parsedData.length);
-
-	  // const [pageRows, setPageRows]= useStoragedState(conf.pages.rows, getStorageKey(flds))
-	  // const [pageCurrent, setPageCurrent]= useState(1)
-	  // const [pageSubset, setPageSubset]= useState(undefined)
-	  // const [pageCount, setPageCount]= useState(1)
-
-	  var [exportable, handleExportFile] = useExport(conf, flds);
-
-	  // On filter or sort change, reorder data
-	  reactExports.useEffect(() => {
-	    if (data == undefined || data.length == 0 || typeof data != 'object') {
-	      setParsedData([]);
-	    } else {
-	      var filteredData = data.filter(rec => {
-	        var hide = 0;
-	        flds.map((f, fidx) => {
-	          if (f.value != undefined) {
-	            if (filterData[fidx] != undefined) {
-	              var hidden = filterData[fidx].filter(f => f[1] == false).map(f => f[0]);
-	              if (hidden.indexOf(f.value(rec)) >= 0) {
-	                hide = 1;
-	              }
-	            }
-	          }
-	        });
-	        return hide == 0; //found>0
-	      });
-
-	      var nParsedData = [];
-	      if (search != undefined && search != '') {
-	        nParsedData = filteredData.filter(rec => {
-	          var show = 0;
-	          flds.map(f => {
-	            if (f.value != undefined) {
-	              var v = f.value(rec);
-	              if (v != undefined && v != '') {
-	                var vv = v.toString().toLowerCase();
-	                var fi = search.toLowerCase();
-	                if (vv.indexOf(fi) >= 0) {
-	                  show = 1;
-	                }
-	              }
-	            }
-	          });
-	          return show == 1;
-	        });
-	      } else {
-	        nParsedData = filteredData;
-	      }
-	      setParsedData(collSort(nParsedData, flds[sortIdx].sort_value, sortOrder));
-	    }
-	  }, [data, flds, sortIdx, sortOrder, filterData, search]);
-
-	  //  // When data changes, recalc page count
-	  //  useEffect(( )=> {
-	  //
-	  //    let nPageCount= 1
-	  //    if (parsedData!=undefined) {
-	  //      if (parsedData.length>0) {
-	  //        const div= parsedData.length / pageRows
-	  //        const mod= parsedData.length % pageRows
-	  //      
-	  //        nPageCount= parseInt(div) + (mod>0 ? 1 : 0)
-	  //      }
-	  //    }
-	  //    setPageCount(nPageCount)
-	  //  }, [parsedData, pageRows])
-	  //  
-	  //
-	  //  // When data or current page changes, move data subset
-	  //  useEffect(()=> {
-	  //    if (pageCurrent>pageCount) {
-	  //      setPageCurrent(pageCount)
-	  //    }   
-	  //  }, [pageCurrent, pageCount])
-	  //
-	  //
-	  //  // When data or current page changes, move data subset
-	  //  useEffect(()=> {
-	  //    if (conf.pages.enabled!==false) {
-	  //      const nFrom= (pageCurrent-1)*pageRows
-	  //      const nTo= Math.min(pageCurrent*pageRows, parsedData.length)
-	  //      setPageSubset([nFrom, nTo])
-	  //    } else {
-	  //      setPageSubset([0, parsedData.length])
-	  //    }
-	  //
-	  //  }, [conf.pages.enabled, parsedData, pageCurrent, pageRows])
-
 	  reactExports.useEffect(() => {
 	    var fIndexes = [];
 	    filterData.map((col, idx) => {
@@ -49171,29 +49019,20 @@
 	    setFilteredIndexes(fIndexes);
 	  }, [filterData]);
 	  var handleClearFilter = reactExports.useCallback(() => {
-	    var zeroFilter = flds.map(_ => undefined);
-	    setFilterData(zeroFilter);
-	  }, [flds]);
-
-	  //  const handlePageChange = useCallback((page) => {
-	  //    if (page>=1 && page<=pageCount) {
-	  //      setPageCurrent(page)
-	  //    }
-	  //  }, [pageCount])
-	  //
+	    //let zeroFilter= fields.map((_) => undefined)
+	    setFilterData([] /*zeroFilter*/);
+	  }, [/*fields*/]);
 	  var handleFilterOpen = reactExports.useCallback((fieldIdx, field) => {
 	    if (field.filterable) {
 	      if (filterData[fieldIdx] == undefined) {
 	        var nFilterData = [...filterData];
-	        var distincts = new Set(parsedData.map(rec => field.value(rec)));
-	        console.log(distincts);
-	        var fdata = Array.from(distincts).map(e => [e, true]);
+	        var fdata = distincts[field.name].map(v => [v, true]);
 	        nFilterData[fieldIdx] = fdata;
 	        setFilterData(nFilterData);
 	      }
 	      setFilteringField(fieldIdx);
 	    }
-	  }, [filterData, parsedData]);
+	  }, [filterData, distincts]);
 	  var handleFilterClose = reactExports.useCallback(() => {
 	    setFilteringField(undefined);
 	  }, []);
@@ -49203,6 +49042,209 @@
 	    setFilterData(nFilterData);
 	    setFilteringField(undefined);
 	  }, [filterData]);
+	  return [filteringField, filterData, filteredIndexes, handleClearFilter, handleFilterOpen, handleFilterClose, handleFilterSet];
+	}
+
+	function _deepGet(obj, path) {
+	  return path.split('.').reduce(function (prev, curr) {
+	    return prev ? prev[curr] : undefined
+	  }, obj || self)
+	}
+
+
+	function collSort(coll, by, order) {
+	  if (by==undefined) {
+	    return coll
+	  }
+	  const ft = order=='desc' ? -1 : 1;
+	  return coll.slice().sort(function (a, b) {
+	    /*
+	    const fa = a[by].toLowerCase(), fb = b[by].toLowerCase()
+	    if (fa < fb) //sort string ascending
+	      return -1 * ft
+	    if (fa > fb)
+	      return 1 * ft
+	    return 0 //default return value (no sorting)
+	    */
+	   //return (a[by]-b[by])*ft
+	   let av,bv;
+
+	   if (typeof by == 'object') {
+	    
+	    av = _deepGet(a, by.field);
+	    bv = _deepGet(b, by.field);
+	    av= by.map[av] || '';
+	    bv= by.map[bv] || '';
+	   } else if (typeof by == 'function') {
+	    av = by(a) || '';
+	    bv = by(b) || '';
+	   } else {
+	    av = _deepGet(a, by);
+	    bv = _deepGet(b, by);
+	   }
+	   if (typeof av == 'string' && typeof bv == 'string') {
+	     av= av.toLowerCase();
+	     bv= bv.toLowerCase();
+	   }
+
+	    if (av < bv) //sort string ascending
+	      return -1 * ft
+	    if (av > bv)
+	      return 1 * ft
+	    return 0
+	  })  
+	}
+
+	function _filterData(data, fields, filterData, search) {
+	  if (data == undefined || data.length == 0 || typeof data != 'object') {
+	    return [];
+	  }
+	  var shownValues = [];
+	  fields.map((f, fidx) => {
+	    var ff = filterData[fidx];
+	    if (ff != undefined) {
+	      shownValues.push(ff.filter(f => f[1] == true).map(f => f[0]));
+	    } else {
+	      shownValues.push('*');
+	    }
+	  });
+	  function _recordMatches(record) {
+	    var hide = 0;
+	    fields.map((f, fidx) => {
+	      if (hide == 1) {
+	        return;
+	      }
+	      if (!f.filterable) {
+	        return;
+	      }
+	      if (f.value == undefined) {
+	        return;
+	      }
+	      if (filterData[fidx] == undefined) {
+	        return;
+	      }
+	      var fvalue = f.value(record);
+	      if (shownValues[fidx] == '*') {
+	        return;
+	      }
+	      if (shownValues[fidx].indexOf(fvalue) < 0) {
+	        hide = 1;
+	        return;
+	      }
+	      if (search != undefined && search != '') {
+	        if (fvalue == undefined || fvalue != '') {
+	          return;
+	        }
+	        var vv = fvalue.toString().toLowerCase();
+	        var fi = search.toLowerCase();
+	        if (vv.indexOf(fi) < 0) {
+	          hide = 1;
+	        }
+	      }
+	    });
+	    return hide == 0;
+	  }
+	  return data.filter(_recordMatches);
+	}
+	function useData(data, fields, sortIdx, sortOrder, filterData, search) {
+	  var [parsedData, setParsedData] = reactExports.useState(data != undefined ? data : []);
+
+	  // On filter or sort change, reorder data
+	  reactExports.useEffect(() => {
+	    var filteredData = _filterData(data, fields, filterData, search);
+	    setParsedData(collSort(filteredData, fields[sortIdx].sort_value, sortOrder));
+	  }, [data, fields, sortIdx, sortOrder, filterData, search]);
+	  return parsedData;
+	}
+
+	function _getDistincts(fields, data) {
+	  var distincts = {};
+	  fields.map(field => {
+	    var fdistincts = new Set(data.map(rec => field.value(rec)));
+	    distincts[field.name] = Array.from(fdistincts);
+	  });
+	  return distincts;
+	}
+	function useDistincts(fields, data) {
+	  var [distincts, setDistincts] = reactExports.useState(_getDistincts(fields, data));
+	  reactExports.useEffect(() => {
+	    setDistincts(_getDistincts(fields, data));
+	  }, [fields, data]);
+	  return distincts;
+	}
+
+	var Axustable = _ref => {
+	  var {
+	    fields,
+	    data,
+	    config,
+	    makeKey,
+	    makeClassName,
+	    onEvent,
+	    className
+	  } = _ref;
+	  var conf = useConfig(config);
+	  var flds = useFields(fields, conf);
+	  var [search, setSearch] = reactExports.useState('');
+	  var [sortIdx, sortOrder, handleSortChange] = useSort(conf, flds);
+	  var distincts = useDistincts(flds, data);
+	  var [filteringField, filterData, filteredIndexes, handleClearFilter, handleFilterOpen, handleFilterClose, handleFilterSet] = useFilter(flds, distincts);
+
+	  //const [parsedData, setParsedData]= useState(data!=undefined ? data : [])
+	  var parsedData = useData(data, flds, sortIdx, sortOrder, filterData, search);
+	  var [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange] = usePagination(conf, flds, parsedData.length);
+	  var [exportable, handleExportFile] = useExport(conf, flds);
+
+	  //  // On filter or sort change, reorder data
+	  //  useEffect(() => {
+	  //    if ( (data==undefined) || (data.length==0) || (typeof data != 'object') ) {
+	  //      setParsedData([])
+	  //    } else {
+	  //      let filteredData= data.filter((rec) => {
+	  //        let hide= 0
+	  //        flds.map((f,fidx) => {
+	  //          if (f.value!=undefined) {
+	  //            if (filterData[fidx]!=undefined) {
+	  //              const hidden = filterData[fidx].filter((f) => f[1]==false).map((f) => f[0])
+	  //              if (hidden.indexOf(f.value(rec))>=0) {
+	  //                hide= 1
+	  //              }
+	  //            }
+	  //          }
+	  //        })
+	  //        return hide==0//found>0
+	  //      })
+	  //
+	  //      let nParsedData= []
+	  //      if (search!=undefined && search!='') {
+	  //
+	  //        nParsedData= filteredData.filter((rec) => {
+	  //          let show= 0
+	  //          flds.map(f => {
+	  //            if (f.value!=undefined) {
+	  //              const v= f.value(rec)
+	  //              if (v!=undefined && v!='') {
+	  //                const vv= v.toString().toLowerCase()
+	  //                const fi= search.toLowerCase()
+	  //                if (vv.indexOf(fi)>=0) {
+	  //                  show= 1
+	  //                }
+	  //              }
+	  //            }
+	  //          })
+	  //          return show==1
+	  //        })
+	  //      } else {
+	  //        nParsedData= filteredData
+	  //      }
+	  //              
+	  //
+	  //      setParsedData(collSort(nParsedData, flds[sortIdx].sort_value, sortOrder))
+	  //    }
+	  //
+	  //  }, [data, flds, sortIdx, sortOrder, filterData, search])
+	  //
+
 	  return /*#__PURE__*/React.createElement(AxustableWrapper, {
 	    config: conf,
 	    className: className
@@ -59292,7 +59334,8 @@
 	    src: p.avatar,
 	    width: "25"
 	  })),
-	  sortable: false
+	  sortable: false,
+	  filterable: false
 	}];
 	var Demo = () => {
 	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h1", null, "Welcome to axustable demo"), /*#__PURE__*/React.createElement(Axustable, {

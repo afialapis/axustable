@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import {slugify} from 'farrapa/strings'
-import { collSort } from 'farrapa/collections'
+//import { collSort } from 'farrapa/collections'
 import useConfig from '~config/useConfig.mjs'
-//import { getStorageKey, useStoragedState } from '~storage/index.mjs'
 import AxustableActions from '~table/actions/AxustableActions.mjs'
 import AxustableHeader from '~table/header/AxustableHeader.mjs'
 import AxustableRow from '~table/body/AxustableRow.mjs'
@@ -14,6 +13,9 @@ import useExport from 'src/state/useExport.mjs'
 import AxustableWrapper from './AxustableWrapper.mjs'
 import useFields from 'src/state/useFields.mjs'
 import usePagination from 'src/state/usePagination.mjs'
+import useFilter from 'src/state/useFilter.mjs'
+import useData from 'src/data/useData.mjs'
+import useDistincts from 'src/data/useDistincts.mjs'
 
 
 const Axustable = (
@@ -30,170 +32,78 @@ const Axustable = (
   const conf = useConfig(config)
   const flds = useFields(fields, conf)
   
+  const [search, setSearch]= useState('')
   const [sortIdx, sortOrder, handleSortChange] = useSort(conf, flds)
 
-  const [parsedData, setParsedData]= useState(data!=undefined ? data : [])
-  
-  const [filteringField, setFilteringField]= useState(undefined)
-  const [filterData, setFilterData]= useState([])
-  const [filteredIndexes, setFilteredIndexes]= useState([])
+  const distincts = useDistincts(flds, data)
+ 
+  const [filteringField, filterData, filteredIndexes, 
+         handleClearFilter, handleFilterOpen, 
+         handleFilterClose, handleFilterSet] = useFilter(flds, distincts)
 
-  const [search, setSearch]= useState('')
+  //const [parsedData, setParsedData]= useState(data!=undefined ? data : [])
+  const parsedData = useData(data, flds, sortIdx, sortOrder, filterData, search)
+
+  
+
+
+  
 
   const [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange] = usePagination(conf, flds, parsedData.length)
-
-  // const [pageRows, setPageRows]= useStoragedState(conf.pages.rows, getStorageKey(flds))
-  // const [pageCurrent, setPageCurrent]= useState(1)
-  // const [pageSubset, setPageSubset]= useState(undefined)
-  // const [pageCount, setPageCount]= useState(1)
 
   const [exportable, handleExportFile] = useExport(conf, flds)
 
 
-  // On filter or sort change, reorder data
-  useEffect(() => {
-    if ( (data==undefined) || (data.length==0) || (typeof data != 'object') ) {
-      setParsedData([])
-    } else {
-      let filteredData= data.filter((rec) => {
-        let hide= 0
-        flds.map((f,fidx) => {
-          if (f.value!=undefined) {
-            if (filterData[fidx]!=undefined) {
-              const hidden = filterData[fidx].filter((f) => f[1]==false).map((f) => f[0])
-              if (hidden.indexOf(f.value(rec))>=0) {
-                hide= 1
-              }
-            }
-          }
-        })
-        return hide==0//found>0
-      })
-
-      let nParsedData= []
-      if (search!=undefined && search!='') {
-
-        nParsedData= filteredData.filter((rec) => {
-          let show= 0
-          flds.map(f => {
-            if (f.value!=undefined) {
-              const v= f.value(rec)
-              if (v!=undefined && v!='') {
-                const vv= v.toString().toLowerCase()
-                const fi= search.toLowerCase()
-                if (vv.indexOf(fi)>=0) {
-                  show= 1
-                }
-              }
-            }
-          })
-          return show==1
-        })
-      } else {
-        nParsedData= filteredData
-      }
-              
-
-      setParsedData(collSort(nParsedData, flds[sortIdx].sort_value, sortOrder))
-    }
-
-  }, [data, flds, sortIdx, sortOrder, filterData, search])
-
-
-  //  // When data changes, recalc page count
-  //  useEffect(( )=> {
-  //
-  //    let nPageCount= 1
-  //    if (parsedData!=undefined) {
-  //      if (parsedData.length>0) {
-  //        const div= parsedData.length / pageRows
-  //        const mod= parsedData.length % pageRows
-  //      
-  //        nPageCount= parseInt(div) + (mod>0 ? 1 : 0)
-  //      }
-  //    }
-  //    setPageCount(nPageCount)
-  //  }, [parsedData, pageRows])
-  //  
-  //
-  //  // When data or current page changes, move data subset
-  //  useEffect(()=> {
-  //    if (pageCurrent>pageCount) {
-  //      setPageCurrent(pageCount)
-  //    }   
-  //  }, [pageCurrent, pageCount])
-  //
-  //
-  //  // When data or current page changes, move data subset
-  //  useEffect(()=> {
-  //    if (conf.pages.enabled!==false) {
-  //      const nFrom= (pageCurrent-1)*pageRows
-  //      const nTo= Math.min(pageCurrent*pageRows, parsedData.length)
-  //      setPageSubset([nFrom, nTo])
+  //  // On filter or sort change, reorder data
+  //  useEffect(() => {
+  //    if ( (data==undefined) || (data.length==0) || (typeof data != 'object') ) {
+  //      setParsedData([])
   //    } else {
-  //      setPageSubset([0, parsedData.length])
+  //      let filteredData= data.filter((rec) => {
+  //        let hide= 0
+  //        flds.map((f,fidx) => {
+  //          if (f.value!=undefined) {
+  //            if (filterData[fidx]!=undefined) {
+  //              const hidden = filterData[fidx].filter((f) => f[1]==false).map((f) => f[0])
+  //              if (hidden.indexOf(f.value(rec))>=0) {
+  //                hide= 1
+  //              }
+  //            }
+  //          }
+  //        })
+  //        return hide==0//found>0
+  //      })
+  //
+  //      let nParsedData= []
+  //      if (search!=undefined && search!='') {
+  //
+  //        nParsedData= filteredData.filter((rec) => {
+  //          let show= 0
+  //          flds.map(f => {
+  //            if (f.value!=undefined) {
+  //              const v= f.value(rec)
+  //              if (v!=undefined && v!='') {
+  //                const vv= v.toString().toLowerCase()
+  //                const fi= search.toLowerCase()
+  //                if (vv.indexOf(fi)>=0) {
+  //                  show= 1
+  //                }
+  //              }
+  //            }
+  //          })
+  //          return show==1
+  //        })
+  //      } else {
+  //        nParsedData= filteredData
+  //      }
+  //              
+  //
+  //      setParsedData(collSort(nParsedData, flds[sortIdx].sort_value, sortOrder))
   //    }
   //
-  //  }, [conf.pages.enabled, parsedData, pageCurrent, pageRows])
+  //  }, [data, flds, sortIdx, sortOrder, filterData, search])
+  //
 
-
-  useEffect(() => {
-
-    let fIndexes= []
-    filterData.map((col,idx) => {
-      if (col!=undefined) {
-        col.map((value,_) => {
-          const [_val,show]= value
-          if (show==false) {
-            fIndexes.push(idx)
-            return  
-          }
-        })
-        
-      }
-    })
-    setFilteredIndexes(fIndexes)
-
-  }, [filterData])
-
-  const handleClearFilter = useCallback(() => {
-    let zeroFilter= flds.map((_) => undefined)
-    setFilterData(zeroFilter)
-  }, [flds])
-  
-
-//  const handlePageChange = useCallback((page) => {
-//    if (page>=1 && page<=pageCount) {
-//      setPageCurrent(page)
-//    }
-//  }, [pageCount])
-//
-  const handleFilterOpen= useCallback((fieldIdx, field) => {
-    if (field.filterable) {
-    
-      if (filterData[fieldIdx] == undefined) {
-        let nFilterData= [...filterData]
-        const distincts= new Set(parsedData.map((rec) => field.value(rec)))
-        console.log(distincts)
-        const fdata= Array.from(distincts).map((e) => [e, true])
-        nFilterData[fieldIdx]= fdata
-        setFilterData(nFilterData)
-      }
-      setFilteringField(fieldIdx)
-    }
-  }, [filterData, parsedData])
-
-  const handleFilterClose = useCallback(() => {
-    setFilteringField(undefined)
-  }, [])
-
-  const handleFilterSet = useCallback((filteringField, values) => {
-    const nFilterData= [...filterData]
-    nFilterData[filteringField]= values
-    setFilterData(nFilterData)
-    setFilteringField(undefined)
-  }, [filterData])
-  
   return (
     <AxustableWrapper config={conf}
                       className={className}>

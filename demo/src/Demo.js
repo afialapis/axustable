@@ -42,7 +42,8 @@ const fields = [
       <div style={{textAlign: "center"}}>
         <img src={p.avatar} width="25"></img>
       </div>,
-    sortable: false
+    sortable: false,
+    filterable: false
   } 
 ]
 const Demo = ( )=> {
