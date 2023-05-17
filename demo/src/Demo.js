@@ -58,7 +58,7 @@ const Demo = ( )=> {
           sort: [0, "asc"],
           export: true
         }}
-        makeKey    = {(p) => `person_${p.id}`}/>
+      />
     </div>
   )
 }

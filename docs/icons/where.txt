@@ -1,0 +1,9 @@
+https://icons8.com/icon/set/export/fluency-systems-regular
+
+
+Style: Windows 11 Outline
+
+
+vtracer, to convert png to svg
+https://github.com/visioncortex/vtracer
+install cargo and in the cmdapp folder, do "cargo install vtracer"

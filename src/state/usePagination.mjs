@@ -3,7 +3,7 @@ import { getStorageKey, useStoragedState } from '~storage/index.mjs'
 
 function usePagination (config, fields, dataLength) {
   const [pageRows, setPageRows]= useStoragedState(config.pages.rows, getStorageKey(fields))
-  const [pageCurrent, setPageCurrent]= useState(1)
+  const [currentPage, setcurrentPage]= useState(1)
   const [pageSubset, setPageSubset]= useState(undefined)
   const [pageCount, setPageCount]= useState(1)
 
@@ -24,23 +24,23 @@ function usePagination (config, fields, dataLength) {
 
   // When data or current page changes, move data subset
   useEffect(()=> {
-    if (pageCurrent>pageCount) {
-      setPageCurrent(pageCount)
+    if (currentPage>pageCount) {
+      setcurrentPage(pageCount)
     }   
-  }, [pageCurrent, pageCount])
+  }, [currentPage, pageCount])
 
 
   // When data or current page changes, move data subset
   useEffect(()=> {
     if (config.pages.enabled!==false) {
-      const nFrom= (pageCurrent-1)*pageRows
-      const nTo= Math.min(pageCurrent*pageRows, dataLength)
+      const nFrom= (currentPage-1)*pageRows
+      const nTo= Math.min(currentPage*pageRows, dataLength)
       setPageSubset([nFrom, nTo])
     } else {
       setPageSubset([0, dataLength])
     }
 
-  }, [config.pages.enabled, dataLength, pageCurrent, pageRows])
+  }, [config.pages.enabled, dataLength, currentPage, pageRows])
 
 
   const handleChangePageRows = useCallback((v) => {
@@ -49,12 +49,12 @@ function usePagination (config, fields, dataLength) {
 
   const handlePageChange = useCallback((page) => {
     if (page>=1 && page<=pageCount) {
-      setPageCurrent(page)
+      setcurrentPage(page)
     }
   }, [pageCount])
 
 
-  return [pageCurrent, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange]
+  return [currentPage, pageRows, pageCount, pageSubset, handleChangePageRows, handlePageChange]
 }
 
 export default usePagination

@@ -1,5 +1,5 @@
-@import '../../node_modules/bootstrap/scss/bootstrap.scss';
-
+/*@import '../../node_modules/bootstrap/scss/bootstrap.scss';
+*/
 // Adapt bootstrap
 $screen-xs: 480px;
 $screen-sm: 768px;
@@ -20,7 +20,7 @@ $screen-md: 992px;
     background-color: #fff;
   }
 
-  .axustable-actions {
+  .axt-toolbar {
     width:100%;
     padding: 0em 1em;
 
@@ -30,46 +30,45 @@ $screen-md: 992px;
     flex-direction: row;
     align-items: center;
 
-    .axustable-actions-left {
+    .axt-toolbar-left {
       flex-grow: 1;
       width: 30%;
-      display: flex;
 
-      .axustable-clear-filter {
-        user-select: none;
-        &.active {
-          cursor: pointer;
+      .axt-toolbar-search {
+        
+        .axt-toolbar-search-icon {
+          display: inline;
         }
+        .axt-toolbar-search-input {
+          display: inline;
+          text-align: center;
+          input {
+            border-style: solid;
+            border-width: 1px;
+            line-height: 2em;
+          }
+        }      
       }
-      .axustable-export {
-        user-select: none;
-        cursor: pointer;
-      }
-
-      .axustable-search-input {
-        text-align: center;
-        input {
-          border-style: solid;
-          border-width: 1px;
-          line-height: 2em;
-        }
-      }      
-
     }
 
 
-    .axustable-actions-right {
+    .axt-toolbar-right {
       flex-grow: 1;
       width: 70%;
 
-      .axustable-pagination{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex-direction: row;
+      align-items: center;      
+
+      .axt-toolbar-pagination{
         text-align: right;
 
         .arrow,
-        .page-num,
-        .ellipsis,
-        .select,
-        .total {
+        .axt-toolbar-pagination-page,
+        .axt-toolbar-pagination-select,
+        .axt-toolbar-pagination-total {
           
           display: inline-block;
           min-width: 1.25em;
@@ -84,7 +83,7 @@ $screen-md: 992px;
         } 
         
         .ellipsis,
-        .total {
+        .axt-toolbar-pagination-total {
           opacity: 0.4;
         }
     
@@ -116,25 +115,25 @@ $screen-md: 992px;
 
   }
 
-  .axustable-table-wrap {
+  .axt-table-wrap {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
 
-    .axustable-table {
+    .axt-table {
       display         : table;
       border-collapse : separate;
       border-spacing  : 0.5em 0;
       width           : 100%;
 
-      .axustable-header {
+      .axt-header {
         display: table-row;
 
         @media screen and (max-width: $screen-sm) {
           display: none !important;
         }  
 
-        .axustable-header-field {
+        .axt-header-field {
           display      : table-cell;
           font-style   : italic;
           font-weight  : bold;
@@ -144,33 +143,39 @@ $screen-md: 992px;
           vertical-align: middle;
 
 
-          .axustable-header-field-inner {
+          .axt-header-field-inner {
             display: flex;
             align-items: baseline;
             justify-content: left; // space-between; // left;
             user-select: none;
             //border-bottom: 1px solid gray;
 
-            .axustable-header-field-actions {
+            .axt-header-field-actions {
               white-space: nowrap;
 
-              a {
+              /*a {
                 opacity: 0.3;
                 font-size: 1.5em;
                 cursor: pointer;
-              }
+              }*/
 
               /*a:not(:first-child) {
                 padding-left: 0.25em;
               }*/
 
-              a.active {
+              /*a.active {
                 opacity: 1;
                 color: #229e09;
+              }*/
+
+              svg {
+                margin-right: 0.1em;
+                cursor: pointer;
+
               }
             }
 
-            .axustable-header-field-label {
+            .axt-header-field-label {
               cursor: pointer;
 
               &.filterable {
@@ -183,16 +188,16 @@ $screen-md: 992px;
           }
           
 
-          &.axustable-header-field-right {
+          &.axt-header-field-right {
             text-align: right;
-            .axustable-header-field-inner {
+            .axt-header-field-inner {
               justify-content: right;
             }
           }
 
-          &.axustable-header-field-center {
+          &.axt-header-field-center {
             text-align: center;
-            .axustable-header-field-inner {
+            .axt-header-field-inner {
               justify-content: center;
             }
           }
@@ -201,13 +206,13 @@ $screen-md: 992px;
 
       
       // Show border bottom except on last row
-      .axustable-row:not(:last-child) {
-        .axustable-item {
+      .axt-row:not(:last-child) {
+        .axt-item {
           border-bottom  : 1px solid #00000020;
         }
       }
 
-      .axustable-row {
+      .axt-row {
         display: table-row;
 
         @media screen and (max-width: $screen-sm) {
@@ -216,7 +221,7 @@ $screen-md: 992px;
           margin-bottom: 1em;
         }    
 
-        .axustable-item {
+        .axt-item {
           display        : table-cell;
 
           //border-bottom  : 1px solid #00000020;
@@ -232,14 +237,14 @@ $screen-md: 992px;
           }           
         }
 
-        .axustable-item.axustable-item-main {
+        .axt-item.axt-item-main {
           @media screen and (max-width: $screen-sm) {
             text-align: center;
           }
         }
 
 
-        .axustable-item:not(.axustable-item-main):not(.axustable-item-right)::after {
+        .axt-item:not(.axt-item-main):not(.axt-item-right)::after {
           @media screen and (max-width: $screen-sm) {
             content: attr(data-name);
             color: #ddd9d9;
@@ -251,31 +256,31 @@ $screen-md: 992px;
           }
         }
 
-        .axustable-item.axustable-item-empty {
+        .axt-item.axt-item-empty {
           @media screen and (max-width: $screen-sm) {
             display: none;
           }
         }    
 
-        .axustable-item.axustable-item-textual {
+        .axt-item.axt-item-textual {
           color     : gray;
           font-style: italic;
           font-size : 0.9em;
         }
 
-        .axustable-item.axustable-item-right {
+        .axt-item.axt-item-right {
           text-align: right;
           white-space: nowrap;
         }
 
 
-        .axustable-item.axustable-item-price {
+        .axt-item.axt-item-price {
           text-align: right;
           color: green;
         }
 
-        .axustable-item.axustable-item-cut_200 {
-          .axustable-item-inner {
+        .axt-item.axt-item-cut_200 {
+          .axt-item-inner {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -288,7 +293,7 @@ $screen-md: 992px;
 }
 
 
-.axustable-filter-modal {
+.axt-filter-modal {
   max-width: 250px;
 
   .modal-header {
@@ -304,7 +309,7 @@ $screen-md: 992px;
     }
   }
   
-  .axustable-filter-search  {
+  .axt-filter-search  {
     margin-top: 1em;
     margin-bottom: -0.5em;
 
@@ -313,10 +318,10 @@ $screen-md: 992px;
     }
   }
 
-  .axustable-filter-list {
+  .axt-filter-list {
     max-height: 200px;
     overflow-y: auto;
-    .axustable-filter-val {
+    .axt-filter-val {
       cursor: pointer;
       padding: 0.25em 0;
       user-select: none;

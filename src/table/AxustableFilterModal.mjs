@@ -33,11 +33,11 @@ const AxustableFilterModal = ({title, show, filterData, onClose, onSubmit}) => {
               backdrop           = {true}
               modalTransition    = {{ timeout: 20 }}
               backdropTransition = {{ timeout: 10 }}
-              className="axustable-filter-modal">
+              className="axt-filter-modal">
         <ModalHeader 
               toggle             = {(e) => onClose(e)}>
           <div>{title}</div>
-          <div className="axustable-filter-search">
+          <div className="axt-filter-search">
             <InputGroup>
               <Input type="text" 
                      value={searchText}
@@ -50,15 +50,15 @@ const AxustableFilterModal = ({title, show, filterData, onClose, onSubmit}) => {
           </div>
         </ModalHeader>
         <ModalBody>
-          <div className="axustable-filter-list">
+          <div className="axt-filter-list">
             {values.map((v, i) => {
                 if ((searchText && v[0]) ? v[0].toLowerCase().indexOf(searchText.toLowerCase())>=0 : true) {
                   return (
-                    <div key      ={`axustable-filter-val-${i}`}
-                        className={`axustable-filter-val ${v[1] ? 'active' : 'inactive'}`}
+                    <div key      ={`axt-filter-val-${i}`}
+                        className={`axt-filter-val ${v[1] ? 'active' : 'inactive'}`}
                         /*onClick  = {() => toggleValue(i)}*/>
                       <FormGroup size="sm" check>
-                        <Input type="checkbox" id={`axustable-filter-val-${i}-check`} 
+                        <Input type="checkbox" id={`axt-filter-val-${i}-check`} 
                                checked={v[1]}
                                onChange={() => {}}
                                onClick={() => toggleValue(i)}/> 
@@ -76,7 +76,7 @@ const AxustableFilterModal = ({title, show, filterData, onClose, onSubmit}) => {
         <ModalFooter>
           <FormGroup check>
             <Input type="checkbox"
-                        id={`axustable-filter-sall-check`} 
+                        id={`axt-filter-sall-check`} 
                         defaultChecked={true}
                         onClick={(ev) => toggleAll(ev.target.checked)}/> 
             <Label>

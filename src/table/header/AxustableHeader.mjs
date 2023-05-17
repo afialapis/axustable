@@ -3,7 +3,7 @@ import AxustableHeaderField from './AxustableHeaderField.mjs'
 
 
 const AxustableHeader = ({ fields, sortIdx, sortOrder, filterable, filteredIndexes, onChangeSort, onOpenFilter }) =>
-  <div className="axustable-header">
+  <div className="axt-header">
     {fields.map((f, i) => 
       <AxustableHeaderField
         key        = {`axustable_field_${i}`}

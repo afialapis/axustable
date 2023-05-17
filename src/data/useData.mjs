@@ -17,46 +17,47 @@ function _filterData(data, fields, filterData, search ) {
     }
   })
 
-
+  const mustMatchSearch= (search!=undefined && search!='')
+  
   function _recordMatches(record) {
-    let hide= 0
+    let matchesShownValues= true
+    let matchesSearchN= 0
+
     fields.map((f,fidx) => {
-      if (hide==1) {
-        return
-      }
       if (!f.filterable) {
         return
       }
       if (f.value==undefined) {
         return
       }
-      if (filterData[fidx]==undefined) {
-        return
-      }
+
       const fvalue= f.value(record)
-      
-      if (shownValues[fidx]=='*'){
-        return
+      const shown= shownValues[fidx]
+      if ((shown!=undefined) && (shown!='*')) {
+        if (shown.indexOf(fvalue)<0) {
+          matchesShownValues= false
+        }
       }
 
-      if (shownValues[fidx].indexOf(fvalue)<0) {
-        hide= 1
-        return
-      }
-
-      if (search!=undefined && search!='') {
-        if (fvalue==undefined || fvalue!='') {
+      if (mustMatchSearch) {
+        if (fvalue==undefined || fvalue=='') {
           return
         }
 
         const vv= fvalue.toString().toLowerCase()
         const fi= search.toLowerCase()
-        if (vv.indexOf(fi)<0) {
-          hide= 1
+
+        
+        if (vv.indexOf(fi)>=0) {
+          matchesSearchN+= 1
         }
       }
     })
-    return hide==0
+
+    const matchesSearch = mustMatchSearch
+      ? matchesSearchN>0
+      : true
+    return matchesShownValues && matchesSearch
   }
   
   return data.filter(_recordMatches)
