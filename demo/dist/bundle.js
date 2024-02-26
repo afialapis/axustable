@@ -28588,28 +28588,32 @@
 	    }
 	  };
 
-	  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Menu, {
-	    onClick: handleContextMenu,
-	    disabled: false
-	  }), /*#__PURE__*/React.createElement(it, {
-	    id: MENU_ID
-	  }, /*#__PURE__*/React.createElement(pt, {
-	    id: "copy",
-	    onClick: handleItemClick
-	  }, /*#__PURE__*/React.createElement(Menu, null), "Menu"), /*#__PURE__*/React.createElement(pt, {
-	    id: "cut",
-	    onClick: handleItemClick
-	  }, "Cut"), /*#__PURE__*/React.createElement(Et, null), /*#__PURE__*/React.createElement(pt, {
-	    disabled: true
-	  }, "Disabled"), /*#__PURE__*/React.createElement(Et, null), /*#__PURE__*/React.createElement(Kt, {
-	    label: "Foobar"
-	  }, /*#__PURE__*/React.createElement(pt, {
-	    id: "reload",
-	    onClick: handleItemClick
-	  }, "Reload"), /*#__PURE__*/React.createElement(pt, {
-	    id: "something",
-	    onClick: handleItemClick
-	  }, "Do something else"))));
+	  return (
+	    /*#__PURE__*/
+	    // USO NEW ICONS
+	    React.createElement("div", null, /*#__PURE__*/React.createElement(Menu, {
+	      onClick: handleContextMenu,
+	      disabled: false
+	    }), /*#__PURE__*/React.createElement(it, {
+	      id: MENU_ID
+	    }, /*#__PURE__*/React.createElement(pt, {
+	      id: "copy",
+	      onClick: handleItemClick
+	    }, /*#__PURE__*/React.createElement(Menu, null), "Menu"), /*#__PURE__*/React.createElement(pt, {
+	      id: "cut",
+	      onClick: handleItemClick
+	    }, "Cut"), /*#__PURE__*/React.createElement(Et, null), /*#__PURE__*/React.createElement(pt, {
+	      disabled: true
+	    }, "Disabled"), /*#__PURE__*/React.createElement(Et, null), /*#__PURE__*/React.createElement(Kt, {
+	      label: "Foobar"
+	    }, /*#__PURE__*/React.createElement(pt, {
+	      id: "reload",
+	      onClick: handleItemClick
+	    }, "Reload"), /*#__PURE__*/React.createElement(pt, {
+	      id: "something",
+	      onClick: handleItemClick
+	    }, "Do something else"))))
+	  );
 	};
 
 	var COLORS$1 = {

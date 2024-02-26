@@ -36,7 +36,7 @@ const MenuMenu = ({filterable, hasSomeFilter, onClearFilter, exportable, onExpor
 
   return (
 
-USO NEW ICONS
+    // USO NEW ICONS
 
     <div> 
       <MenuIcon onClick  = {handleContextMenu}
